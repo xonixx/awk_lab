@@ -85,3 +85,17 @@ object
     end
 end
 ```
+
+### Keywords
+
+```
+object
+list
+string
+number
+true
+false
+null
+key
+end
+```
