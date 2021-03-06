@@ -3,10 +3,11 @@ BEGIN {
     split("",Stack)
     Mode = ""
     WasPrev = 0
+    Open["object"]="{"
+    Open["list"]="["
 }
 
-"object" == $1 && !isString() { Mode=$1; Stack[++Depth]="object"; p((WasPrev ? ",":"") "{"); WasPrev=0; next; }
-"list"   == $1 && !isString() { Mode=$1; Stack[++Depth]="list";   p((WasPrev ? ",":"") "["); WasPrev=0; next; }
+isComplex($1)  && !isString() { Mode=$1; Stack[++Depth]=$1;  p((WasPrev ? ",":"") Open[$1]); WasPrev=0; next; }
 "string" == $1 && !isString() { Mode=$1;                                                                next; }
 "number" == $1 && !isString() { Mode=$1;                                                                next; }
 isSingle($1)   && !isString() { p((WasPrev ? ",":"") $1);                                    WasPrev=1; next; }
@@ -18,5 +19,6 @@ Mode=="number"||Mode=="string"{ p((WasPrev ? ",":"")$1); Mode="";               
                               { print "Error at " FILENAME ":" NR; exit 1                                     }
 
 function isString() { return Mode=="key" || Mode=="string" }
-function isSingle(s) { return "true"==s ||"false"==s || "null"==s }
+function isSingle(s) { return "true"==s || "false"==s || "null"==s }
+function isComplex(s) { return "object"==s || "list"==s }
 function p(s) { printf "%s", s }
