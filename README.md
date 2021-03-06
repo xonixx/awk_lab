@@ -1,5 +1,6 @@
 ## JSON assembler
-
+   
+### JSON
 ```json
 {
   "total": 57,
@@ -21,65 +22,66 @@
   ]
 }
 ```
-
+        
+### JSON asm
 ```
 object
     key
-    total
+    "total"
     number
     57
-    
+
     key
-    page
+    "page"
     list
         object
             key
-            firstName
+            "firstName"
             string
-            John
+            "John"
 
             key
-            lastName
+            "lastName"
             string
-            Doe
+            "Doe"
 
             key
-            age
+            "age"
             number
             25
 
             key
-            active
+            "active"
             true
 
             key
-            hobby
+            "hobby"
             string
-            football
+            "football"
         end
-        
+
         object
             key
-            firstName
+            "firstName"
             string
-            Jane
+            "Jane"
 
             key
-            lastName
+            "lastName"
             string
-            Smith
+            "Smith"
 
             key
-            age
+            "age"
             number
             24
 
             key
-            active
+            "active"
             false
 
             key
-            hobby
+            "hobby"
             null
         end
     end
