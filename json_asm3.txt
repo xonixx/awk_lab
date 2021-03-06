@@ -1,0 +1,19 @@
+list
+    string
+    "string"
+    string
+    "key"
+    string
+    "number"
+    string
+    "object"
+    string
+    "end"
+    number
+    123
+    true
+    false
+    null
+    object
+    end
+end
