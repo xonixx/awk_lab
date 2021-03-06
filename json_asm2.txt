@@ -1,0 +1,11 @@
+list
+    string
+    "hello"
+    number
+    123
+    true
+    false
+    null
+    object
+    end
+end
