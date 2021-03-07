@@ -1,5 +1,5 @@
 BEGIN {
-    Json="{\"a\":\"b\"}"
+    Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"}}"
     Pos=1
     QUOTE="\""
     split("", States)
@@ -7,7 +7,7 @@ BEGIN {
 
     # print tryParse("{"), Pos
 
-    for(;;) {
+    while(nextChar() != "") {
         if (tryParse("{")) {
             json_asm("object");
             States[++Depth] = "object"
@@ -17,13 +17,15 @@ BEGIN {
             Depth--
         } else if (tryParse(QUOTE)) {
             str=QUOTE
-            while(nextChar() != QUOTE) { str = str advance1(); }
+            while(nextChar() != QUOTE) { str = str advance1(); } # TODO naive
             str=str advance1()
-            json_asm(StateKey=1 ? "key" : "string")
+            json_asm(StateKey==1 ? "key" : "string")
             json_asm(str)
         } else if (tryParse(":")) {
             StateKey = 0;
-        }
+        }  else if (tryParse(",")) {
+            StateKey = 1;
+        } else { print "Can't advance at pos " Pos; exit 1 }
     }
 }
 
