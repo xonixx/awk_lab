@@ -1,5 +1,5 @@
 BEGIN {
-    Json="[123,\"Hello world\",true,false,null,{}]"
+    Json="[123,-234,\"Hello world\",true,false,null,{}]"
     # Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"}}"
     Pos=1
     QUOTE="\""
@@ -38,7 +38,7 @@ BEGIN {
         } else if (tryParseNumber(res)) {
             json_asm("number")
             json_asm(res[0])
-        } else { print "Can't advance at pos " Pos; exit 1 }
+        } else { print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."; exit 1 }
     }
 }
 
@@ -48,14 +48,19 @@ function tryParse(s,    l) {
     if(substr(Json,Pos,l)==s) { Pos += l; return 1 }
     return 0
 }
-function tryParseNumber(res,  c,num) {
-    num=""
-    while (index("0123456789", c = nextChar()) > 0) {
-        num = num c
+function tryParseAll(chars, res,    c,s) {
+    s=""
+    while (index(chars, c = nextChar()) > 0) {
+        s = s c
         Pos++
     }
-    res[0]=num
-    return num != ""
+    res[0] = res[0] s
+    return s != ""
+}
+function tryParseNumber(res) {
+    res[0]=""
+    tryParseAll("-", res)
+    return tryParseAll("0123456789", res)
 }
 function nextChar() { return substr(Json,Pos,1) }
 function advance1(  c) { c = nextChar(); Pos++; return c }
