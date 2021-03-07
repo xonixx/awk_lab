@@ -1,39 +1,39 @@
 BEGIN {
-    Json="[123,-234,\"Hello world\",true,false,null,{}]"
+    Json="[123,-234.56E+10,\"Hello world\",true,false,null,{}]"
     # Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"}}"
     Pos=1
     QUOTE="\""
     split("", States)
     Depth=0
 
-    # print tryParse("{"), Pos
+    # print tryParseExact("{"), Pos
 
     while(nextChar() != "") {
-        if (tryParse("{")) {
+        if (tryParseExact("{")) {
             json_asm("object");
             States[++Depth] = "object"
             StateKey=1
-        } else if (tryParse("[")) {
+        } else if (tryParseExact("[")) {
             json_asm("list");
             States[++Depth] = "list"
-        } else if (tryParse("}") || tryParse("]")) {
+        } else if (tryParseExact("}") || tryParseExact("]")) {
             json_asm("end");
             Depth--
-        } else if (tryParse(QUOTE)) {
+        } else if (tryParseExact(QUOTE)) {
             str=QUOTE
             while(nextChar() != QUOTE) { str = str advance1(); } # TODO naive
             str=str advance1()
             json_asm(StateKey==1 ? "key" : "string")
             json_asm(str)
-        } else if (tryParse(":")) {
+        } else if (tryParseExact(":")) {
             StateKey = 0;
-        } else if (tryParse(",")) {
+        } else if (tryParseExact(",")) {
             if (currentState("object")) StateKey = 1;
-        } else if (tryParse("true")) {
+        } else if (tryParseExact("true")) {
             json_asm("true")
-        } else if (tryParse("false")) {
+        } else if (tryParseExact("false")) {
             json_asm("false")
-        } else if (tryParse("null")) {
+        } else if (tryParseExact("null")) {
             json_asm("null")
         } else if (tryParseNumber(res)) {
             json_asm("number")
@@ -43,24 +43,28 @@ BEGIN {
 }
 
 function currentState(s) { return States[Depth] == s }
-function tryParse(s,    l) {
+function tryParseExact(s,    l) {
     l=length(s);
     if(substr(Json,Pos,l)==s) { Pos += l; return 1 }
     return 0
 }
-function tryParseAll(chars, res,    c,s) {
+function tryParse(chars, res, atMost,    i,c,s) {
     s=""
-    while (index(chars, c = nextChar()) > 0) {
+    while (index(chars, c = nextChar()) > 0 && (atMost==0 || i++ < atMost)) {
         s = s c
         Pos++
     }
     res[0] = res[0] s
     return s != ""
 }
+function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
 function tryParseNumber(res) {
     res[0]=""
-    tryParseAll("-", res)
-    return tryParseAll("0123456789", res)
+    # https://stackoverflow.com/a/13340826/104522
+    return (tryParse("-", res) || 1) &&
+        (tryParse("0", res) || tryParse("123456789", res, 1) && tryParseDigitOptional(res)) &&
+        (tryParse(".", res) && tryParseDigitOptional(res) || 1) &&
+        (tryParse("eE", res, 1) && (tryParse("-+",res,1)||1) && tryParseDigitOptional(res) || 1)
 }
 function nextChar() { return substr(Json,Pos,1) }
 function advance1(  c) { c = nextChar(); Pos++; return c }
