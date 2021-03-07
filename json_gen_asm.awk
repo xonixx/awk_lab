@@ -2,7 +2,7 @@ BEGIN {
     json_init()
     json_object_start()
     json_key("name")
-    json_string("John Smith")
+    json_string("John \"Dirty\" Smith")
     json_key("age")
     json_number(27)
     json_key("hobbies")
@@ -32,5 +32,5 @@ function json_false()        { json_asm("false") }
 function json_null()         { json_asm("null") }
 function json_print(  i)     { for (i=0;i<AsmLen;i++) print Asm[i] }
 function json_asm(instr)     { Asm[AsmLen++] = instr }
-function quote_js(s) {  return "\"" s "\""} # TODO this is naive
+function quote_js(s) { gsub("\n", "\\n", s); gsub("\"", "\\\"", s); return "\"" s "\""} # TODO this is naive
 
