@@ -23,7 +23,7 @@ BEGIN {
         } else if (tryParseExact("}") || tryParseExact("]")) {
             json_asm("end");
             Depth--
-        } else if (tryParseString(res)) {
+        } else if (STRING(res)) {
             json_asm(StateKey==1 ? "key" : "string")
             json_asm(res[0])
         } else if (tryParseExact(":")) {
@@ -36,7 +36,7 @@ BEGIN {
             json_asm("false")
         } else if (tryParseExact("null")) {
             json_asm("null")
-        } else if (tryParseNumber(res)) {
+        } else if (NUMBER(res)) {
             json_asm("number")
             json_asm(res[0])
         } else { print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."; exit 1 }
@@ -44,7 +44,7 @@ BEGIN {
 }
 
 function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
-function tryParseNumber(res) {
+function NUMBER(res) {
     # https://stackoverflow.com/a/13340826/104522
     return (tryParse("-", res) || 1) &&
         (tryParse("0", res) || tryParse1("123456789", res) && tryParseDigitOptional(res)) &&
@@ -67,11 +67,42 @@ function tryParseNonEscapeChar(res,   c) {
     }
     return 0
 }
-function tryParseString(res) {
+function STRING(res) {
     return tryParse1("\"",res) && tryParseCharacters(res) && tryParse1("\"",res)
 }
-function tryParseWs(res) {
+function WS(res) {
     return tryParse("\t\n\r ", res) || 1
+}
+function VALUE(res) {
+    return OBJECT(res) ||
+        ARRAY(res) ||
+        STRING(res) ||
+        NUMBER(res) ||
+        tryParseExact("true") ||
+        tryParseExact("false") ||
+        tryParseExact("null")
+}
+function OBJECT(res) {
+    return tryParse1("{", res) &&
+    (WS(res) || MEMBERS(res)) &&
+    tryParse1("}", res)
+}
+function MEMBERS(res) {
+    return MEMBER(res) && (tryParse1(",",res) && MEMBERS(res) || 1)
+}
+function MEMBER(res) {
+    return WS(res) && STRING(res) && WS(res) && tryParse1(":", res) && ELEMENT(res)
+}
+function ARRAY(res) {
+    return tryParse1("[",res) &&
+    (WS(res) || ELEMENTS(res)) &&
+    tryParse1("]",res)
+}
+function ELEMENTS(res) {
+    return ELEMENT(res) && (tryParse1(",") && ELEMENTS(res) || 1)
+}
+function ELEMENT(res) {
+    return WS(res) && VALUE(res) && WS(res)
 }
 # lib
 function currentState(s) { return States[Depth] == s }
