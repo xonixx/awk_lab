@@ -105,8 +105,15 @@ function VALUE() {
 }
 function OBJECT() {
     d("OBJECT")
-    return tryParse1("{") && asm("object") &&
-        #(WS() || MEMBERS()) &&
+    return save_pos() &&
+        tryParse1("{") && asm("object") &&
+        WS() &&
+        tryParse1("}") &&
+        asm("end") ||
+
+        rewind() &&
+        tryParse1("{") && asm("object") &&
+        MEMBERS() &&
         (MEMBERS()) &&
         tryParse1("}") &&
         asm("end") || f("OBJECT")
@@ -130,7 +137,7 @@ function ELEMENTS() {
 }
 function ELEMENT() {
     d("ELEMENT")
-    return WS() && VALUE() && WS()
+    return WS() && VALUE() && WS() || f("ELEMENT")
 }
 # lib
 function currentState(s) { return States[Depth] == s }
@@ -153,6 +160,8 @@ function tryParse(chars, res, atMost,    i,c,s) {
 }
 function nextChar() { return substr(Json,Pos,1) }
 function advance1(  c) { c = nextChar(); Pos++; return c }
+function save_pos() { PosSaved = Pos; return 1 }
+function rewind() { Pos = PosSaved; return 1 }
 function d(rule) { printf "%10s: pos %d: %s\n", rule, Pos, substr(Json,Pos,10) "..."}
 function f(rule) { printf "%10s: pos %d: %s\n", "-" rule, Pos, substr(Json,Pos,10) "..."}
 
