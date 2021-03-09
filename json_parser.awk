@@ -8,48 +8,58 @@ BEGIN {
     split("", States)
     Depth=0
 
+    split("", Asm)
+    AsmLen=0
+
+    if (ELEMENT()) {
+        print "Parsed: "
+        for (i=0; i<AsmLen; i++)
+            print Asm[i]
+    }
+
     # print tryParseExact("{"), Pos
 
-    while(nextChar() != "") {
-        res[0]=""
-
-        if (tryParseExact("{")) {
-            json_asm("object");
-            States[++Depth] = "object"
-            StateKey=1
-        } else if (tryParseExact("[")) {
-            json_asm("list");
-            States[++Depth] = "list"
-        } else if (tryParseExact("}") || tryParseExact("]")) {
-            json_asm("end");
-            Depth--
-        } else if (STRING(res)) {
-            json_asm(StateKey==1 ? "key" : "string")
-            json_asm(res[0])
-        } else if (tryParseExact(":")) {
-            StateKey = 0;
-        } else if (tryParseExact(",")) {
-            if (currentState("object")) StateKey = 1;
-        } else if (tryParseExact("true")) {
-            json_asm("true")
-        } else if (tryParseExact("false")) {
-            json_asm("false")
-        } else if (tryParseExact("null")) {
-            json_asm("null")
-        } else if (NUMBER(res)) {
-            json_asm("number")
-            json_asm(res[0])
-        } else { print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."; exit 1 }
-    }
+#    while(nextChar() != "") {
+#        res[0]=""
+#
+#        if (tryParseExact("{")) {
+#            json_asm("object");
+#            States[++Depth] = "object"
+#            StateKey=1
+#        } else if (tryParseExact("[")) {
+#            json_asm("list");
+#            States[++Depth] = "list"
+#        } else if (tryParseExact("}") || tryParseExact("]")) {
+#            json_asm("end");
+#            Depth--
+#        } else if (STRING(res)) {
+#            json_asm(StateKey==1 ? "key" : "string")
+#            json_asm(res[0])
+#        } else if (tryParseExact(":")) {
+#            StateKey = 0;
+#        } else if (tryParseExact(",")) {
+#            if (currentState("object")) StateKey = 1;
+#        } else if (tryParseExact("true")) {
+#            json_asm("true")
+#        } else if (tryParseExact("false")) {
+#            json_asm("false")
+#        } else if (tryParseExact("null")) {
+#            json_asm("null")
+#        } else if (NUMBER(res)) {
+#            json_asm("number")
+#            json_asm(res[0])
+#        } else { print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."; exit 1 }
+#    }
 }
 
 function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
-function NUMBER(res) {
+function NUMBER() {
     # https://stackoverflow.com/a/13340826/104522
     return (tryParse("-", res) || 1) &&
         (tryParse("0", res) || tryParse1("123456789", res) && tryParseDigitOptional(res)) &&
         (tryParse(".", res) && tryParseDigitOptional(res) || 1) &&
-        (tryParse1("eE", res) && (tryParse1("-+",res)||1) && tryParseDigitOptional(res) || 1)
+        (tryParse1("eE", res) && (tryParse1("-+",res)||1) && tryParseDigitOptional(res) || 1) &&
+        asm("number") && asm(res[0])
 }
 function tryParseHex(res) { return tryParse1("0123456789ABCDEFabcdef", res) }
 function tryParseCharacters(res) { return tryParseCharacter(res) && tryParseCharacters(res) || 1 }
@@ -67,42 +77,45 @@ function tryParseNonEscapeChar(res,   c) {
     }
     return 0
 }
-function STRING(res) {
-    return tryParse1("\"",res) && tryParseCharacters(res) && tryParse1("\"",res)
+function STRING() {
+    return tryParse1("\"",res) &&
+        tryParseCharacters(res) &&
+        tryParse1("\"",res) &&
+        asm("string") && asm(res[0])
 }
-function WS(res) {
-    return tryParse("\t\n\r ", res) || 1
+function WS() {
+    return tryParse("\t\n\r ") || 1
 }
-function VALUE(res) {
-    return OBJECT(res) ||
-        ARRAY(res) ||
-        STRING(res) ||
-        NUMBER(res) ||
-        tryParseExact("true") ||
-        tryParseExact("false") ||
-        tryParseExact("null")
+function VALUE() {
+    return OBJECT() ||
+        ARRAY() ||
+        STRING() ||
+        NUMBER() ||
+        tryParseExact("true") && asm("true") ||
+        tryParseExact("false") && asm("false") ||
+        tryParseExact("null") && asm("null")
 }
-function OBJECT(res) {
-    return tryParse1("{", res) &&
-    (WS(res) || MEMBERS(res)) &&
-    tryParse1("}", res)
+function OBJECT() {
+    return tryParse1("{") &&
+    (WS() || MEMBERS()) &&
+    tryParse1("}")
 }
-function MEMBERS(res) {
-    return MEMBER(res) && (tryParse1(",",res) && MEMBERS(res) || 1)
+function MEMBERS() {
+    return MEMBER() && (tryParse1(",") && MEMBERS() || 1)
 }
-function MEMBER(res) {
-    return WS(res) && STRING(res) && WS(res) && tryParse1(":", res) && ELEMENT(res)
+function MEMBER() {
+    return WS() && STRING() && WS() && tryParse1(":") && ELEMENT()
 }
-function ARRAY(res) {
-    return tryParse1("[",res) &&
-    (WS(res) || ELEMENTS(res)) &&
-    tryParse1("]",res)
+function ARRAY() {
+    return tryParse1("[") &&
+    (WS() || ELEMENTS()) &&
+    tryParse1("]")
 }
-function ELEMENTS(res) {
-    return ELEMENT(res) && (tryParse1(",") && ELEMENTS(res) || 1)
+function ELEMENTS() {
+    return ELEMENT() && (tryParse1(",") && ELEMENTS() || 1)
 }
-function ELEMENT(res) {
-    return WS(res) && VALUE(res) && WS(res)
+function ELEMENT() {
+    return WS() && VALUE() && WS()
 }
 # lib
 function currentState(s) { return States[Depth] == s }
@@ -126,5 +139,6 @@ function advance1(  c) { c = nextChar(); Pos++; return c }
 function d(rule) { print rule ": pos " Pos ": " substr(Json,Pos,10) "..."}
 
 function json_asm(s) { print s }
+function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 
 
