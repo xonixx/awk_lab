@@ -105,7 +105,7 @@ function VALUE() {
 }
 function OBJECT() {
     d("OBJECT")
-    return save_pos() &&
+    return (save_pos() &&
         tryParse1("{") && asm("object") &&
         WS() &&
         tryParse1("}") &&
@@ -116,11 +116,11 @@ function OBJECT() {
         MEMBERS() &&
         (MEMBERS()) &&
         tryParse1("}") &&
-        asm("end") || f("OBJECT")
+        asm("end")) && s("OBJECT") || f("OBJECT")
 }
 function MEMBERS() {
     d("MEMBERS")
-    return MEMBER() && (tryParse1(",") && MEMBERS() || 1)
+    return MEMBER() && (tryParse1(",") ? MEMBERS() : 1)
 }
 function MEMBER() {
     d("MEMBER")
@@ -137,7 +137,7 @@ function ELEMENTS() {
 }
 function ELEMENT() {
     d("ELEMENT")
-    return WS() && VALUE() && WS() || f("ELEMENT")
+    return WS() && VALUE() && WS() && s("ELEMENT") || f("ELEMENT")
 }
 # lib
 function currentState(s) { return States[Depth] == s }
@@ -163,7 +163,8 @@ function advance1(  c) { c = nextChar(); Pos++; return c }
 function save_pos() { PosSaved = Pos; return 1 }
 function rewind() { Pos = PosSaved; return 1 }
 function d(rule) { printf "%10s: pos %d: %s\n", rule, Pos, substr(Json,Pos,10) "..."}
-function f(rule) { printf "%10s: pos %d: %s\n", "-" rule, Pos, substr(Json,Pos,10) "..."}
+function s(rule) { printf "%10s: pos %d: %s\n", "+" rule, Pos, substr(Json,Pos,10) "..."; return 1}
+function f(rule) { printf "%10s: pos %d: %s\n", "-" rule, Pos, substr(Json,Pos,10) "..."; return 0}
 
 function json_asm(s) { print s }
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
