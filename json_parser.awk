@@ -2,7 +2,8 @@
 BEGIN {
     # Json="[123,-234.56E+10,\"Hello world\",true,false,null,{}]"
     # Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"}}"
-    Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"},\"g\":[123,-234.56E+10,\"Hello \\u1234 world\",true,false,null,{}]}"
+    Json="{\"a\":\"b\"}"
+    # Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"},\"g\":[123,-234.56E+10,\"Hello \\u1234 world\",true,false,null,{}]}"
     # Json = "\"Hello world\""
     Pos=1
     split("", States)
@@ -12,6 +13,10 @@ BEGIN {
     AsmLen=0
 
     if (ELEMENT()) {
+        if (Pos < length(Json)) {
+            print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
+            exit 1
+        }
         print "Parsed: "
         for (i=0; i<AsmLen; i++)
             print Asm[i]
@@ -77,16 +82,19 @@ function tryParseNonEscapeChar(res,   c) {
     }
     return 0
 }
-function STRING() {
-    return tryParse1("\"",res) &&
+function STRING(isKey) {
+    d("STRING" isKey)
+    return tryParse1("\"",res) && asm(isKey ? "key" : "string") &&
         tryParseCharacters(res) &&
         tryParse1("\"",res) &&
-        asm("string") && asm(res[0])
+        asm(res[0])
 }
 function WS() {
+    d("WS")
     return tryParse("\t\n\r ") || 1
 }
 function VALUE() {
+    d("VALUE")
     return OBJECT() ||
         ARRAY() ||
         STRING() ||
@@ -96,25 +104,32 @@ function VALUE() {
         tryParseExact("null") && asm("null")
 }
 function OBJECT() {
-    return tryParse1("{") &&
-    (WS() || MEMBERS()) &&
-    tryParse1("}")
+    d("OBJECT")
+    return tryParse1("{") && asm("object") &&
+        #(WS() || MEMBERS()) &&
+        (MEMBERS()) &&
+        tryParse1("}") &&
+        asm("end") || f("OBJECT")
 }
 function MEMBERS() {
+    d("MEMBERS")
     return MEMBER() && (tryParse1(",") && MEMBERS() || 1)
 }
 function MEMBER() {
-    return WS() && STRING() && WS() && tryParse1(":") && ELEMENT()
+    d("MEMBER")
+    return WS() && STRING(1) && WS() && tryParse1(":") && ELEMENT()
 }
 function ARRAY() {
-    return tryParse1("[") &&
-    (WS() || ELEMENTS()) &&
-    tryParse1("]")
+    return tryParse1("[") && asm("list") &&
+        (WS() || ELEMENTS()) &&
+        tryParse1("]") &&
+        asm("end")
 }
 function ELEMENTS() {
     return ELEMENT() && (tryParse1(",") && ELEMENTS() || 1)
 }
 function ELEMENT() {
+    d("ELEMENT")
     return WS() && VALUE() && WS()
 }
 # lib
@@ -127,7 +142,9 @@ function tryParseExact(s,    l) {
 function tryParse1(chars, res) { return tryParse(chars,res,1) }
 function tryParse(chars, res, atMost,    i,c,s) {
     s=""
-    while (index(chars, c = nextChar()) > 0 && (atMost==0 || i++ < atMost)) {
+    while (index(chars, c = nextChar()) > 0 &&
+            (atMost==0 || i++ < atMost) &&
+            Pos <= length(Json)) {
         s = s c
         Pos++
     }
@@ -136,7 +153,8 @@ function tryParse(chars, res, atMost,    i,c,s) {
 }
 function nextChar() { return substr(Json,Pos,1) }
 function advance1(  c) { c = nextChar(); Pos++; return c }
-function d(rule) { print rule ": pos " Pos ": " substr(Json,Pos,10) "..."}
+function d(rule) { printf "%10s: pos %d: %s\n", rule, Pos, substr(Json,Pos,10) "..."}
+function f(rule) { printf "%10s: pos %d: %s\n", "-" rule, Pos, substr(Json,Pos,10) "..."}
 
 function json_asm(s) { print s }
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
