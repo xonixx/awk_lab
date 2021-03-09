@@ -2,10 +2,9 @@
 BEGIN {
     # Json="[123,-234.56E+10,\"Hello world\",true,false,null,{}]"
     # Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"}}"
-    Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"},\"g\":[123,-234.56E+10,\"Hello world\",true,false,null,{}]}"
+    Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"},\"g\":[123,-234.56E+10,\"Hello \\u1234 world\",true,false,null,{}]}"
     # Json = "\"Hello world\""
     Pos=1
-    QUOTE="\""
     split("", States)
     Depth=0
 
@@ -64,9 +63,9 @@ function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
 function tryParseNumber(res) {
     # https://stackoverflow.com/a/13340826/104522
     return (tryParse("-", res) || 1) &&
-        (tryParse("0", res) || tryParse("123456789", res, 1) && tryParseDigitOptional(res)) &&
+        (tryParse("0", res) || tryParse1("123456789", res) && tryParseDigitOptional(res)) &&
         (tryParse(".", res) && tryParseDigitOptional(res) || 1) &&
-        (tryParse("eE", res, 1) && (tryParse("-+",res,1)||1) && tryParseDigitOptional(res) || 1)
+        (tryParse1("eE", res) && (tryParse1("-+",res)||1) && tryParseDigitOptional(res) || 1)
 }
 function tryParseHex(res) { return tryParse1("0123456789ABCDEFabcdef", res) }
 function tryParseCharacters(res) { return tryParseCharacter(res) && tryParseCharacters(res) || 1 }
@@ -85,7 +84,7 @@ function tryParseNonEscapeChar(res,   c) {
     return 0
 }
 function tryParseString(res) {
-    return tryParse1(QUOTE,res) && tryParseCharacters(res) && tryParse1(QUOTE,res)
+    return tryParse1("\"",res) && tryParseCharacters(res) && tryParse1("\"",res)
 }
 function nextChar() { return substr(Json,Pos,1) }
 function advance1(  c) { c = nextChar(); Pos++; return c }
