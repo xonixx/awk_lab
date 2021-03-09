@@ -43,22 +43,6 @@ BEGIN {
     }
 }
 
-function currentState(s) { return States[Depth] == s }
-function tryParseExact(s,    l) {
-    l=length(s);
-    if(substr(Json,Pos,l)==s) { Pos += l; return 1 }
-    return 0
-}
-function tryParse1(chars, res) { return tryParse(chars,res,1) }
-function tryParse(chars, res, atMost,    i,c,s) {
-    s=""
-    while (index(chars, c = nextChar()) > 0 && (atMost==0 || i++ < atMost)) {
-        s = s c
-        Pos++
-    }
-    res[0] = res[0] s
-    return s != ""
-}
 function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
 function tryParseNumber(res) {
     # https://stackoverflow.com/a/13340826/104522
@@ -85,6 +69,26 @@ function tryParseNonEscapeChar(res,   c) {
 }
 function tryParseString(res) {
     return tryParse1("\"",res) && tryParseCharacters(res) && tryParse1("\"",res)
+}
+function tryParseWs(res) {
+    return tryParse("\t\n\r ", res) || 1
+}
+# lib
+function currentState(s) { return States[Depth] == s }
+function tryParseExact(s,    l) {
+    l=length(s);
+    if(substr(Json,Pos,l)==s) { Pos += l; return 1 }
+    return 0
+}
+function tryParse1(chars, res) { return tryParse(chars,res,1) }
+function tryParse(chars, res, atMost,    i,c,s) {
+    s=""
+    while (index(chars, c = nextChar()) > 0 && (atMost==0 || i++ < atMost)) {
+        s = s c
+        Pos++
+    }
+    res[0] = res[0] s
+    return s != ""
 }
 function nextChar() { return substr(Json,Pos,1) }
 function advance1(  c) { c = nextChar(); Pos++; return c }
