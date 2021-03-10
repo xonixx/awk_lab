@@ -1,15 +1,16 @@
 # https://www.json.org/json-en.html
 BEGIN {
-    # Json="[123,-234.56E+10,\"Hello world\",true,false,null,{}]"
-    # Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"}}"
-    # Json="{\"a\":\"b\"}"
-    # Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"},\"g\":[123,-234.56E+10,\"Hello \\u1234 world\",true,false,null,{}]}"
-    # Json = "\"Hello world\""
-    Json = "{}a"
-    # Json = "---1...2"
-    # Json = "-1."
+    #Json="[123,-234.56E+10,\"Hello world\",true,false,null,{}]"
+    #Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"}}"
+    #Json="{\"a\":\"b\"}"
+    Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"},\"g\":[123,-234.56E+10,\"Hello \\u1234 world\",true,false,null,{}]}"
+    #Json = "\"Hello world\""
+    #Json = "{}a"
+    #Json = "---1...2"
+    #Json = "-1."
+    #Json = "\"\n\""
     Pos=1
-    Trace=1
+    Trace=0
 
     split("", Asm)
     AsmLen=0
@@ -46,7 +47,8 @@ function tryParseEscapeChar(res) {
 }
 function tryParseNonEscapeChar(res,   c) {
     c = nextChar()
-    if (c != "\\" && c != "\"") { # TODO '0020' . '10FFFF' - '"' - '\'
+    # https://github.com/antlr/grammars-v4/blob/master/json/JSON.g4#L56
+    if (0 == index("\"\\\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F",c)) {
         Pos++
         res[0] = res[0] c
         return 1
