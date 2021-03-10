@@ -23,8 +23,8 @@ function isValueHolder(s) { return "string"==s || "number"==s || "key"==s }
 
 function p(v,    row,i) {
     row="json"
-    for(i=0; i<Depth; i++) {
-        row=(i==0?"":".") row PathStack[i]
+    for(i=0; i<=Depth; i++) {
+        row= row (i==0?"":".") PathStack[i]
     }
     row=row "=" v
     print row
