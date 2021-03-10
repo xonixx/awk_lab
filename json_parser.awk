@@ -91,7 +91,7 @@ function STRING(isKey) {
 }
 function WS() {
     d("WS")
-    return tryParse("\t\n\r ") || 1
+    return tryParse("\t\n\r ") && s("WS") || f("WS") || 1
 }
 function VALUE() {
     d("VALUE")
@@ -114,7 +114,6 @@ function OBJECT() {
         rewind() &&
         tryParse1("{") && asm("object") &&
         MEMBERS() &&
-        (MEMBERS()) &&
         tryParse1("}") &&
         asm("end")) && s("OBJECT") || f("OBJECT")
 }
@@ -124,7 +123,7 @@ function MEMBERS() {
 }
 function MEMBER() {
     d("MEMBER")
-    return WS() && STRING(1) && WS() && tryParse1(":") && ELEMENT()
+    return WS() && STRING(1) && WS() && tryParse1(":") && ELEMENT() && s("MEMBER") || f("MEMBER")
 }
 function ARRAY() {
     return tryParse1("[") && asm("list") &&
