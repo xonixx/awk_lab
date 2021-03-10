@@ -82,7 +82,7 @@ function tryParseNonEscapeChar(res,   c) {
     }
     return 0
 }
-function STRING(isKey) {
+function STRING(isKey,    res) {
     d("STRING" isKey)
     return tryParse1("\"",res) && asm(isKey ? "key" : "string") &&
         tryParseCharacters(res) &&
@@ -106,10 +106,10 @@ function VALUE() {
 function OBJECT() {
     d("OBJECT")
     return (save_pos() &&
-        tryParse1("{") && asm("object") &&
+        tryParse1("{") &&
         WS() &&
         tryParse1("}") &&
-        asm("end") ||
+        asm("object") && asm("end") ||
 
         rewind() &&
         tryParse1("{") && asm("object") &&
