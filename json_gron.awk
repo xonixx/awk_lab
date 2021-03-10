@@ -24,12 +24,28 @@ function isValueHolder(s) { return "string"==s || "number"==s || "key"==s }
 function p(v,    row,i) {
     row="json"
     for(i=0; i<=Depth; i++) {
-        row= row (i==0?"":".") PathStack[i]
+        row= row (i==0?"":".") stringUnquote(PathStack[i])
     }
     row=row "=" v
     print row
 }
 
-# { "a": { "b" : "c" } }
+function stringUnquote(text,    len)
+{
+	len  = length(text);
+	text = len == 2 ? "" : substr(text, 2, len-2)
+
+	gsub(/\\\\/, "\\", text)
+	gsub(/\\"/,  "\"", text)
+	gsub(/\\b/,  "\b", text)
+	gsub(/\\f/,  "\f", text)
+	gsub(/\\n/,  "\n", text)
+	gsub(/\\r/,  "\r", text)
+	gsub(/\\t/,  "\t", text)
+
+    return text
+}
+
+# { "a": { "b" : "c", "d":"e" } }
 # [ "a"     ,"b"     ]
 # [ "object","object"]

@@ -101,3 +101,8 @@ null
 key
 end
 ```
+
+## Links
+
+- https://github.com/Andy753421/rhawk/blob/master/json.awk
+- https://github.com/step-/JSON.awk
