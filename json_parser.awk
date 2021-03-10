@@ -3,35 +3,39 @@ BEGIN {
     # Json="[123,-234.56E+10,\"Hello world\",true,false,null,{}]"
     # Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"}}"
     # Json="{\"a\":\"b\"}"
-    Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"},\"g\":[123,-234.56E+10,\"Hello \\u1234 world\",true,false,null,{}]}"
+    # Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"},\"g\":[123,-234.56E+10,\"Hello \\u1234 world\",true,false,null,{}]}"
     # Json = "\"Hello world\""
+    Json = "{}a"
+    # Json = "---1...2"
+    # Json = "-1."
     Pos=1
-    #Trace=1
+    Trace=1
 
     split("", Asm)
     AsmLen=0
 
     if (ELEMENT()) {
-        if (Pos < length(Json)) {
+        if (Pos <= length(Json)) {
             print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
             exit 1
         }
         # print "Parsed: "
         for (i=0; i<AsmLen; i++)
             print Asm[i]
-    }
+    } else
+        print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
 
     # print tryParseExact("{"), Pos
 }
 
 function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
 function NUMBER(    res) {
-    # https://stackoverflow.com/a/13340826/104522
-    return (tryParse("-", res) || 1) &&
-        (tryParse("0", res) || tryParse1("123456789", res) && tryParseDigitOptional(res)) &&
-        (tryParse(".", res) && tryParseDigitOptional(res) || 1) &&
+    d("NUMBER")
+    return (tryParse1("-", res) || 1) &&
+        (tryParse1("0", res) || tryParse1("123456789", res) && tryParseDigitOptional(res)) &&
+        (tryParse1(".", res) && tryParseDigitOptional(res) || 1) &&
         (tryParse1("eE", res) && (tryParse1("-+",res)||1) && tryParseDigitOptional(res) || 1) &&
-        asm("number") && asm(res[0])
+        asm("number") && asm(res[0]) && s("NUMBER") || f("NUMBER")
 }
 function tryParseHex(res) { return tryParse1("0123456789ABCDEFabcdef", res) }
 function tryParseCharacters(res) { return tryParseCharacter(res) && tryParseCharacters(res) || 1 }
@@ -134,9 +138,9 @@ function tryParse(chars, res, atMost,    i,c,s) {
 function nextChar() { return substr(Json,Pos,1) }
 function save_pos() { PosSaved = Pos; return 1 }
 function rewind() { Pos = PosSaved; return 1 }
-function d(rule) { if (Trace){ printf "%10s: pos %d: %s\n", rule, Pos, substr(Json,Pos,10) "..."} }
-function s(rule) { if (Trace){ printf "%10s: pos %d: %s\n", "+" rule, Pos, substr(Json,Pos,10) "..." }; return 1 }
-function f(rule) { if (Trace){ printf "%10s: pos %d: %s\n", "-" rule, Pos, substr(Json,Pos,10) "..." }; return 0 }
+function d(rule) { if (Trace){ printf "%10s pos %d: %s\n", rule "?", Pos, substr(Json,Pos,10) "..."} }
+function s(rule) { if (Trace){ printf "%10s pos %d: %s\n", rule "+", Pos, substr(Json,Pos,10) "..." }; return 1 }
+function f(rule) { if (Trace){ printf "%10s pos %d: %s\n", rule "-", Pos, substr(Json,Pos,10) "..." }; return 0 }
 
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 
