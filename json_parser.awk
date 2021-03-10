@@ -40,12 +40,12 @@ function NUMBER(    res) {
 }
 function tryParseHex(res) { return tryParse1("0123456789ABCDEFabcdef", res) }
 function tryParseCharacters(res) { return tryParseCharacter(res) && tryParseCharacters(res) || 1 }
-function tryParseCharacter(res) { return tryParseNonEscapeChar(res) || tryParseEscapeChar(res) }
+function tryParseCharacter(res) { return tryParseSafeChar(res) || tryParseEscapeChar(res) }
 function tryParseEscapeChar(res) {
     return tryParse1("\\", res) &&
         (tryParse1("\\/bfnrt", res) || tryParse1("u", res) && tryParseHex(res) && tryParseHex(res) && tryParseHex(res) && tryParseHex(res))
 }
-function tryParseNonEscapeChar(res,   c) {
+function tryParseSafeChar(res,   c) {
     c = nextChar()
     # https://github.com/antlr/grammars-v4/blob/master/json/JSON.g4#L56
     if (0 == index("\"\\\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F",c)) {
