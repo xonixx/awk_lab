@@ -6,7 +6,7 @@ object
 
     key
     "page"
-    list
+    array
         object
             key
             "firstName"

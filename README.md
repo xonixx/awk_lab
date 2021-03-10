@@ -33,7 +33,7 @@ object
 
     key
     "page"
-    list
+    array
         object
             key
             "firstName"
@@ -92,7 +92,7 @@ end
 
 ```
 object
-list
+array
 string
 number
 true

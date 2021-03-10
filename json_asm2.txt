@@ -1,4 +1,4 @@
-list
+array
     string
     "hello"
     number

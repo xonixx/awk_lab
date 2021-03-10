@@ -92,7 +92,7 @@ function OBJECT() {
 }
 function ARRAY() {
     return attempt("ARRAY") && checkRes("ARRAY",
-        tryParse1("[") && asm("list") &&
+        tryParse1("[") && asm("array") &&
 
         (WS() && tryParse1("]") ||
 

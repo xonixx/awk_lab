@@ -6,7 +6,7 @@ BEGIN {
     json_key("age")
     json_number(27)
     json_key("hobbies")
-    json_list_start()
+    json_array_start()
     json_string("football")
     json_string("chess")
     json_string("cinema")
@@ -22,7 +22,7 @@ function json_init() {
     AsmLen = 0
 }
 function json_object_start() { json_asm("object") }
-function json_list_start()   { json_asm("list") }
+function json_array_start()  { json_asm("array") }
 function json_end()          { json_asm("end") }
 function json_key(k)         { json_asm("key")   ; json_asm(quote_js(k)) }
 function json_string(s)      { json_asm("string"); json_asm(quote_js(s)) }

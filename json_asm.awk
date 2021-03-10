@@ -4,7 +4,7 @@ BEGIN {
     Mode = ""
     WasPrev = 0
     Open["object"]="{" ; Close["object"]="}"
-    Open["list"]="["   ; Close["list"]="]"
+    Open["array"]="["   ; Close["array"]="]"
 }
 
 isComplex($1)                  { Mode=$1; Stack[++Depth]=$1;  p1(Open[$1]); WasPrev=0; next; }
@@ -17,7 +17,7 @@ Mode=="number"||Mode=="string" { p1($0);     Mode="";                       WasP
                                { print "Error at " FILENAME ":" NR; exit 1                   }
 
 function isSingle(s) { return "true"==s || "false"==s || "null"==s }
-function isComplex(s) { return "object"==s || "list"==s }
+function isComplex(s) { return "object"==s || "array"==s }
 function isValueHolder(s) { return "string"==s || "number"==s || "key"==s }
 function p(s) { printf "%s", s }
 function p1(s) { p((WasPrev ? "," : "") s) }
