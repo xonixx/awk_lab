@@ -32,8 +32,7 @@ BEGIN {
 
 function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
 function NUMBER(    res) {
-    d("NUMBER")
-    return checkRes("NUMBER",
+    return attempt("NUMBER") && checkRes("NUMBER",
         (tryParse1("-", res) || 1) &&
         (tryParse1("0", res) || tryParse1("123456789", res) && tryParseDigitOptional(res)) &&
         (tryParse1(".", res) && tryParseDigitOptional(res) || 1) &&
@@ -58,20 +57,17 @@ function tryParseSafeChar(res,   c) {
     return 0
 }
 function STRING(isKey,    res) {
-    d("STRING" isKey)
-    return checkRes("STRING" isKey,
+    return attempt("STRING" isKey) && checkRes("STRING" isKey,
         tryParse1("\"",res) && asm(isKey ? "key" : "string") &&
         tryParseCharacters(res) &&
         tryParse1("\"",res) &&
         asm(res[0]))
 }
 function WS() {
-    d("WS")
-    return checkRes("WS", tryParse("\t\n\r ")) || 1
+    return attempt("WS") && checkRes("WS", tryParse("\t\n\r ")) || 1
 }
 function VALUE() {
-    d("VALUE")
-    return checkRes("VALUE",
+    return attempt("VALUE") && checkRes("VALUE",
         OBJECT() ||
         ARRAY()  ||
         STRING() ||
@@ -81,8 +77,7 @@ function VALUE() {
         tryParseExact("null") && asm("null"))
 }
 function OBJECT() {
-    d("OBJECT")
-    return checkRes("OBJECT",
+    return attempt("OBJECT") && checkRes("OBJECT",
         tryParse1("{") && asm("object") &&
 
         (WS() && tryParse1("}") ||
@@ -92,8 +87,7 @@ function OBJECT() {
         asm("end"))
 }
 function ARRAY() {
-    d("ARRAY")
-    return checkRes("ARRAY",
+    return attempt("ARRAY") && checkRes("ARRAY",
         tryParse1("[") && asm("list") &&
 
         (WS() && tryParse1("]") ||
@@ -103,20 +97,16 @@ function ARRAY() {
         asm("end"))
 }
 function MEMBERS() {
-    d("MEMBERS")
-    return checkRes("MEMBERS", MEMBER() && (tryParse1(",") ? MEMBERS() : 1))
+    return attempt("MEMBERS") && checkRes("MEMBERS", MEMBER() && (tryParse1(",") ? MEMBERS() : 1))
 }
 function ELEMENTS() {
-    d("ELEMENTS")
-    return checkRes("ELEMENTS", ELEMENT() && (tryParse1(",") ? ELEMENTS() : 1))
+    return attempt("ELEMENTS") && checkRes("ELEMENTS", ELEMENT() && (tryParse1(",") ? ELEMENTS() : 1))
 }
 function MEMBER() {
-    d("MEMBER")
-    return checkRes("MEMBER", WS() && STRING(1) && WS() && tryParse1(":") && ELEMENT())
+    return attempt("MEMBER") && checkRes("MEMBER", WS() && STRING(1) && WS() && tryParse1(":") && ELEMENT())
 }
 function ELEMENT() {
-    d("ELEMENT")
-    return checkRes("ELEMENT", WS() && VALUE() && WS())
+    return attempt("ELEMENT") && checkRes("ELEMENT", WS() && VALUE() && WS())
 }
 # lib
 function tryParseExact(s,    l) {
@@ -137,9 +127,8 @@ function tryParse(chars, res, atMost,    i,c,s) {
     return s != ""
 }
 function nextChar() { return substr(Json,Pos,1) }
-function checkRes(rule, r) { r ? s(rule) : f(rule); return r }
-function d(rule) { if (Trace){ printf "%10s pos %d: %s\n", rule "?", Pos, substr(Json,Pos,10) "..."} }
-function s(rule) { if (Trace){ printf "%10s pos %d: %s\n", rule "+", Pos, substr(Json,Pos,10) "..." }; return 1 }
-function f(rule) { if (Trace){ printf "%10s pos %d: %s\n", rule "-", Pos, substr(Json,Pos,10) "..." }; return 0 }
+function checkRes(rule, r) { trace(rule (r?"+":"-")); return r }
+function attempt(rule) { trace(rule "?"); return 1 }
+function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(Json,Pos,10) "..."} }
 
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
