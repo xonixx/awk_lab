@@ -6,8 +6,7 @@ BEGIN {
     Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"},\"g\":[123,-234.56E+10,\"Hello \\u1234 world\",true,false,null,{}]}"
     # Json = "\"Hello world\""
     Pos=1
-    split("", States)
-    Depth=0
+    #Trace=1
 
     split("", Asm)
     AsmLen=0
@@ -115,7 +114,6 @@ function ELEMENT() {
     return WS() && VALUE() && WS() && s("ELEMENT") || f("ELEMENT")
 }
 # lib
-function currentState(s) { return States[Depth] == s }
 function tryParseExact(s,    l) {
     l=length(s);
     if(substr(Json,Pos,l)==s) { Pos += l; return 1 }
@@ -134,14 +132,12 @@ function tryParse(chars, res, atMost,    i,c,s) {
     return s != ""
 }
 function nextChar() { return substr(Json,Pos,1) }
-function advance1(  c) { c = nextChar(); Pos++; return c }
 function save_pos() { PosSaved = Pos; return 1 }
 function rewind() { Pos = PosSaved; return 1 }
 function d(rule) { if (Trace){ printf "%10s: pos %d: %s\n", rule, Pos, substr(Json,Pos,10) "..."} }
 function s(rule) { if (Trace){ printf "%10s: pos %d: %s\n", "+" rule, Pos, substr(Json,Pos,10) "..." }; return 1 }
 function f(rule) { if (Trace){ printf "%10s: pos %d: %s\n", "-" rule, Pos, substr(Json,Pos,10) "..." }; return 0 }
 
-function json_asm(s) { print s }
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 
 
