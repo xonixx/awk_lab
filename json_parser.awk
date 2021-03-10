@@ -9,8 +9,9 @@ BEGIN {
     #Json = "---1...2"
     #Json = "-1."
     #Json = "\"\n\""
+    #Json="[ [[[[],    {}]]]   ,[[{}]] ]"
     Pos=1
-    Trace=0
+    Trace="Trace" in ENVIRON
 
     split("", Asm)
     AsmLen=0
@@ -78,30 +79,23 @@ function VALUE() {
 }
 function OBJECT() {
     d("OBJECT")
-    return (save_pos() &&
-        tryParse1("{") &&
-        WS() &&
-        tryParse1("}") &&
-        asm("object") && asm("end") ||
+    return tryParse1("{") && asm("object") &&
 
-        rewind() &&
-        tryParse1("{") && asm("object") &&
-        MEMBERS() &&
-        tryParse1("}") &&
-        asm("end")) && s("OBJECT") || f("OBJECT")
+        (WS() && tryParse1("}") ||
+
+        MEMBERS() && tryParse1("}")) &&
+
+        asm("end") && s("OBJECT") || f("OBJECT")
 }
 function ARRAY() {
-    return (save_pos() &&
-        tryParse1("[") &&
-        WS() &&
-        tryParse1("]") &&
-        asm("list") && asm("end") ||
+    d("ARRAY")
+    return tryParse1("[") && asm("list") &&
 
-        rewind() &&
-        tryParse1("[") && asm("list") &&
-        ELEMENTS() &&
-        tryParse1("]") &&
-        asm("end")) && s("ARRAY") || f("ARRAY")
+        (WS() && tryParse1("]") ||
+
+        ELEMENTS() && tryParse1("]")) &&
+
+        asm("end") && s("ARRAY") || f("ARRAY")
 }
 function MEMBERS() {
     d("MEMBERS")
@@ -138,8 +132,6 @@ function tryParse(chars, res, atMost,    i,c,s) {
     return s != ""
 }
 function nextChar() { return substr(Json,Pos,1) }
-function save_pos() { PosSaved = Pos; return 1 }
-function rewind() { Pos = PosSaved; return 1 }
 function d(rule) { if (Trace){ printf "%10s pos %d: %s\n", rule "?", Pos, substr(Json,Pos,10) "..."} }
 function s(rule) { if (Trace){ printf "%10s pos %d: %s\n", rule "+", Pos, substr(Json,Pos,10) "..." }; return 1 }
 function f(rule) { if (Trace){ printf "%10s pos %d: %s\n", rule "-", Pos, substr(Json,Pos,10) "..." }; return 0 }
