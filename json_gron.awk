@@ -23,11 +23,13 @@ function isValueHolder(s) { return "string"==s || "number"==s || "key"==s }
 function inArr() { return "array"==Stack[Depth] }
 function incArrIdx() { if (inArr()) PathStack[Depth]++ }
 
-function p(v,    row,i) {
+function p(v,    row,i,by_idx,segment,segment_unq) {
     row="json"
-    for(i=0; i<=Depth; i++) {
-        # print ">>> " i "  " PathStack[i]
-        row= row (i==0||"array"==Stack[i]?"":".") ("array"==Stack[i] ? "[" PathStack[i] "]" : stringUnquote(PathStack[i]))
+    for(i=1; i<=Depth; i++) {
+        segment = PathStack[i]
+        segment_unq = stringUnquote(segment)
+        by_idx = "array"==Stack[i] || segment_unq !~ /^[[:alpha:]$_][[:alnum:]$_]*$/
+        row= row (i==0||by_idx?"":".") (by_idx ? "[" segment "]" : segment_unq)
     }
     row=row "=" v
     print row
