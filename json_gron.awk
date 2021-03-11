@@ -2,18 +2,21 @@ BEGIN {
     Depth = 0
     split("",Stack)
     split("",PathStack)
-    #split("",TypeStack) # segment/index
     Mode = ""
-    Open["object"]="{" ; Close["object"]="}"
-    Open["array"]="["   ; Close["array"]="]"
 }
 
-isComplex($1)                  { Mode=$1; p("object"==$1?"{}":"[]"); Stack[++Depth]=$1;   next; }
+isComplex($1)                  { Mode=$1;
+                                    p("object"==$1?"{}":"[]");
+                                    Stack[++Depth]=$1;
+                                    if ("array"==$1) { PathStack[Depth]=0 } next; }
 isValueHolder($1)              { Mode=$1;                                   next; }
-isSingle($1)                   { p($1);                                     next; }
+isSingle($1)                   { p($1);
+                                    if ("array"==Stack[Depth]) { PathStack[Depth]++ }
+                                                                            next; }
 "end" == $1                    { Depth--;                                   next; }
 Mode=="key"                    { PathStack[Depth]=$0;         Mode="";      next; }
-Mode=="number"||Mode=="string" { p($0);                       Mode="";      next; }
+Mode=="number"||Mode=="string" { p($0); if ("array"==Stack[Depth]) { PathStack[Depth]++ }
+                                                              Mode="";      next; }
 !$1                            {                                            next; }
                                { print "Error at " FILENAME ":" NR; exit 1        }
 
@@ -24,7 +27,8 @@ function isValueHolder(s) { return "string"==s || "number"==s || "key"==s }
 function p(v,    row,i) {
     row="json"
     for(i=0; i<=Depth; i++) {
-        row= row (i==0?"":".") stringUnquote(PathStack[i])
+        # print ">>> " i "  " PathStack[i]
+        row= row (i==0||"array"==Stack[i]?"":".") ("array"==Stack[i] ? "[" PathStack[i] "]" : stringUnquote(PathStack[i]))
     }
     row=row "=" v
     print row
