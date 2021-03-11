@@ -10,10 +10,10 @@ isComplex($1)                  { Mode=$1;
                                  Stack[++Depth]=$1;
                                  if (inArr()) { PathStack[Depth]=0 }        next; }
 isValueHolder($1)              { Mode=$1;                                   next; }
-isSingle($1)                   { p($1); incArrIdx();                        next; }
-"end" == $1                    { Depth--;                                   next; }
+isSingle($1)                   { p($1);          incArrIdx();               next; }
+"end" == $1                    { Depth--;        incArrIdx();               next; }
 Mode=="key"                    { PathStack[Depth]=$0;         Mode="";      next; }
-Mode=="number"||Mode=="string" { p($0); incArrIdx();          Mode="";      next; }
+Mode=="number"||Mode=="string" { p($0);          incArrIdx(); Mode="";      next; }
 !$1                            {                                            next; }
                                { print "Error at " FILENAME ":" NR; exit 1        }
 
