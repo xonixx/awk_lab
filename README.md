@@ -108,3 +108,4 @@ end
 - https://github.com/step-/JSON.awk
 - https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
 - https://www.crockford.com/mckeeman.html
+- https://www.compart.com/en/unicode/category
