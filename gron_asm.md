@@ -37,9 +37,27 @@ UnescapedRune ::= [^#x0-#x1f"\]
 ```
 
 ```
-Statement     ::= Path "=" Value
-Path          ::= (BareWord) ("." BareWord | ("[" Key "]"))*
-Value         ::= String | Number | "true" | "false" | "null" | "[]" | "{}"
-BareWord      ::= [a-zA-Z$_][a-zA-Z0-9$_]*
-Key           ::= [0-9]+ | String
+Statement
+    Path "=" Value
+Path
+    BareWord Segments
+Segments
+    Segment 
+    Segment Segments
+Segment
+    "." BareWord 
+    "[" Key "]"
+Value
+    String
+    Number
+    "true"
+    "false"
+    "null"
+    "[]"
+    "{}"
+BareWord
+    [a-zA-Z$_][a-zA-Z0-9$_]* # TODO
+Key
+    [0-9]+
+    String
 ```
