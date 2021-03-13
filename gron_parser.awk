@@ -1,27 +1,25 @@
 BEGIN {
-    Gron="json.a.b[\" -c- \"].d[7]=2"
-
-    #while ((getline line)>0)
-    #   Gron = Gron line "\n"
-
-    Pos=1
     Trace="Trace" in ENVIRON
 
-    split("", Asm)
-    AsmLen=0
+    while ((getline Gron)>0) {
+        Pos=1
 
-    asm("record")
-    if (STATEMENT()) {
-        asm("end")
-        if (Pos <= length(Gron)) {
+        split("", Asm)
+        AsmLen=0
+
+        asm("record")
+        if (STATEMENT()) {
+            asm("end")
+            if (Pos <= length(Gron)) {
+                print "Can't advance at pos " Pos ": " substr(Gron,Pos,10) "..."
+                exit 1
+            }
+            # print "Parsed: "
+            for (i=0; i<AsmLen; i++)
+                print Asm[i]
+        } else
             print "Can't advance at pos " Pos ": " substr(Gron,Pos,10) "..."
-            exit 1
-        }
-        # print "Parsed: "
-        for (i=0; i<AsmLen; i++)
-            print Asm[i]
-    } else
-        print "Can't advance at pos " Pos ": " substr(Gron,Pos,10) "..."
+    }
 }
 
 function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }

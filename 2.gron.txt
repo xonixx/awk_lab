@@ -1,0 +1,6 @@
+json.a.b.c=5
+json.a.f="F"
+json.a.j[0]=true
+json.a.j[1]=null
+json.a.j[2]={}
+json.a.j[3].z=[]
