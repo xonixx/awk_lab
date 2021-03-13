@@ -1,5 +1,5 @@
 BEGIN {
-    Gron="json.a.b[\" -c- \"]d[7]={}"
+    Gron="json.a.b[\" -c- \"].d[7]={}"
 
     #while ((getline line)>0)
     #   Gron = Gron line "\n"
@@ -78,7 +78,7 @@ function PATH() {
 function BARE_WORD(    word) {
     return attempt("BARE_WORD") && checkRes("BARE_WORD",
     tryParse1("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_", word) &&
-    tryParse( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_0123456789", word))
+    (tryParse( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_0123456789", word)||1))
 }
 function SEGMENTS() {
     return attempt("SEGMENTS") && checkRes("SEGMENTS", SEGMENT() && SEGMENTS()) || 1
