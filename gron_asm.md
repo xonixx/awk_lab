@@ -42,7 +42,7 @@ Statement
 Path
     BareWord Segments
 Segments
-    Segment 
+    ""
     Segment Segments
 Segment
     "." BareWord 

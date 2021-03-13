@@ -1,18 +1,8 @@
-# https://www.json.org/json-en.html
 BEGIN {
-    #Json="[123,-234.56E+10,\"Hello world\",true,false,null,{}]"
-    #Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"}}"
-    #Json="{\"a\":\"b\"}"
-    #Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"},\"g\":[123,-234.56E+10,\"Hello \\u1234 world\",true,false,null,{}]}"
-    #Json = "\"Hello world\""
-    #Json = "{}a"
-    #Json = "---1...2"
-    #Json = "-1."
-    #Json = "\"\n\""
-    #Json="[ [[[[],    {}]]]   ,[[{}]] ]"
+    Gron="json.a.b[\" -c- \"]d[7]={}"
 
-    while ((getline line)>0)
-       Json = Json line "\n"
+    #while ((getline line)>0)
+    #   Gron = Gron line "\n"
 
     Pos=1
     Trace="Trace" in ENVIRON
@@ -20,18 +10,16 @@ BEGIN {
     split("", Asm)
     AsmLen=0
 
-    if (ELEMENT()) {
-        if (Pos <= length(Json)) {
-            print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
+    if (STATEMENT()) {
+        if (Pos <= length(Gron)) {
+            print "Can't advance at pos " Pos ": " substr(Gron,Pos,10) "..."
             exit 1
         }
         # print "Parsed: "
         for (i=0; i<AsmLen; i++)
             print Asm[i]
     } else
-        print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
-
-    # print tryParseExact("{"), Pos
+        print "Can't advance at pos " Pos ": " substr(Gron,Pos,10) "..."
 }
 
 function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
@@ -72,50 +60,44 @@ function WS() {
 }
 function VALUE() {
     return attempt("VALUE") && checkRes("VALUE",
-        OBJECT() ||
-        ARRAY()  ||
         STRING() ||
         NUMBER() ||
         tryParseExact("true") && asm("true") ||
         tryParseExact("false") && asm("false") ||
-        tryParseExact("null") && asm("null"))
-}
-function OBJECT() {
-    return attempt("OBJECT") && checkRes("OBJECT",
-        tryParse1("{") && asm("object") &&
+        tryParseExact("null") && asm("null") ||
+        tryParseExact("{}") && asm("object") ||
+        tryParseExact("[]") && asm("array"))
 
-        (WS() && tryParse1("}") ||
+}
+function STATEMENT() {
+    return attempt("STATEMENT") && checkRes("STATEMENT", PATH() && tryParse1("=") && VALUE())
+}
+function PATH() {
+    return attempt("PATH") && checkRes("PATH", BARE_WORD() && SEGMENTS())
+}
+function BARE_WORD(    word) {
+    return attempt("BARE_WORD") && checkRes("BARE_WORD",
+    tryParse1("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_", word) &&
+    tryParse( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_0123456789", word))
+}
+function SEGMENTS() {
+    return attempt("SEGMENTS") && checkRes("SEGMENTS", SEGMENT() && SEGMENTS()) || 1
+}
+function SEGMENT() {
+    return attempt("SEGMENT") && checkRes("SEGMENT",
+        tryParse1(".") && BARE_WORD() ||
+        tryParse1("[") && KEY() && tryParse1("]"))
+}
+function KEY(    idx) {
+    return attempt("KEY") && checkRes("KEY",
+        tryParse("0123456789", idx) ||
+        STRING())
+}
 
-        MEMBERS() && tryParse1("}")) &&
-
-        asm("end"))
-}
-function ARRAY() {
-    return attempt("ARRAY") && checkRes("ARRAY",
-        tryParse1("[") && asm("array") &&
-
-        (WS() && tryParse1("]") ||
-
-        ELEMENTS() && tryParse1("]")) &&
-
-        asm("end"))
-}
-function MEMBERS() {
-    return attempt("MEMBERS") && checkRes("MEMBERS", MEMBER() && (tryParse1(",") ? MEMBERS() : 1))
-}
-function ELEMENTS() {
-    return attempt("ELEMENTS") && checkRes("ELEMENTS", ELEMENT() && (tryParse1(",") ? ELEMENTS() : 1))
-}
-function MEMBER() {
-    return attempt("MEMBER") && checkRes("MEMBER", WS() && STRING(1) && WS() && tryParse1(":") && ELEMENT())
-}
-function ELEMENT() {
-    return attempt("ELEMENT") && checkRes("ELEMENT", WS() && VALUE() && WS())
-}
 # lib
 function tryParseExact(s,    l) {
     l=length(s);
-    if(substr(Json,Pos,l)==s) { Pos += l; return 1 }
+    if(substr(Gron,Pos,l)==s) { Pos += l; return 1 }
     return 0
 }
 function tryParse1(chars, res) { return tryParse(chars,res,1) }
@@ -123,16 +105,16 @@ function tryParse(chars, res, atMost,    i,c,s) {
     s=""
     while (index(chars, c = nextChar()) > 0 &&
             (atMost==0 || i++ < atMost) &&
-            Pos <= length(Json)) {
+            Pos <= length(Gron)) {
         s = s c
         Pos++
     }
     res[0] = res[0] s
     return s != ""
 }
-function nextChar() { return substr(Json,Pos,1) }
+function nextChar() { return substr(Gron,Pos,1) }
 function checkRes(rule, r) { trace(rule (r?"+":"-")); return r }
 function attempt(rule) { trace(rule "?"); return 1 }
-function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(Json,Pos,10) "..."} }
+function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(Gron,Pos,10) "..."} }
 
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
