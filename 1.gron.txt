@@ -1,0 +1,4 @@
+json.a.b.c=5;
+json.a.b.d=5;
+json.a.f=5;
+-- json.a[1]=4;

@@ -31,7 +31,7 @@ function p(v,    row,i,by_idx,segment,segment_unq) {
         by_idx = "array"==Stack[i] || segment_unq !~ /^[[:alpha:]$_][[:alnum:]$_]*$/
         row= row (i==0||by_idx?"":".") (by_idx ? "[" segment "]" : segment_unq)
     }
-    row=row "=" v
+    row=row "=" v ";"
     print row
 }
 
