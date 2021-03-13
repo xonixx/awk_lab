@@ -1,5 +1,5 @@
 BEGIN {
-    Gron="json.a.b[\" -c- \"].d[7]={}"
+    Gron="json.a.b[\" -c- \"].d[7]=2"
 
     #while ((getline line)>0)
     #   Gron = Gron line "\n"
@@ -10,7 +10,9 @@ BEGIN {
     split("", Asm)
     AsmLen=0
 
+    asm("record")
     if (STATEMENT()) {
+        asm("end")
         if (Pos <= length(Gron)) {
             print "Can't advance at pos " Pos ": " substr(Gron,Pos,10) "..."
             exit 1
@@ -50,13 +52,10 @@ function tryParseSafeChar(res,   c) {
 }
 function STRING(isKey,    res) {
     return attempt("STRING" isKey) && checkRes("STRING" isKey,
-        tryParse1("\"",res) && asm(isKey ? "key" : "string") &&
+        tryParse1("\"",res) && asm(isKey ? "field" : "string") &&
         tryParseCharacters(res) &&
         tryParse1("\"",res) &&
         asm(res[0]))
-}
-function WS() {
-    return attempt("WS") && checkRes("WS", tryParse("\t\n\r ")) || 1
 }
 function VALUE() {
     return attempt("VALUE") && checkRes("VALUE",
@@ -70,7 +69,7 @@ function VALUE() {
 
 }
 function STATEMENT() {
-    return attempt("STATEMENT") && checkRes("STATEMENT", PATH() && tryParse1("=") && VALUE())
+    return attempt("STATEMENT") && checkRes("STATEMENT", PATH() && tryParse1("=") && asm("value") && VALUE())
 }
 function PATH() {
     return attempt("PATH") && checkRes("PATH", BARE_WORD() && SEGMENTS())
@@ -78,7 +77,8 @@ function PATH() {
 function BARE_WORD(    word) {
     return attempt("BARE_WORD") && checkRes("BARE_WORD",
     tryParse1("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_", word) &&
-    (tryParse( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_0123456789", word)||1))
+    (tryParse( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_0123456789", word) || 1) &&
+    asm("field") && asm("\"" word[0] "\""))
 }
 function SEGMENTS() {
     return attempt("SEGMENTS") && checkRes("SEGMENTS", SEGMENT() && SEGMENTS()) || 1
@@ -90,10 +90,10 @@ function SEGMENT() {
 }
 function KEY(    idx) {
     return attempt("KEY") && checkRes("KEY",
-        tryParse("0123456789", idx) ||
-        STRING())
+        tryParse("0123456789", idx) &&
+        asm("index") && asm(idx[0]) ||
+        STRING(1))
 }
-
 # lib
 function tryParseExact(s,    l) {
     l=length(s);
