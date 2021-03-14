@@ -2,7 +2,7 @@ BEGIN {
     split("", Asm)
     while ((getline Instr)>0) {
         Instr = trim(Instr)
-        if (Instr) Asm[AsmLen++] = Instr
+        if (Instr!="") Asm[AsmLen++] = Instr
     }
 
     Depth = 0
@@ -13,12 +13,12 @@ BEGIN {
 
     for (i=0; i<AsmLen; i++) {
         Instr = Asm[i];
-        if(isComplex(Instr))           { Stack[++Depth]=Instr;  p1(Open[Instr]); WasPrev=0; }
-        else if ("key"==Instr)       { p1(Asm[++i] ":"); Mode="";                       WasPrev=0; }
-        else if ("number"==Instr||"string"==Instr) { p1(Asm[++i]);     Mode="";          WasPrev=1; }
-        else if (isSingle(Instr))      { p1(Instr);                                    WasPrev=1;       }
-        else if ("end" == Instr)       { p(Close[Stack[Depth--]]);                  WasPrev=1; }
-        else                        { print "Error at " FILENAME ":" i ": " Instr; exit 1             }
+        if(isComplex(Instr))                         { Stack[++Depth]=Instr;  p1(Open[Instr]); WasPrev=0; }
+        else if ("key"==Instr)                       { p1(Asm[++i] ":");                       WasPrev=0; }
+        else if ("number"==Instr || "string"==Instr) { p1(Asm[++i]);                           WasPrev=1; }
+        else if (isSingle(Instr))                    { p1(Instr);                              WasPrev=1; }
+        else if ("end" == Instr)                     { p(Close[Stack[Depth--]]);               WasPrev=1; }
+        else                                         { print "Error at " FILENAME ":" i ": " Instr; exit 1}
     }
 }
 
