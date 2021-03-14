@@ -5,40 +5,23 @@ BEGIN {
         if (Instr!="") { Asm[AsmLen++] = Instr; LineNums[AsmLen] = NR }
     }
 
-    split("",Stack)
-    split("",PathStack)
+    split("",Stack); split("",PathStack)
     Depth = 0
-    Mode = ""
 
     for (i=0; i<AsmLen; i++) {
-        if (isComplex(Instr = Asm[i]))               { Mode=Instr;
-                                                        p("object"==Instr?"{}":"[]");
-                                                        Stack[++Depth]=Instr;
-                                                        if (inArr()) { PathStack[Depth]=0 } }
-else if (isValueHolder(Instr)             ) { Mode=Instr;                                   }
-else if (isSingle(Instr)                  ) { p(Instr);          incArrIdx();               }
-else if ("end" == Instr                   ) { Depth--;        incArrIdx();               }
-else if (Mode=="key"                   ) { PathStack[Depth]=Instr;         Mode="";      }
-else if (Mode=="number"||Mode=="string") { p(Instr);          incArrIdx(); Mode="";      }
+        if (isComplex(Instr = Asm[i]))               { p("object"==Instr?"{}":"[]");
+                                                       Stack[++Depth]=Instr;
+                                                       if (inArr()) { PathStack[Depth]=0 } }
+        else if (isSingle(Instr))                    { p(Instr);          incArrIdx();     }
+        else if ("end" == Instr)                     { Depth--;        incArrIdx()         }
+        else if ("key" == Instr)                     { PathStack[Depth]=Asm[++i];          }
+        else if ("number"==Instr || "string"==Instr) { p(Asm[++i]);          incArrIdx();  }
         else { print "Error at " FILENAME ":" LineNums[i] ": " Instr; exit 1 }
     }
 }
 
-#isComplex($1)                  { Mode=$1;
-#                                 p("object"==$1?"{}":"[]");
-#                                 Stack[++Depth]=$1;
-#                                 if (inArr()) { PathStack[Depth]=0 }        next; }
-#isValueHolder($1)              { Mode=$1;                                   next; }
-#isSingle($1)                   { p($1);          incArrIdx();               next; }
-#"end" == $1                    { Depth--;        incArrIdx();               next; }
-#Mode=="key"                    { PathStack[Depth]=$0;         Mode="";      next; }
-#Mode=="number"||Mode=="string" { p($0);          incArrIdx(); Mode="";      next; }
-#!$1                            {                                            next; }
-#                               { print "Error at " FILENAME ":" NR; exit 1        }
-
 function isSingle(s) { return "true"==s || "false"==s || "null"==s }
 function isComplex(s) { return "object"==s || "array"==s }
-function isValueHolder(s) { return "string"==s || "number"==s || "key"==s }
 function inArr() { return "array"==Stack[Depth] }
 function incArrIdx() { if (inArr()) PathStack[Depth]++ }
 
