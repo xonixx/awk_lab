@@ -1,3 +1,8 @@
+## Gron
+
+See https://github.com/tomnomnom/gron
+
+### Gron
 ```
 json={}
 json.a={}
@@ -9,7 +14,8 @@ json.a["f\nf"][1]="BBB"
 json.a["f\nf"][2]=true
 json.a["f\nf"][3]=123
 ```
-
+         
+### Gron asm
 ```
 record  #
 field   # a || ["a"]
@@ -24,7 +30,8 @@ false   #
 null    #
 end     #
 ```
-
+            
+### Grammar
 ```
 Input         ::= '--'* Statement (Statement | '--')*
 Statement     ::= Path Space* "=" Space* Value ";" "\n"

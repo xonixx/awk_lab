@@ -1,4 +1,11 @@
-## JSON assembler
+## AWK Lab
+
+- [json_compile.awk](json_compile.awk) - JSON asm → JSON
+- [json_parser.awk](json_parser.awk) - JSON → JSON asm
+- [json_gen_asm.awk](json_gen_asm.awk) - AWK routines to generate JSON asm
+- [json_gron.awk](json_gron.awk) - JSON asm → [Gron](gron_asm.md)
+- [gron_parser.awk](gron_parser.awk) - Grom → [Gron asm](gron_asm.md#Gron asm)
+- [ungron.awk](ungron.awk) - Gron asm → JSON asm 
    
 ### JSON
 ```json
@@ -23,7 +30,7 @@
 }
 ```
         
-### JSON asm
+### JSON assembler
 ```
 object
     key
@@ -109,3 +116,4 @@ end
 - https://en.wikipedia.org/wiki/Backus%E2%80%93Naur_form
 - https://www.crockford.com/mckeeman.html
 - https://www.compart.com/en/unicode/category
+- https://github.com/tomnomnom/gron
