@@ -14,17 +14,17 @@ BEGIN {
             Depth=0
         }
         else if (isSegmentType(Instr)) { Types[++Depth]=Instr; Instr = Asm[++i]; Path[Depth]=Instr; }
-        else if ("value"  == Instr) {
+        else if ("value" == Instr) {
             Instr = Asm[++i];
             split("",Value)
             Value[0] = Instr
             if (isValueHolder(Instr))
                 Value[1] = Asm[++i]
-        } else if ("end"    == Instr) { processRecord() }
+        } else if ("end" == Instr) { processRecord() }
     }
 }
 
-function isSegmentType(s) { return "field"==s || "index"==s }
+function isSegmentType(s) { return "field" ==s || "index" ==s }
 function isValueHolder(s) { return "string"==s || "number"==s }
 function processRecord() {
     print "=================="

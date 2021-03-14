@@ -1,20 +1,26 @@
 BEGIN {
+    split("", Asm)
+    while ((getline Instr)>0)
+        Asm[AsmLen++] = Instr
+
     Depth = 0
     split("",Stack)
     Mode = ""
     WasPrev = 0
     Open["object"]="{" ; Close["object"]="}"
     Open["array"]="["   ; Close["array"]="]"
-}
 
-isComplex($1)                  { Mode=$1; Stack[++Depth]=$1;  p1(Open[$1]); WasPrev=0; next; }
-isValueHolder($1)              { Mode=$1;                                              next; }
-isSingle($1)                   { p1($1);                                    WasPrev=1; next; }
-"end" == $1                    { p(Close[Stack[Depth--]]);                  WasPrev=1; next; }
-Mode=="key"                    { p1($0 ":"); Mode="";                       WasPrev=0; next; }
-Mode=="number"||Mode=="string" { p1($0);     Mode="";                       WasPrev=1; next; }
-!$1                            {                                                       next; }
-                               { print "Error at " FILENAME ":" NR; exit 1                   }
+    for (i=0; i<AsmLen; i++) {
+        Instr = Asm[i];
+        if(isComplex(Instr))           { Mode=Instr; Stack[++Depth]=Instr;  p1(Open[Instr]); WasPrev=0; }
+        else if (isValueHolder(Instr)) { Mode=Instr;                                                    }
+        else if (isSingle(Instr))      { p1(Instr);                                    WasPrev=1;       }
+        else if ("end" == Instr)       { p(Close[Stack[Depth--]]);                  WasPrev=1; }
+        else if (Mode=="key")       { p1(Instr ":"); Mode="";                       WasPrev=0; }
+        else if (Mode=="number"||Mode=="string") { p1(Instr);     Mode="";          WasPrev=1; }
+        else                        { print "Error at " FILENAME ":" i; exit 1             }
+    }
+}
 
 function isSingle(s) { return "true"==s || "false"==s || "null"==s }
 function isComplex(s) { return "object"==s || "array"==s }
