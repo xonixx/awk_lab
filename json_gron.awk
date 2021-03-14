@@ -1,8 +1,7 @@
 BEGIN {
     split("", Asm); split("", LineNums)
-    while (getline Instr > 0) {
-        Instr = trim(Instr)
-        if (Instr!="") { Asm[AsmLen++] = Instr; LineNums[AsmLen] = NR }
+    while (getline > 0) {
+        if ((Instr = trim($0))!="") { Asm[AsmLen++] = Instr; LineNums[AsmLen] = NR }
     }
 
     split("",Stack); split("",PathStack)

@@ -1,8 +1,8 @@
 BEGIN {
     split("", Asm)
 
-    while (getline Instr > 0)
-        arrPush(Asm, Instr)
+    while (getline > 0)
+        arrPush(Asm, $0)
 
     for (i=0; i<arrLen(Asm); i++) {
         Instr = Asm[i];
