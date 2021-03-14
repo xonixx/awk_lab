@@ -1,6 +1,6 @@
 BEGIN {
     split("", Asm); split("", LineNums)
-    while ((getline Instr)>0) {
+    while (getline Instr > 0) {
         Instr = trim(Instr)
         if (Instr!="") { Asm[AsmLen++] = Instr; LineNums[AsmLen] = NR }
     }

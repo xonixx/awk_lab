@@ -1,7 +1,7 @@
 BEGIN {
     Trace="Trace" in ENVIRON
 
-    while ((getline Gron)>0) {
+    while (getline Gron > 0) {
         Pos=1
 
         split("", Asm)

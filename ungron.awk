@@ -1,7 +1,7 @@
 BEGIN {
     split("", Asm)
 
-    while ((getline Instr)>0)
+    while (getline Instr > 0)
         arrPush(Asm, Instr)
 
     for (i=0; i<arrLen(Asm); i++) {

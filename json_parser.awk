@@ -11,7 +11,7 @@ BEGIN {
     #Json = "\"\n\""
     #Json="[ [[[[],    {}]]]   ,[[{}]] ]"
 
-    while ((getline line)>0)
+    while (getline line > 0)
        Json = Json line "\n"
 
     Pos=1
