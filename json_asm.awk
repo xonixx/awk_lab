@@ -12,8 +12,7 @@ BEGIN {
     WasPrev = 0
 
     for (i=0; i<AsmLen; i++) {
-        Instr = Asm[i];
-        if(isComplex(Instr))                         { Stack[++Depth]=Instr; p1(Open[Instr]); WasPrev=0 }
+        if (isComplex(Instr = Asm[i]))               { Stack[++Depth]=Instr; p1(Open[Instr]); WasPrev=0 }
         else if ("key"==Instr)                       { p1(Asm[++i] ":");                      WasPrev=0 }
         else if ("number"==Instr || "string"==Instr) { p1(Asm[++i]);                          WasPrev=1 }
         else if (isSingle(Instr))                    { p1(Instr);                             WasPrev=1 }
