@@ -12,10 +12,10 @@ BEGIN {
         if (isComplex(Instr = Asm[i]))               { p("object"==Instr?"{}":"[]");
                                                        Stack[++Depth]=Instr;
                                                        if (inArr()) { PathStack[Depth]=0 } }
-        else if (isSingle(Instr))                    { p(Instr);          incArrIdx();     }
-        else if ("end" == Instr)                     { Depth--;        incArrIdx()         }
+        else if (isSingle(Instr))                    { p(Instr);               incArrIdx() }
+        else if ("end" == Instr)                     { Depth--;                incArrIdx() }
         else if ("key" == Instr)                     { PathStack[Depth]=Asm[++i];          }
-        else if ("number"==Instr || "string"==Instr) { p(Asm[++i]);          incArrIdx();  }
+        else if ("number"==Instr || "string"==Instr) { p(Asm[++i]);            incArrIdx() }
         else { print "Error at " FILENAME ":" LineNums[i] ": " Instr; exit 1 }
     }
 }
