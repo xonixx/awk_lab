@@ -58,7 +58,7 @@ function processRecord(   l, addr, type, value, i, segments_pos) {
         arrPush(Segments, Path[i])
     }
 }
-function generateAsm(   i,j, a, prev_a, addrs) {
+function generateAsm(   i,j, a,a1, addrs) {
     dbg("AddrType",AddrType)
     dbg("AddrValue",AddrValue)
     dbg("AddrCount",AddrCount)
@@ -72,11 +72,14 @@ function generateAsm(   i,j, a, prev_a, addrs) {
         if (i==0)
             asm(AddrType[a])
         else {
-            prev_a = addrs[i-1]
-            for (j=0; j<AddrCount[prev_a]-AddrCount[a]; j++)
+            for (j=0; j<AddrCount[addrs[i-1]]-AddrCount[a]; j++)
                 asm("end")
-            asm("key")
-            asm(Segments[AddrStart[a]+AddrCount[a]-1]) # last segment in addr
+            # determine the type of current container (object/array) - for array should not issue "key"
+            for (j=i; AddrCount[a]-AddrCount[a1=addrs[j]] != 1; j--) {} # descend to addr of prev segment
+            if ("array" != AddrType[a1]) {
+                asm("key")
+                asm(Segments[AddrStart[a]+AddrCount[a]-1]) # last segment in addr
+            }
             asm(AddrType[a])
             if (isValueHolder(AddrType[a]))
                 asm(AddrValue[a])
