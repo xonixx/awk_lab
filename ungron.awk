@@ -58,15 +58,15 @@ function processRecord(   l, addr, type, value, i) {
         AddrKey[addr] = Path[i]
     }
 }
-function generateAsm(   i,j, a,a1, addrs) {
+function generateAsm(   i,j,l, a,a1, addrs) {
     dbg("AddrType",AddrType)
     dbg("AddrValue",AddrValue)
     dbg("AddrCount",AddrCount)
     dbg("AddrKey",AddrKey)
 
     for (a in AddrType) arrPush(addrs, a)
-    quicksort(addrs, 0, arrLen(addrs)-1)
-    for (i=0; i<arrLen(addrs); i++) {
+    quicksort(addrs, 0, (l=arrLen(addrs))-1)
+    for (i=0; i<l; i++) {
         a = addrs[i]
         if (i>0) {
             for (j=0; j<AddrCount[addrs[i-1]]-AddrCount[a]; j++)
@@ -82,9 +82,11 @@ function generateAsm(   i,j, a,a1, addrs) {
         asm(AddrType[a])
         if (isValueHolder(AddrType[a]))
             asm(AddrValue[a])
+        if (i==l-1) { # last
+            for (j=0; j<AddrCount[a] - (isComplex(AddrType[a])?0:1); j++)
+                asm("end")
+        }
     }
-    for (j=0; j<AddrCount[a]; j++)
-        asm("end")
 }
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 function arrPush(arr, e) { arr[arr[-7]++] = e }
