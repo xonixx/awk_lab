@@ -1,6 +1,7 @@
 ## AWK Lab
 
 - [json_compile.awk](json_compile.awk) - JSON asm → JSON
+- [json_compile_pretty.awk](json_compile_pretty.awk) - JSON asm → JSON pretty-printed
 - [json_parser.awk](json_parser.awk) - JSON → JSON asm
 - [json_gen_asm.awk](json_gen_asm.awk) - AWK routines to generate JSON asm
 - [json_gron.awk](json_gron.awk) - JSON asm → [Gron](gron_asm.md)
