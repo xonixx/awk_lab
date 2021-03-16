@@ -4,9 +4,11 @@ BEGIN {
     while (getline > 0)
         arrPush(Asm, $0)
 
-    split("", AddrTypes)  # addr -> type
-    split("", AddrValues) # addr -> value
-    split("", AddrCounts) # addr -> segment count
+    split("", AddrType)  # addr -> type
+    split("", AddrValue) # addr -> value
+    split("", AddrCount) # addr -> segment count
+    split("", AddrStart) # addr -> segment storage pointer
+    split("", Segments); SegmentPos=0
 
     for (i=0; i<arrLen(Asm); i++) {
         Instr = Asm[i];
@@ -25,9 +27,11 @@ BEGIN {
                 Value[1] = Asm[++i]
         } else if ("end" == Instr) { processRecord() }
     }
-    dbg("AddrTypes",AddrTypes)
-    dbg("AddrValues",AddrValues)
-    dbg("AddrCounts",AddrCounts)
+    dbg("AddrType",AddrType)
+    dbg("AddrValue",AddrValue)
+    dbg("AddrCount",AddrCount)
+    dbg("AddrStart",AddrStart)
+    dbgA("Segments",Segments)
     print "JSON asm:"
     for (i=0; i<AsmLen; i++)
         print Asm[i]
@@ -35,7 +39,7 @@ BEGIN {
 
 function isSegmentType(s) { return "field" ==s || "index" ==s }
 function isValueHolder(s) { return "string"==s || "number"==s }
-function processRecord(   l, addr, type, value, i) {
+function processRecord(   l, addr, type, value, i, ssp) {
     print "=================="
     dbgA("Path",Path)
     dbgA("Types",Types)
@@ -47,10 +51,13 @@ function processRecord(   l, addr, type, value, i) {
         addr = addr (i>0?",":"") Path[i]
         type = i<l-1 ? (Types[i+1] == "field" ? "object" : "array") : Value[0]
         value = i<l-1 ? "" : Value[1]
-        AddrTypes[addr] = type
-        AddrValues[addr] = value
-        AddrCounts[addr] = i+1
+        AddrType[addr] = type
+        AddrValue[addr] = value
+        AddrCount[addr] = i+1
+        AddrStart[addr] = SegmentPos
+        arrPush(Segments, Path[i])
     }
+    SegmentPos += l
 }
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 function arrPush(arr, e) { arr[arr[-7]++] = e }
