@@ -27,11 +27,7 @@ BEGIN {
                 Value[1] = Asm[++i]
         } else if ("end" == Instr) { processRecord() }
     }
-    dbg("AddrType",AddrType)
-    dbg("AddrValue",AddrValue)
-    dbg("AddrCount",AddrCount)
-    dbg("AddrStart",AddrStart)
-    dbgA("Segments",Segments)
+    generateAsm()
     print "JSON asm:"
     for (i=0; i<AsmLen; i++)
         print Asm[i]
@@ -52,7 +48,7 @@ function processRecord(   l, addr, type, value, i, segments_pos) {
         addr = addr (i>0?",":"") Path[i]
         type = i<l-1 ? (Types[i+1] == "field" ? "object" : "array") : Value[0]
         value = i<l-1 ? "" : Value[1]
-        if (addr in AddrType && type != AddrType[addr]) {
+        if (addr in AddrType && type != AddrType[addr]) { # TODO check conflicting value
             die("Conflicting types for " addr ": " type " and " AddrType[addr])
         }
         AddrType[addr] = type
@@ -60,6 +56,32 @@ function processRecord(   l, addr, type, value, i, segments_pos) {
         AddrCount[addr] = i+1
         AddrStart[addr] = segments_pos
         arrPush(Segments, Path[i])
+    }
+}
+function generateAsm(   i,j, a, prev_a, addrs) {
+    dbg("AddrType",AddrType)
+    dbg("AddrValue",AddrValue)
+    dbg("AddrCount",AddrCount)
+    dbg("AddrStart",AddrStart)
+    dbgA("Segments",Segments)
+
+    for (a in AddrType) arrPush(addrs, a)
+    quicksort(addrs, 0, arrLen(addrs)-1)
+    for (i=0; i<arrLen(addrs); i++) {
+        a = addrs[i]
+        if (i==0)
+            asm(AddrType[a])
+        else {
+            prev_a = addrs[i-1]
+            for (j=0; j<AddrCount[prev_a]-AddrCount[a]; j++)
+                asm("end")
+            asm("key")
+            asm(Segments[AddrStart[a]+AddrCount[a]-1]) # last segment in addr
+            asm(AddrType[a])
+            if (isValueHolder(AddrType[a]))
+                asm(AddrValue[a])
+        }
+
     }
 }
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
