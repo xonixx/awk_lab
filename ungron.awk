@@ -58,7 +58,7 @@ function processRecord(   l, addr, type, value, i) {
         AddrKey[addr] = Path[i]
     }
 }
-function generateAsm(   i,j,l, a,a_prev,aj, addrs) {
+function generateAsm(   i,j,l, a,a_prev,aj, type, addrs) {
     dbg("AddrType",AddrType)
     dbg("AddrValue",AddrValue)
     dbg("AddrCount",AddrCount)
@@ -68,9 +68,10 @@ function generateAsm(   i,j,l, a,a_prev,aj, addrs) {
     quicksort(addrs, 0, (l=arrLen(addrs))-1)
     for (i=0; i<l; i++) {
         a = addrs[i]
+        type = AddrType[a]
         if (i>0) {
             a_prev = addrs[i-1]
-            for (j=0; j<AddrCount[a_prev]-AddrCount[a] + (isComplex(AddrType[a])?1:0); j++)
+            for (j=0; j<AddrCount[a_prev]-AddrCount[a] + (isComplex(type)?1:0); j++)
                 asm("end")
             # determine the type of current container (object/array) - for array should not issue "key"
             for (j=i; AddrCount[a]-AddrCount[aj=addrs[j]] != 1; j--) {} # descend to addr of prev segment
@@ -80,11 +81,11 @@ function generateAsm(   i,j,l, a,a_prev,aj, addrs) {
             } else if (isComplex(AddrType[a_prev]) && AddrCount[a_prev]==AddrCount[a]) # close empty [] {} list element
                 asm("end")
         }
-        asm(AddrType[a])
-        if (isValueHolder(AddrType[a]))
+        asm(type)
+        if (isValueHolder(type))
             asm(AddrValue[a])
         if (i==l-1) { # last
-            for (j=0; j<AddrCount[a] - (isComplex(AddrType[a])?0:1); j++)
+            for (j=0; j<AddrCount[a] - (isComplex(type)?0:1); j++)
                 asm("end")
         }
     }
