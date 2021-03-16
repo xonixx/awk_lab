@@ -8,7 +8,7 @@ BEGIN {
     split("", AddrValue) # addr -> value
     split("", AddrCount) # addr -> segment count
     split("", AddrStart) # addr -> segment storage pointer
-    split("", Segments); SegmentPos=0
+    split("", Segments)
 
     for (i=0; i<arrLen(Asm); i++) {
         Instr = Asm[i];
@@ -39,29 +39,33 @@ BEGIN {
 
 function isSegmentType(s) { return "field" ==s || "index" ==s }
 function isValueHolder(s) { return "string"==s || "number"==s }
-function processRecord(   l, addr, type, value, i, ssp) {
+function processRecord(   l, addr, type, value, i, segments_pos) {
     print "=================="
     dbgA("Path",Path)
     dbgA("Types",Types)
     dbgA("Value",Value)
     l = arrLen(Path)
     addr=""
+    segments_pos = arrLen(Segments)
     for (i=0; i<l; i++) {
         # build addr
         addr = addr (i>0?",":"") Path[i]
         type = i<l-1 ? (Types[i+1] == "field" ? "object" : "array") : Value[0]
         value = i<l-1 ? "" : Value[1]
+        if (addr in AddrType && type != AddrType[addr]) {
+            die("Conflicting types for " addr ": " type " and " AddrType[addr])
+        }
         AddrType[addr] = type
         AddrValue[addr] = value
         AddrCount[addr] = i+1
-        AddrStart[addr] = SegmentPos
+        AddrStart[addr] = segments_pos
         arrPush(Segments, Path[i])
     }
-    SegmentPos += l
 }
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 function arrPush(arr, e) { arr[arr[-7]++] = e }
-function arrLen(arr) { return arr[-7] }
+function arrLen(arr) { return 0 + arr[-7] }
+function die(msg) { print msg; exit 1 }
 #function arrSet(target, source,    i) { split("",target); for(i in source) target[i] = source[i] }
 function dbgA(name, arr,    i) { print "--- " name " ---"; for (i=0; i<arrLen(arr); i++) print i " : " arr[i] }
 function dbg(name, arr,    i, j, k, maxlen, keys) {
