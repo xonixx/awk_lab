@@ -9,8 +9,7 @@ BEGIN {
     split("", AddrType)  # addr -> type
     split("", AddrValue) # addr -> value
     split("", AddrCount) # addr -> segment count
-    split("", AddrStart) # addr -> segment storage pointer
-    split("", Segments)
+    split("", AddrKey)   # addr -> last segment name
 
     for (i=0; i<arrLen(Asm); i++) {
         Instr = Asm[i];
@@ -38,14 +37,13 @@ BEGIN {
 function isComplex(s) { return "object"==s || "array"==s }
 function isSegmentType(s) { return "field" ==s || "index" ==s }
 function isValueHolder(s) { return "string"==s || "number"==s }
-function processRecord(   l, addr, type, value, i, segments_pos) {
+function processRecord(   l, addr, type, value, i) {
     if (Trace) print "=================="
     dbgA("Path",Path)
     dbgA("Types",Types)
     dbgA("Value",Value)
     l = arrLen(Path)
     addr=""
-    segments_pos = arrLen(Segments)
     for (i=0; i<l; i++) {
         # build addr
         addr = addr (i>0?",":"") Path[i]
@@ -57,16 +55,14 @@ function processRecord(   l, addr, type, value, i, segments_pos) {
         AddrType[addr] = type
         AddrValue[addr] = value
         AddrCount[addr] = i+1
-        AddrStart[addr] = segments_pos
-        arrPush(Segments, Path[i])
+        AddrKey[addr] = Path[arrLen(Path)-1]
     }
 }
 function generateAsm(   i,j, a,a1, addrs) {
     dbg("AddrType",AddrType)
     dbg("AddrValue",AddrValue)
     dbg("AddrCount",AddrCount)
-    dbg("AddrStart",AddrStart)
-    dbgA("Segments",Segments)
+    dbg("AddrKey",AddrKey)
 
     for (a in AddrType) arrPush(addrs, a)
     quicksort(addrs, 0, arrLen(addrs)-1)
@@ -81,7 +77,7 @@ function generateAsm(   i,j, a,a1, addrs) {
             for (j=i; AddrCount[a]-AddrCount[a1=addrs[j]] != 1; j--) {} # descend to addr of prev segment
             if ("array" != AddrType[a1]) {
                 asm("key")
-                asm(Segments[AddrStart[a]+AddrCount[a]-1]) # last segment in addr
+                asm(AddrKey[a]) # last segment in addr
             } else if (isComplex(AddrType[addrs[i-1]]) && AddrCount[addrs[i-1]]==AddrCount[a]) # close empty [] {} list element
                 asm("end")
             asm(AddrType[a])
@@ -96,7 +92,6 @@ function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 function arrPush(arr, e) { arr[arr[-7]++] = e }
 function arrLen(arr) { return 0 + arr[-7] }
 function die(msg) { print msg; exit 1 }
-#function arrSet(target, source,    i) { split("",target); for(i in source) target[i] = source[i] }
 function dbgA(name, arr,    i) {
     if (!Trace) return
     print "--- " name " ---";
