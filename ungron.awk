@@ -89,7 +89,7 @@ function generateAsm(   i,j, a,a1, addrs) {
                 asm(AddrValue[a])
         }
     }
-    for (j=0; j<AddrCount[a]-1; j++)
+    for (j=0; j<AddrCount[a]; j++)
         asm("end")
 }
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
