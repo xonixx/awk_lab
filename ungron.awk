@@ -46,7 +46,7 @@ function processRecord(   l, addr, type, value, i) {
     addr=""
     for (i=0; i<l; i++) {
         # build addr
-        addr = addr (i>0?",":"") Path[i]
+        addr = addr (i>0?",":"") (Types[i] == "index" ? sprintf("%010d",Path[i]) : Path[i]) # proper sorting for index values
         type = i<l-1 ? (Types[i+1] == "field" ? "object" : "array") : Value[0]
         value = i<l-1 ? "" : Value[1]
         if (addr in AddrType && type != AddrType[addr]) { # TODO check conflicting value
