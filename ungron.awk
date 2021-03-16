@@ -55,7 +55,7 @@ function processRecord(   l, addr, type, value, i) {
         AddrType[addr] = type
         AddrValue[addr] = value
         AddrCount[addr] = i+1
-        AddrKey[addr] = Path[arrLen(Path)-1]
+        AddrKey[addr] = Path[i]
     }
 }
 function generateAsm(   i,j, a,a1, addrs) {
