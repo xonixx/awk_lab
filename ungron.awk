@@ -70,7 +70,7 @@ function generateAsm(   i,j,l, a,a_prev,aj, addrs) {
         a = addrs[i]
         if (i>0) {
             a_prev = addrs[i-1]
-            for (j=0; j<AddrCount[a_prev]-AddrCount[a]; j++)
+            for (j=0; j<AddrCount[a_prev]-AddrCount[a] + (isComplex(AddrType[a])?1:0); j++)
                 asm("end")
             # determine the type of current container (object/array) - for array should not issue "key"
             for (j=i; AddrCount[a]-AddrCount[aj=addrs[j]] != 1; j--) {} # descend to addr of prev segment
