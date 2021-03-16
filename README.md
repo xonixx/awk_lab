@@ -117,3 +117,9 @@ end
 - https://www.crockford.com/mckeeman.html
 - https://www.compart.com/en/unicode/category
 - https://github.com/tomnomnom/gron
+
+### Test the whole thing
+
+```shell
+cat 1.json | awk -f json_parser.awk | awk -f json_gron.awk | grep "org." | awk -f gron_parser.awk | awk -f ungron.awk | awk -f json_compile.awk | jsqry 
+```
