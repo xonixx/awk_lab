@@ -1,2 +1,4 @@
-json.a.b.c=5
-json.a.f="F"
+json=[]
+json[0]={}
+json[1]=[]
+json[2]=5

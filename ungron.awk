@@ -1,4 +1,6 @@
 BEGIN {
+    Trace="Trace" in ENVIRON
+
     split("", Asm)
 
     while (getline > 0)
@@ -28,15 +30,16 @@ BEGIN {
         } else if ("end" == Instr) { processRecord() }
     }
     generateAsm()
-    print "JSON asm:"
+    if (Trace) print "--- JSON asm ---"
     for (i=0; i<AsmLen; i++)
         print Asm[i]
 }
 
+function isComplex(s) { return "object"==s || "array"==s }
 function isSegmentType(s) { return "field" ==s || "index" ==s }
 function isValueHolder(s) { return "string"==s || "number"==s }
 function processRecord(   l, addr, type, value, i, segments_pos) {
-    print "=================="
+    if (Trace) print "=================="
     dbgA("Path",Path)
     dbgA("Types",Types)
     dbgA("Value",Value)
@@ -79,21 +82,28 @@ function generateAsm(   i,j, a,a1, addrs) {
             if ("array" != AddrType[a1]) {
                 asm("key")
                 asm(Segments[AddrStart[a]+AddrCount[a]-1]) # last segment in addr
-            }
+            } else if (isComplex(AddrType[addrs[i-1]]) && AddrCount[addrs[i-1]]==AddrCount[a]) # close empty [] {} list element
+                asm("end")
             asm(AddrType[a])
             if (isValueHolder(AddrType[a]))
                 asm(AddrValue[a])
         }
-
     }
+    for (j=0; j<AddrCount[a]-1; j++)
+        asm("end")
 }
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 function arrPush(arr, e) { arr[arr[-7]++] = e }
 function arrLen(arr) { return 0 + arr[-7] }
 function die(msg) { print msg; exit 1 }
 #function arrSet(target, source,    i) { split("",target); for(i in source) target[i] = source[i] }
-function dbgA(name, arr,    i) { print "--- " name " ---"; for (i=0; i<arrLen(arr); i++) print i " : " arr[i] }
+function dbgA(name, arr,    i) {
+    if (!Trace) return
+    print "--- " name " ---";
+    for (i=0; i<arrLen(arr); i++) print i " : " arr[i]
+}
 function dbg(name, arr,    i, j, k, maxlen, keys) {
+    if (!Trace) return
     print "--- " name " ---";
     for (k in arr) { keys[i++] = k; if (maxlen < (j = length(k))) maxlen = j }
     quicksort(keys,0,i-1)
