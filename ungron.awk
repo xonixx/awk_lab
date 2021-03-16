@@ -44,7 +44,7 @@ function processRecord(   l, addr, type, value, i) {
     addr=""
     for (i=0; i<l; i++) {
         # build addr
-        addr = addr (i>0?SUBSEP:"") Path[i]
+        addr = addr (i>0?",":"") Path[i]
         type = i<l-1 ? (Types[i+1] == "field" ? "object" : "array") : Value[0]
         value = i<l-1 ? "" : Value[1]
         AddrTypes[addr] = type
@@ -57,11 +57,11 @@ function arrPush(arr, e) { arr[arr[-7]++] = e }
 function arrLen(arr) { return arr[-7] }
 #function arrSet(target, source,    i) { split("",target); for(i in source) target[i] = source[i] }
 function dbgA(name, arr,    i) { print "--- " name " ---"; for (i=0; i<arrLen(arr); i++) print i " : " arr[i] }
-function dbg(name, arr,    i, j, k, keys) {
+function dbg(name, arr,    i, j, k, maxlen, keys) {
     print "--- " name " ---";
-    for (k in arr) keys[i++] = k
+    for (k in arr) { keys[i++] = k; if (maxlen < (j = length(k))) maxlen = j }
     quicksort(keys,0,i-1)
-    for (j=0; j<i; j++) { k = keys[j]; print k " : " arr[k] }
+    for (j=0; j<i; j++) { k = keys[j]; printf "%-" maxlen "s : %s\n", k, arr[k] }
 }
 function quicksort(data, left, right,   i, last) {
     if (left >= right)
