@@ -58,7 +58,7 @@ function processRecord(   l, addr, type, value, i) {
         AddrKey[addr] = Path[i]
     }
 }
-function generateAsm(   i,j,l, a,a1, addrs) {
+function generateAsm(   i,j,l, a,a_prev,aj, addrs) {
     dbg("AddrType",AddrType)
     dbg("AddrValue",AddrValue)
     dbg("AddrCount",AddrCount)
@@ -69,14 +69,15 @@ function generateAsm(   i,j,l, a,a1, addrs) {
     for (i=0; i<l; i++) {
         a = addrs[i]
         if (i>0) {
-            for (j=0; j<AddrCount[addrs[i-1]]-AddrCount[a]; j++)
+            a_prev = addrs[i-1]
+            for (j=0; j<AddrCount[a_prev]-AddrCount[a]; j++)
                 asm("end")
             # determine the type of current container (object/array) - for array should not issue "key"
-            for (j=i; AddrCount[a]-AddrCount[a1=addrs[j]] != 1; j--) {} # descend to addr of prev segment
-            if ("array" != AddrType[a1]) {
+            for (j=i; AddrCount[a]-AddrCount[aj=addrs[j]] != 1; j--) {} # descend to addr of prev segment
+            if ("array" != AddrType[aj]) {
                 asm("key")
                 asm(AddrKey[a]) # last segment in addr
-            } else if (isComplex(AddrType[addrs[i-1]]) && AddrCount[addrs[i-1]]==AddrCount[a]) # close empty [] {} list element
+            } else if (isComplex(AddrType[a_prev]) && AddrCount[a_prev]==AddrCount[a]) # close empty [] {} list element
                 asm("end")
         }
         asm(AddrType[a])
