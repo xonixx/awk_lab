@@ -49,7 +49,7 @@ function processRecord(   l, addr, type, value, i) {
         addr = addr (i>0?",":"") (Types[i] == "index" ? sprintf("%010d",Path[i]) : Path[i]) # proper sorting for index values
         type = i<l-1 ? (Types[i+1] == "field" ? "object" : "array") : Value[0]
         value = i<l-1 ? "" : Value[1]
-        if (addr in AddrType && type != AddrType[addr]) { # TODO check conflicting value
+        if (addr in AddrType && type != AddrType[addr]) {
             die("Conflicting types for " addr ": " type " and " AddrType[addr])
         }
         AddrType[addr] = type
@@ -68,9 +68,7 @@ function generateAsm(   i,j, a,a1, addrs) {
     quicksort(addrs, 0, arrLen(addrs)-1)
     for (i=0; i<arrLen(addrs); i++) {
         a = addrs[i]
-        if (i==0)
-            asm(AddrType[a])
-        else {
+        if (i>0) {
             for (j=0; j<AddrCount[addrs[i-1]]-AddrCount[a]; j++)
                 asm("end")
             # determine the type of current container (object/array) - for array should not issue "key"
@@ -80,10 +78,10 @@ function generateAsm(   i,j, a,a1, addrs) {
                 asm(AddrKey[a]) # last segment in addr
             } else if (isComplex(AddrType[addrs[i-1]]) && AddrCount[addrs[i-1]]==AddrCount[a]) # close empty [] {} list element
                 asm("end")
-            asm(AddrType[a])
-            if (isValueHolder(AddrType[a]))
-                asm(AddrValue[a])
         }
+        asm(AddrType[a])
+        if (isValueHolder(AddrType[a]))
+            asm(AddrValue[a])
     }
     for (j=0; j<AddrCount[a]; j++)
         asm("end")
