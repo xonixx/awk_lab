@@ -10,10 +10,10 @@ BEGIN {
     json_string("football")
     json_string("chess")
     json_string("cinema")
-    json_end()
+    json_end_array()
     json_key("married")
     json_false()
-    json_end()
+    json_end_object()
     json_print()
 }
 
@@ -23,7 +23,8 @@ function json_init() {
 }
 function json_object_start() { json_asm("object") }
 function json_array_start()  { json_asm("array") }
-function json_end()          { json_asm("end") }
+function json_end_object()   { json_asm("end_object") }
+function json_end_array()    { json_asm("end_array") }
 function json_key(k)         { json_asm("key")   ; json_asm(quote_js(k)) }
 function json_string(s)      { json_asm("string"); json_asm(quote_js(s)) }
 function json_number(n)      { json_asm("number"); json_asm(n) }

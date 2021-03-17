@@ -12,7 +12,7 @@ BEGIN {
                                                        Stack[++Depth]=Instr;
                                                        if (inArr()) { PathStack[Depth]=0 } }
         else if (isSingle(Instr))                    { p(Instr);               incArrIdx() }
-        else if ("end" == Instr)                     { Depth--;                incArrIdx() }
+        else if (isEnd(Instr))                       { Depth--;                incArrIdx() }
         else if ("key" == Instr)                     { PathStack[Depth]=Asm[++i];          }
         else if ("number"==Instr || "string"==Instr) { p(Asm[++i]);            incArrIdx() }
         else { print "Error at " FILENAME ":" LineNums[i] ": " Instr; exit 1 }
@@ -22,6 +22,7 @@ BEGIN {
 function isSingle(s) { return "true"==s || "false"==s || "null"==s }
 function isComplex(s) { return "object"==s || "array"==s }
 function inArr() { return "array"==Stack[Depth] }
+function isEnd(s) { return "end_object"==s || "end_array"==s }
 function incArrIdx() { if (inArr()) PathStack[Depth]++ }
 
 function p(v,    row,i,by_idx,segment,segment_unq) {

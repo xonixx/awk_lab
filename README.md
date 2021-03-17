@@ -66,7 +66,7 @@ object
             "hobby"
             string
             "football"
-        end
+        end_object
 
         object
             key
@@ -91,23 +91,24 @@ object
             key
             "hobby"
             null
-        end
-    end
-end
+        end_object
+    end_array
+end_object
 ```
 
 ### Keywords
 
 ```
-object
-array
-string
-number
-true
-false
-null
-key
-end
+object       # {
+end_object   # }
+array        # [
+end_array    # ]
+key          # "key":
+string       # "value"
+number       # 123
+true         # 
+false        # 
+null         # 
 ```
 
 ## Links

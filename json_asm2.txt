@@ -7,5 +7,5 @@ array
     false
     null
     object
-    end
-end
+    end_object
+end_array
