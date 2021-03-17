@@ -1,0 +1,62 @@
+
+@define TUSH_REPO=https://github.com/adolfopa/tush
+
+@options timing
+
+@goal soft_folder_created
+@reached_if [[ -d "soft" ]]
+  mkdir soft
+
+@goal tush_installed
+@depends_on soft_folder_created
+@reached_if [[ -f "soft/tush/bin/tush-check" ]]
+  echo
+  echo "Fetching tush..."
+  echo
+
+  cd "soft"
+
+  if which wget >/dev/null 2>/dev/null
+  then
+    wget $TUSH_REPO/archive/master.tar.gz -O./tush.tar.gz
+    tar xzvf ./tush.tar.gz
+    rm ./tush.tar.gz
+    mv tush-master tush
+  else
+    git clone --depth 1 $TUSH_REPO.git
+    rm -r tush/.git
+  fi
+
+@goal soft_installed
+@depends_on tush_installed
+
+@goal cleaned
+
+@goal cleaned_soft
+@reached_if [[ ! -d "soft" ]]
+  rm -r "soft"
+
+@goal cleaned_all
+@depends_on cleaned cleaned_soft
+
+@goal debug
+  awk --version | head -n 1
+  bash --version| head -n 1
+
+@goal tested
+@depends_on tush_installed debug
+  export PATH="$PATH:$MYDIR/soft/tush/bin"
+
+  for f in tests/*.tush
+  do
+    if DIFF="diff --strip-trailing-cr" tush-check "$f"
+    then
+      echo "TESTS PASSED : $f"
+    else
+      echo >&2 "!!! TESTS FAILED !!! : $f"
+      exit 1
+    fi
+  done
+
+@goal default
+@depends_on tested
