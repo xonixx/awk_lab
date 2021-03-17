@@ -31,7 +31,7 @@ object
             "hobby"
             string
             "football"
-        end
+        end_object
 
         object
             key
@@ -56,6 +56,6 @@ object
             key
             "hobby"
             null
-        end
-    end
-end
+        end_object
+    end_array
+end_object
