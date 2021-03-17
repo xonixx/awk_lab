@@ -43,20 +43,15 @@
   awk --version | head -n 1
   bash --version| head -n 1
 
-@goal tested
+@goal prepared4tests
 @depends_on tush_installed debug
-  export PATH="$PATH:$MYDIR/soft/tush/bin"
 
-  for f in tests/*.tush
-  do
-    if DIFF="diff --strip-trailing-cr" tush-check "$f"
-    then
-      echo "TESTS PASSED : $f"
-    else
-      echo >&2 "!!! TESTS FAILED !!! : $f"
-      exit 1
-    fi
-  done
+@goal tests.json_compile.tush
+@depends_on prepared4tests
+ ./test_run.sh tests.json_compile.tush
+
+@goal tested
+@depends_on tests.json_compile.tush
 
 @goal default
 @depends_on tested
