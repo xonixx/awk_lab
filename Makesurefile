@@ -48,7 +48,7 @@
 
 @goal tests.json_compile.tush
 @depends_on prepared4tests
- ./test_run.sh tests.json_compile.tush
+ ./tests_run_single.sh tests.json_compile.tush
 
 @goal tested
 @depends_on tests.json_compile.tush
