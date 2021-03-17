@@ -35,25 +35,87 @@ $ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"}}' | awk -f json_parser.awk
 | end_object
 
 $ cd "$MYDIR"; echo '{"a":"b"}' | awk -f json_parser.awk
-|
+| object
+| key
+| "a"
+| string
+| "b"
+| end_object
 
 $ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"},"g":[123,-234.56E+10,"Hello \u1234 world",true,false,null,{}]}' | awk -f json_parser.awk
-|
+| object
+| key
+| "a"
+| string
+| "b"
+| key
+| "c"
+| object
+| end_object
+| key
+| "d"
+| object
+| key
+| "e"
+| string
+| "f"
+| end_object
+| key
+| "g"
+| array
+| number
+| 123
+| number
+| -234.56E+10
+| string
+| "Hello \u1234 world"
+| true
+| false
+| null
+| object
+| end_object
+| end_array
+| end_object
 
 $ cd "$MYDIR"; echo '"Hello world"' | awk -f json_parser.awk
-|
+| string
+| "Hello world"
 
 $ cd "$MYDIR"; echo '{}a' | awk -f json_parser.awk
-|
+| Can't advance at pos 3: a
+| ...
+? 1
 
 $ cd "$MYDIR"; echo '---1...2' | awk -f json_parser.awk
-|
+| Can't advance at pos 2: --1...2
+| ...
 
 $ cd "$MYDIR"; echo '-1.' | awk -f json_parser.awk
-|
+| number
+| -1.
 
 $ cd "$MYDIR"; echo "\"\n\"" | awk -f json_parser.awk
-|
+| Can't advance at pos 2: 
+| "
+| ...
 
 $ cd "$MYDIR"; echo '[ [[[[],    {}]]]   ,[[{}]] ]' | awk -f json_parser.awk
-|
+| array
+| array
+| array
+| array
+| array
+| end_array
+| object
+| end_object
+| end_array
+| end_array
+| end_array
+| array
+| array
+| object
+| end_object
+| end_array
+| end_array
+| end_array
+

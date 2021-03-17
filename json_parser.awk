@@ -1,14 +1,5 @@
 # https://www.json.org/json-en.html
 BEGIN {
-    #Json=""
-    #Json=""
-    #Json = ""
-    #Json = ""
-    #Json = ""
-    #Json = "-1."
-    #Json = "\"\n\""
-    #Json="[ [[[[],    {}]]]   ,[[{}]] ]"
-
     while (getline line > 0)
        Json = Json line "\n"
 
