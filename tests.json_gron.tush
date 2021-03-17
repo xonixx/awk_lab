@@ -1,0 +1,42 @@
+
+$ cd "$MYDIR"; awk -f json_gron.awk json_asm.1.txt
+| json={}
+| json.total=57
+| json.page=[]
+| json.page[0]={}
+| json.page[0].firstName="John"
+| json.page[0].lastName="Doe"
+| json.page[0].age=25
+| json.page[0].active=true
+| json.page[0].hobby="football"
+| json.page[1]={}
+| json.page[1].firstName="Jane"
+| json.page[1].lastName="Smith"
+| json.page[1].age=24
+| json.page[1].active=false
+| json.page[1].hobby=null
+|
+
+$ cd "$MYDIR"; awk -f json_gron.awk json_asm.2.txt
+| json=[]
+| json[0]="hello"
+| json[1]=123
+| json[2]=true
+| json[3]=false
+| json[4]=null
+| json[5]={}
+|
+
+$ cd "$MYDIR"; awk -f json_gron.awk json_asm.3.txt
+| json=[]
+| json[0]="string"
+| json[1]="key"
+| json[2]="number"
+| json[3]="object"
+| json[4]="end"
+| json[5]=123
+| json[6]=true
+| json[7]=false
+| json[8]=null
+| json[9]={}
+|

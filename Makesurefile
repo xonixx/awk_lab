@@ -58,10 +58,15 @@
 @depends_on prepared4tests
  ./tests_run_single.sh tests.json_parser.tush
 
+@goal tests.json_gron.tush
+@depends_on prepared4tests
+ ./tests_run_single.sh tests.json_gron.tush
+
 @goal tested
 @depends_on tests.json_compile.tush
 @depends_on tests.json_compile_pretty.tush
 @depends_on tests.json_parser.tush
+@depends_on tests.json_gron.tush
 
 @goal default
 @depends_on tested
