@@ -88,7 +88,7 @@ function OBJECT() {
 
         MEMBERS() && tryParse1("}")) &&
 
-        asm("end"))
+        asm("end_object"))
 }
 function ARRAY() {
     return attempt("ARRAY") && checkRes("ARRAY",
@@ -98,7 +98,7 @@ function ARRAY() {
 
         ELEMENTS() && tryParse1("]")) &&
 
-        asm("end"))
+        asm("end_array"))
 }
 function MEMBERS() {
     return attempt("MEMBERS") && checkRes("MEMBERS", MEMBER() && (tryParse1(",") ? MEMBERS() : 1))
