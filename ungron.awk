@@ -64,6 +64,10 @@ function generateAsm(   i,j,l, a,a_prev,aj, type, addrs) {
     dbg("AddrCount",AddrCount)
     dbg("AddrKey",AddrKey)
 
+    split("",Stack)
+    Ends["object"] = "end_object"
+    Ends["array"]  = "end_array"
+
     for (a in AddrType) arrPush(addrs, a)
     quicksort(addrs, 0, (l=arrLen(addrs))-1)
     for (i=0; i<l; i++) {
@@ -71,8 +75,8 @@ function generateAsm(   i,j,l, a,a_prev,aj, type, addrs) {
         type = AddrType[a]
         if (i>0) {
             a_prev = addrs[i-1]
-            for (j=0; j<AddrCount[a_prev]-AddrCount[a] + (isComplex(AddrType[a_prev])?1:0); j++)
-                asm("end")
+            for (j=0; j<AddrCount[a_prev] - AddrCount[a] + (isComplex(AddrType[a_prev])?1:0); j++)
+                asm(Ends[arrPop(Stack)])
             # determine the type of current container (object/array) - for array should not issue "key"
             for (j=i; AddrCount[a]-AddrCount[aj=addrs[j]] != 1; j--) {} # descend to addr of prev segment
             if ("array" != AddrType[aj]) {
@@ -81,16 +85,19 @@ function generateAsm(   i,j,l, a,a_prev,aj, type, addrs) {
             }
         }
         asm(type)
+        if (isComplex(type))
+            arrPush(Stack, type)
         if (isValueHolder(type))
             asm(AddrValue[a])
         if (i==l-1) { # last
             for (j=0; j<AddrCount[a] - (isComplex(type)?0:1); j++)
-                asm("end")
+                asm(Ends[arrPop(Stack)])
         }
     }
 }
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 function arrPush(arr, e) { arr[arr[-7]++] = e }
+function arrPop(arr,   e) { e = arr[--arr[-7]]; if (arr[-7]<0) die("Can't pop"); delete arr[arr[-7]]; return e }
 function arrLen(arr) { return 0 + arr[-7] }
 function die(msg) { print msg; exit 1 }
 function dbgA(name, arr,    i) {
