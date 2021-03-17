@@ -1,12 +1,10 @@
 # https://www.json.org/json-en.html
 BEGIN {
-    #Json="[123,-234.56E+10,\"Hello world\",true,false,null,{}]"
-    #Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"}}"
-    #Json="{\"a\":\"b\"}"
-    #Json="{\"a\":\"b\",\"c\":{},\"d\":{\"e\":\"f\"},\"g\":[123,-234.56E+10,\"Hello \\u1234 world\",true,false,null,{}]}"
-    #Json = "\"Hello world\""
-    #Json = "{}a"
-    #Json = "---1...2"
+    #Json=""
+    #Json=""
+    #Json = ""
+    #Json = ""
+    #Json = ""
     #Json = "-1."
     #Json = "\"\n\""
     #Json="[ [[[[],    {}]]]   ,[[{}]] ]"

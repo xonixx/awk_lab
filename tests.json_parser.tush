@@ -1,0 +1,59 @@
+
+$ cd "$MYDIR"; echo '[123,-234.56E+10,"Hello world",true,false,null,{}]' | awk -f json_parser.awk
+| array
+| number
+| 123
+| number
+| -234.56E+10
+| string
+| "Hello world"
+| true
+| false
+| null
+| object
+| end_object
+| end_array
+
+$ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"}}' | awk -f json_parser.awk
+| object
+| key
+| "a"
+| string
+| "b"
+| key
+| "c"
+| object
+| end_object
+| key
+| "d"
+| object
+| key
+| "e"
+| string
+| "f"
+| end_object
+| end_object
+
+$ cd "$MYDIR"; echo '{"a":"b"}' | awk -f json_parser.awk
+|
+
+$ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"},"g":[123,-234.56E+10,"Hello \u1234 world",true,false,null,{}]}' | awk -f json_parser.awk
+|
+
+$ cd "$MYDIR"; echo '"Hello world"' | awk -f json_parser.awk
+|
+
+$ cd "$MYDIR"; echo '{}a' | awk -f json_parser.awk
+|
+
+$ cd "$MYDIR"; echo '---1...2' | awk -f json_parser.awk
+|
+
+$ cd "$MYDIR"; echo '-1.' | awk -f json_parser.awk
+|
+
+$ cd "$MYDIR"; echo "\"\n\"" | awk -f json_parser.awk
+|
+
+$ cd "$MYDIR"; echo '[ [[[[],    {}]]]   ,[[{}]] ]' | awk -f json_parser.awk
+|
