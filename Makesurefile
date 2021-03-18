@@ -1,0 +1,87 @@
+
+@define TUSH_REPO=https://github.com/adolfopa/tush
+
+@options timing
+
+@goal soft_folder_created
+@reached_if [[ -d "soft" ]]
+  mkdir soft
+
+@goal tush_installed
+@depends_on soft_folder_created
+@reached_if [[ -f "soft/tush/bin/tush-check" ]]
+  echo
+  echo "Fetching tush..."
+  echo
+
+  cd "soft"
+
+  if which wget >/dev/null 2>/dev/null
+  then
+    wget $TUSH_REPO/archive/master.tar.gz -O./tush.tar.gz
+    tar xzvf ./tush.tar.gz
+    rm ./tush.tar.gz
+    mv tush-master tush
+  else
+    git clone --depth 1 $TUSH_REPO.git
+    rm -r tush/.git
+  fi
+
+@goal soft_installed
+@depends_on tush_installed
+
+@goal cleaned
+
+@goal cleaned_soft
+@reached_if [[ ! -d "soft" ]]
+  rm -r "soft"
+
+@goal cleaned_all
+@depends_on cleaned cleaned_soft
+
+@goal debug
+  awk --version | head -n 1
+  bash --version| head -n 1
+
+@goal prepared4tests
+@depends_on tush_installed debug
+
+@goal tests.json_compile.tush
+@depends_on prepared4tests
+ ./tests_run_single.sh tests.json_compile.tush
+
+@goal tests.json_compile_pretty.tush
+@depends_on prepared4tests
+ ./tests_run_single.sh tests.json_compile_pretty.tush
+
+@goal tests.json_parser.tush
+@depends_on prepared4tests
+ ./tests_run_single.sh tests.json_parser.tush
+
+@goal tests.json_gron.tush
+@depends_on prepared4tests
+ ./tests_run_single.sh tests.json_gron.tush
+
+@goal tests.gron_parser.tush
+@depends_on prepared4tests
+ ./tests_run_single.sh tests.gron_parser.tush
+
+@goal tests.ungron.tush
+@depends_on prepared4tests
+ ./tests_run_single.sh tests.ungron.tush
+
+@goal tests.integration.tush
+@depends_on prepared4tests
+ ./tests_run_single.sh tests.integration.tush
+
+@goal tested
+@depends_on tests.json_compile.tush
+@depends_on tests.json_compile_pretty.tush
+@depends_on tests.json_parser.tush
+@depends_on tests.json_gron.tush
+@depends_on tests.gron_parser.tush
+@depends_on tests.ungron.tush
+@depends_on tests.integration.tush
+
+@goal default
+@depends_on tested

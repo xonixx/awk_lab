@@ -1,0 +1,32 @@
+
+$ cd "$MYDIR"; awk -f ungron.awk gron_asm.1.txt #| awk -f json_compile_pretty.awk
+| number
+| 7
+|
+
+$ cd "$MYDIR"; awk -f ungron.awk gron_asm.2.txt | awk -f json_compile_pretty.awk
+| {
+|   "a": {
+|     "b": "BBB"
+|   }
+| }
+|
+
+$ cd "$MYDIR"; awk -f ungron.awk gron_asm.3.txt | awk -f json_compile_pretty.awk
+| {
+|   "a": {
+|     "b": "BBB"
+|   }
+| }
+|
+
+$ cd "$MYDIR"; awk -f ungron.awk gron_asm.4.txt | awk -f json_compile_pretty.awk
+| [
+|   5,
+|   "5",
+|   false,
+|   null,
+|   {},
+|   []
+| ]
+|

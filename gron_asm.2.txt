@@ -1,0 +1,27 @@
+record
+    field
+    "json"
+    value
+    object
+end
+
+record
+    field
+    "json"
+    field
+    "a"
+    value
+    object
+end
+
+record
+    field
+    "json"
+    field
+    "a"
+    field
+    "b"
+    value
+    string
+    "BBB"
+end

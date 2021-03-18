@@ -1,0 +1,68 @@
+
+$ cd "$MYDIR"; echo '[[[]],[]]' | awk -f json_parser.awk | awk -f json_gron.awk | awk -f gron_parser.awk | awk -f ungron.awk | awk -f json_compile_pretty.awk
+| [
+|   [
+|     []
+|   ],
+|   []
+| ]
+|
+
+$ cd "$MYDIR"; echo '[1]' | awk -f json_parser.awk | awk -f json_gron.awk | awk -f gron_parser.awk | awk -f ungron.awk | awk -f json_compile_pretty.awk
+| [
+|   1
+| ]
+
+== make sure ungron doesn't change order ==
+$ cd "$MYDIR"; cat 4.json | awk -f json_parser.awk | awk -f json_gron.awk | awk -f gron_parser.awk | awk -f ungron.awk | awk -f json_compile_pretty.awk
+| [
+|   1,
+|   2,
+|   3,
+|   4,
+|   5,
+|   6,
+|   7,
+|   8,
+|   9,
+|   10,
+|   11,
+|   12
+| ]
+
+== full gron use-case with grep ==
+$ cd "$MYDIR"; cat 1.json | awk -f json_parser.awk | \
+           awk -f json_gron.awk | \
+           grep "org." | \
+           awk -f gron_parser.awk | \
+           awk -f ungron.awk | \
+           awk -f json_compile_pretty.awk
+| {
+|   "web-app": {
+|     "servlet": [
+|       {
+|         "init-param": {
+|           "dataStoreClass": "org.cofax.SqlDataStore",
+|           "redirectionClass": "org.cofax.SqlRedirection",
+|           "templateLoaderClass": "org.cofax.FilesTemplateLoader",
+|           "templateProcessorClass": "org.cofax.WysiwygTemplate"
+|         },
+|         "servlet-class": "org.cofax.cds.CDSServlet"
+|       },
+|       {
+|         "servlet-class": "org.cofax.cds.EmailServlet"
+|       },
+|       {
+|         "servlet-class": "org.cofax.cds.AdminServlet"
+|       },
+|       {
+|         "servlet-class": "org.cofax.cds.FileServlet"
+|       },
+|       {
+|         "servlet-class": "org.cofax.cms.CofaxToolsServlet"
+|       }
+|     ]
+|   }
+| }
+
+

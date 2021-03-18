@@ -1,5 +1,7 @@
 ## AWK Lab
 
+[![Run tests](https://github.com/xonixx/awk_lab/actions/workflows/run-tests.yml/badge.svg)](https://github.com/xonixx/awk_lab/actions/workflows/run-tests.yml)
+
 - [json_compile.awk](json_compile.awk) - JSON asm → JSON
 - [json_compile_pretty.awk](json_compile_pretty.awk) - JSON asm → JSON pretty-printed
 - [json_parser.awk](json_parser.awk) - JSON → JSON asm
