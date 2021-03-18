@@ -1,37 +1,39 @@
 BEGIN {
     Trace="Trace" in ENVIRON
 
-    split("", Asm)
+    split("", JsonAsm); JsonAsmLen=0
+    split("", GronAsm); GronAsmLen=0; split("", LineNums)
 
-    while (getline > 0)
-        arrPush(Asm, $0)
+    while (getline > 0) {
+        if ((Instr = trim($0))!="") { GronAsm[GronAsmLen++] = Instr; LineNums[GronAsmLen] = NR }
+    }
 
     split("", AddrType)  # addr -> type
     split("", AddrValue) # addr -> value
     split("", AddrCount) # addr -> segment count
     split("", AddrKey)   # addr -> last segment name
 
-    for (i=0; i<arrLen(Asm); i++) {
-        Instr = Asm[i];
+    for (i=0; i<GronAsmLen; i++) {
+        Instr = GronAsm[i];
 
         if("record" == Instr) {
             split("",Path)
             split("",Types)
             split("",Value) # [ type, value ]
         }
-        else if (isSegmentType(Instr)) { arrPush(Types, Instr); arrPush(Path, Asm[++i]) }
+        else if (isSegmentType(Instr)) { arrPush(Types, Instr); arrPush(Path, GronAsm[++i]) }
         else if ("value" == Instr) {
-            Instr = Asm[++i];
+            Instr = GronAsm[++i];
             split("",Value)
             Value[0] = Instr
             if (isValueHolder(Instr))
-                Value[1] = Asm[++i]
+                Value[1] = GronAsm[++i]
         } else if ("end" == Instr) { processRecord() }
     }
     generateAsm()
     if (Trace) print "--- JSON asm ---"
-    for (i=0; i<AsmLen; i++)
-        print Asm[i]
+    for (i=0; i<JsonAsmLen; i++)
+        print JsonAsm[i]
 }
 
 function isComplex(s) { return "object"==s || "array"==s }
@@ -95,7 +97,7 @@ function generateAsm(   i,j,l, a,a_prev,aj, type, addrs) {
         }
     }
 }
-function asm(inst) { Asm[AsmLen++]=inst; return 1 }
+function asm(inst) { JsonAsm[JsonAsmLen++]=inst; return 1 }
 function arrPush(arr, e) { arr[arr[-7]++] = e }
 function arrPop(arr,   e) { e = arr[--arr[-7]]; if (arr[-7]<0) die("Can't pop"); delete arr[arr[-7]]; return e }
 function arrLen(arr) { return 0 + arr[-7] }
@@ -130,3 +132,4 @@ function quicksort_swap(data, i, j,   temp) {
     data[i] = data[j]
     data[j] = temp
 }
+function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s; }

@@ -1,0 +1,53 @@
+record
+    field
+    "json"
+    value
+    array
+end
+
+record
+    field
+    "json"
+    index
+    0
+    value
+    number
+    5
+end
+
+record
+    field
+    "json"
+    index
+    1
+    value
+    string
+    "5"
+end
+
+record
+    field
+    "json"
+    index
+    2
+    value
+    false
+end
+
+record
+    field
+    "json"
+    index
+    3
+    value
+    object
+end
+
+record
+    field
+    "json"
+    index
+    4
+    value
+    array
+end
