@@ -1,5 +1,6 @@
 BEGIN {
     resetHeap()
+
     set("name", "John")
     set("age", 30)
     print get("name")
@@ -34,8 +35,10 @@ function set(var_name, value) {
 # get primitive
 function get(var_name) {
     # TODO make sure primitive
-    return Heap[Vars[var_name]+1]
+    return Heap[addrOf(var_name)+1]
 }
+
+function addrOf(var_name) { return Vars[var_name] }
 
 function listCreate(var_name) {
     Vars[var_name] = HeapTop
@@ -46,16 +49,16 @@ function listCreate(var_name) {
 }
 
 function typeOf(var_name) {
-    return Heap[Vars[var_name]]
+    return Heap[addrOf(var_name)]
 }
 
 function listLen(var_name) {
-    return Heap[Vars[var_name]+1]
+    return Heap[addrOf(var_name)+1]
 }
 
 function listPush(list_name, var_name,   pl,pv,l) {
-    pl = Vars[list_name]
-    pv = Vars[var_name]
+    pl = addrOf(list_name)
+    pv = addrOf(var_name)
 
     l = Heap[pl+1]++  # length
     Heap[pl+2*l+3] = Heap[pv]
@@ -65,7 +68,7 @@ function listPush(list_name, var_name,   pl,pv,l) {
 }
 
 function listGet(list_name, idx) {
-    return Heap[Vars[list_name] + 3 + 2*idx + 1]
+    return Heap[addrOf(list_name) + 3 + 2*idx + 1]
 }
 
 function heapDump(   i) {
