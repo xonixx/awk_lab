@@ -26,8 +26,7 @@ $ cd "$MYDIR"; awk -f json_compile_pretty.awk json_asm.2.txt
 |   true,
 |   false,
 |   null,
-|   {
-|     }
+|   {}
 | ]
 
 $ cd "$MYDIR"; awk -f json_compile_pretty.awk json_asm.3.txt
@@ -41,6 +40,5 @@ $ cd "$MYDIR"; awk -f json_compile_pretty.awk json_asm.3.txt
 |   true,
 |   false,
 |   null,
-|   {
-|     }
+|   {}
 | ]

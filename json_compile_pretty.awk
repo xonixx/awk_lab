@@ -11,7 +11,7 @@ BEGIN {
     WasPrev = 0
 
     for (i=0; i<AsmLen; i++) {
-        if (isComplex(Instr = Asm[i]))               { p1(Open[Instr] ("end" != Asm[i+1] ? nlIndent(Depth+1) : ""))
+        if (isComplex(Instr = Asm[i]))               { p1(Open[Instr] (!isEnd(Asm[i+1]) ? nlIndent(Depth+1) : ""))
                                                        Stack[++Depth]=Instr;                        WasPrev=0 }
         else if ("key"==Instr)                       { p1(Asm[++i] ": ");                           WasPrev=0 }
         else if ("number"==Instr || "string"==Instr) { p1(Asm[++i]);                                WasPrev=1 }
