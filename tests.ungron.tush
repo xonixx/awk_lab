@@ -25,6 +25,7 @@ $ cd "$MYDIR"; awk -f ungron.awk gron_asm.4.txt | awk -f json_compile_pretty.awk
 |   5,
 |   "5",
 |   false,
+|   null,
 |   {},
 |   []
 | ]

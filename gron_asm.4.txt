@@ -40,7 +40,7 @@ record
     index
     3
     value
-    object
+    null
 end
 
 record
@@ -48,6 +48,15 @@ record
     "json"
     index
     4
+    value
+    object
+end
+
+record
+    field
+    "json"
+    index
+    5
     value
     array
 end
