@@ -94,11 +94,10 @@ $ cd "$MYDIR"; echo '-1.' | awk -f json_parser.awk
 | number
 | -1.
 
-# TODO
-#$ cd "$MYDIR"; echo "\"\n\"" | awk -f json_parser.awk
-#| Can't advance at pos 2:
-#| "
-#| ...
+$ cd "$MYDIR"; printf '"\n"' | awk -f json_parser.awk
+| Can't advance at pos 2: 
+| "
+| ...
 
 $ cd "$MYDIR"; echo '[ [[[[],    {}]]]   ,[[{}]] ]' | awk -f json_parser.awk
 | array
