@@ -1,6 +1,5 @@
 
-$ cd "$MYDIR"; awk -f ungron.awk test_data/gron_asm.1.txt #| awk -f json_compile_pretty.awk
-| number
+$ cd "$MYDIR"; awk -f ungron.awk test_data/gron_asm.1.txt | awk -f json_compile_pretty.awk
 | 7
 |
 
