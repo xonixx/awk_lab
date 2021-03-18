@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; awk -f gron_parser.awk gron.1.txt
+$ cd "$MYDIR"; awk -f gron_parser.awk test_data/gron.1.txt
 | record
 | field
 | "json"
@@ -76,7 +76,7 @@ $ cd "$MYDIR"; awk -f gron_parser.awk gron.1.txt
 | end
 |
 
-$ cd "$MYDIR"; awk -f gron_parser.awk gron.2.txt
+$ cd "$MYDIR"; awk -f gron_parser.awk test_data/gron.2.txt
 | record
 | field
 | "json"
@@ -110,7 +110,7 @@ $ cd "$MYDIR"; awk -f gron_parser.awk gron.2.txt
 | end
 |
 
-$ cd "$MYDIR"; awk -f json_gron.awk json_asm.1.txt | awk -f gron_parser.awk
+$ cd "$MYDIR"; awk -f json_gron.awk test_data/json_asm.1.txt | awk -f gron_parser.awk
 | record
 | field
 | "json"
@@ -283,7 +283,7 @@ $ cd "$MYDIR"; awk -f json_gron.awk json_asm.1.txt | awk -f gron_parser.awk
 | end
 |
 
-$ cd "$MYDIR"; awk -f json_gron.awk json_asm.2.txt | awk -f gron_parser.awk
+$ cd "$MYDIR"; awk -f json_gron.awk test_data/json_asm.2.txt | awk -f gron_parser.awk
 | record
 | field
 | "json"
@@ -342,7 +342,7 @@ $ cd "$MYDIR"; awk -f json_gron.awk json_asm.2.txt | awk -f gron_parser.awk
 | end
 |
 
-$ cd "$MYDIR"; awk -f json_gron.awk json_asm.3.txt | awk -f gron_parser.awk
+$ cd "$MYDIR"; awk -f json_gron.awk test_data/json_asm.3.txt | awk -f gron_parser.awk
 | record
 | field
 | "json"

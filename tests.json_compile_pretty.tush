@@ -1,4 +1,4 @@
-$ cd "$MYDIR"; awk -f json_compile_pretty.awk json_asm.1.txt
+$ cd "$MYDIR"; awk -f json_compile_pretty.awk test_data/json_asm.1.txt
 | {
 |   "total": 57,
 |   "page": [
@@ -19,7 +19,7 @@ $ cd "$MYDIR"; awk -f json_compile_pretty.awk json_asm.1.txt
 |   ]
 | }
 
-$ cd "$MYDIR"; awk -f json_compile_pretty.awk json_asm.2.txt
+$ cd "$MYDIR"; awk -f json_compile_pretty.awk test_data/json_asm.2.txt
 | [
 |   "hello",
 |   123,
@@ -29,7 +29,7 @@ $ cd "$MYDIR"; awk -f json_compile_pretty.awk json_asm.2.txt
 |   {}
 | ]
 
-$ cd "$MYDIR"; awk -f json_compile_pretty.awk json_asm.3.txt
+$ cd "$MYDIR"; awk -f json_compile_pretty.awk test_data/json_asm.3.txt
 | [
 |   "string",
 |   "key",

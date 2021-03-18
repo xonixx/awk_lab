@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; awk -f json_gron.awk json_asm.1.txt
+$ cd "$MYDIR"; awk -f json_gron.awk test_data/json_asm.1.txt
 | json={}
 | json.total=57
 | json.page=[]
@@ -17,7 +17,7 @@ $ cd "$MYDIR"; awk -f json_gron.awk json_asm.1.txt
 | json.page[1].hobby=null
 |
 
-$ cd "$MYDIR"; awk -f json_gron.awk json_asm.2.txt
+$ cd "$MYDIR"; awk -f json_gron.awk test_data/json_asm.2.txt
 | json=[]
 | json[0]="hello"
 | json[1]=123
@@ -27,7 +27,7 @@ $ cd "$MYDIR"; awk -f json_gron.awk json_asm.2.txt
 | json[5]={}
 |
 
-$ cd "$MYDIR"; awk -f json_gron.awk json_asm.3.txt
+$ cd "$MYDIR"; awk -f json_gron.awk test_data/json_asm.3.txt
 | json=[]
 | json[0]="string"
 | json[1]="key"

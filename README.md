@@ -125,10 +125,11 @@ null         #
 ### Test the whole thing
 
 ```shell
-cat 1.json | awk -f json_parser.awk \
-           | awk -f json_gron.awk \
-           | grep "org." \
-           | awk -f gron_parser.awk \
-           | awk -f ungron.awk \
-           | awk -f json_compile.awk | jsqry 
+cat test_data/1.json \
+  | awk -f json_parser.awk \
+  | awk -f json_gron.awk \
+  | grep "org." \
+  | awk -f gron_parser.awk \
+  | awk -f ungron.awk \
+  | awk -f json_compile_pretty.awk 
 ```

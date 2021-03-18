@@ -14,7 +14,7 @@ $ cd "$MYDIR"; echo '[1]' | awk -f json_parser.awk | awk -f json_gron.awk | awk 
 | ]
 
 == make sure ungron doesn't change order ==
-$ cd "$MYDIR"; cat 4.json | awk -f json_parser.awk | awk -f json_gron.awk | awk -f gron_parser.awk | awk -f ungron.awk | awk -f json_compile_pretty.awk
+$ cd "$MYDIR"; cat test_data/4.json | awk -f json_parser.awk | awk -f json_gron.awk | awk -f gron_parser.awk | awk -f ungron.awk | awk -f json_compile_pretty.awk
 | [
 |   1,
 |   2,
@@ -31,12 +31,13 @@ $ cd "$MYDIR"; cat 4.json | awk -f json_parser.awk | awk -f json_gron.awk | awk 
 | ]
 
 == full gron use-case with grep ==
-$ cd "$MYDIR"; cat 1.json | awk -f json_parser.awk | \
-           awk -f json_gron.awk | \
-           grep "org." | \
-           awk -f gron_parser.awk | \
-           awk -f ungron.awk | \
-           awk -f json_compile_pretty.awk
+$ cd "$MYDIR"; cat test_data/1.json | \
+    awk -f json_parser.awk | \
+    awk -f json_gron.awk | \
+    grep "org." | \
+    awk -f gron_parser.awk | \
+    awk -f ungron.awk | \
+    awk -f json_compile_pretty.awk
 | {
 |   "web-app": {
 |     "servlet": [
