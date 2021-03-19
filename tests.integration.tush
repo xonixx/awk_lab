@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; echo '[[[]],[]]' | awk -f json_parser.awk | awk -f json_gron.awk | awk -f gron_parser.awk | awk -f ungron.awk | awk -f json_compile_pretty.awk
+$ cd "$MYDIR"; echo '[[[]],[]]' | awk -f json_parser.awk | awk -f json_gron.awk | awk -f gron_parser.awk | awk -f ungron.awk | Indent=2 awk -f json_compile.awk
 | [
 |   [
 |     []
@@ -8,13 +8,13 @@ $ cd "$MYDIR"; echo '[[[]],[]]' | awk -f json_parser.awk | awk -f json_gron.awk 
 | ]
 |
 
-$ cd "$MYDIR"; echo '[1]' | awk -f json_parser.awk | awk -f json_gron.awk | awk -f gron_parser.awk | awk -f ungron.awk | awk -f json_compile_pretty.awk
+$ cd "$MYDIR"; echo '[1]' | awk -f json_parser.awk | awk -f json_gron.awk | awk -f gron_parser.awk | awk -f ungron.awk | Indent=2 awk -f json_compile.awk
 | [
 |   1
 | ]
 
 == make sure ungron doesn't change order ==
-$ cd "$MYDIR"; cat test_data/4.json | awk -f json_parser.awk | awk -f json_gron.awk | awk -f gron_parser.awk | awk -f ungron.awk | awk -f json_compile_pretty.awk
+$ cd "$MYDIR"; cat test_data/4.json | awk -f json_parser.awk | awk -f json_gron.awk | awk -f gron_parser.awk | awk -f ungron.awk | Indent=2 awk -f json_compile.awk
 | [
 |   1,
 |   2,
@@ -37,7 +37,7 @@ $ cd "$MYDIR"; cat test_data/1.json | \
     grep "org." | \
     awk -f gron_parser.awk | \
     awk -f ungron.awk | \
-    awk -f json_compile_pretty.awk
+    Indent=2 awk -f json_compile.awk
 | {
 |   "web-app": {
 |     "servlet": [
