@@ -89,8 +89,8 @@ function _listPush(list_addr, type, val,   l, i) {
     Heap[i = list_addr + ListServiceLen   + 2*l] = type
     Heap[i+1] = val
 
-    #if (type == "list")
-    #    _listPush(_getRefAddr(val), "primitive", i)
+    if (type == "list")
+        _listPush(_getRefAddr(val), "primitive", i+1)
 
     # TODO re-allocation
 }
