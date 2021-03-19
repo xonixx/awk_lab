@@ -16,6 +16,9 @@ BEGIN {
     print listGetTypeOf("a", 0) " " listGetTypeOf("a", 1)
     print listGet("a", 0)        " " listGet("a", 1)
 
+    listCreate("b")
+    listPush("a", "b")
+
     heapDump()
 }
 
@@ -42,14 +45,17 @@ function get(var_name) {
 
 function addrOf(var_name) { return Vars[var_name] }
 
-function listCreate(var_name,   l_addr, refs_addr) {
-    Vars[var_name] = l_addr = HeapTop
+function listCreate(var_name,   list_addr, refs_addr) {
+    Vars[var_name] = list_addr = HeapTop
     _listCreate(0)
     refs_addr = HeapTop
     _listCreate(1)
-    Heap[l_addr+3] = refs_addr
-    Heap[refs_addr+3] = l_addr
+    _setRefAddr(list_addr, refs_addr)
+    _setRefAddr(refs_addr, list_addr)
 }
+
+function _setRefAddr(list_addr, refs_addr) { Heap[list_addr+3] = refs_addr }
+function _getRefAddr(list_addr) { return Heap[list_addr+3] }
 
 function _listCreate(is_refs) {
     Heap[HeapTop++] = is_refs ? "refs" : "list"
@@ -60,20 +66,31 @@ function _listCreate(is_refs) {
 }
 
 function typeOf(var_name) {
-    return Heap[addrOf(var_name)]
+    return _typeOf(addrOf(var_name))
 }
+
+function _typeOf(var_addr) { return Heap[var_addr] }
+function _valOf(var_addr) { return _typeOf(var_addr) == "list" ? var_addr : Heap[var_addr+1] }
 
 function listLen(var_name) {
     return Heap[addrOf(var_name)+1]
 }
 
-function listPush(list_name, var_name,   pl,pv,l) {
-    pl = addrOf(list_name)
-    pv = addrOf(var_name)
+function listPush(list_name, var_name,   list_addr, var_addr) {
+    list_addr = addrOf(list_name)
+    var_addr = addrOf(var_name)
 
-    l = Heap[pl+1]++  # length
-    Heap[pl + ListServiceLen   + 2*l] = Heap[pv]
-    Heap[pl + ListServiceLen+1 + 2*l] = Heap[pv+1]
+    _listPush(list_addr, _typeOf(var_addr), _valOf(var_addr))
+}
+
+function _listPush(list_addr, type, val,   l, i) {
+    print ">>> ", list_addr, type, val
+    l = Heap[list_addr+1]++  # length
+    Heap[i = list_addr + ListServiceLen   + 2*l] = type
+    Heap[i+1] = val
+
+    #if (type == "list")
+    #    _listPush(_getRefAddr(val), "primitive", i)
 
     # TODO re-allocation
 }
