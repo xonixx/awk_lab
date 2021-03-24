@@ -9,6 +9,7 @@
 - [json_gron.awk](json_gron.awk) - JSON asm → [Gron](gron_asm.md)
 - [gron_parser.awk](gron_parser.awk) - Gron → [Gron asm](gron_asm.md#gron-asm)
 - [ungron.awk](ungron.awk) - Gron asm → JSON asm 
+- [json_structure.awk](json_structure.awk) - JSON asm → [JSON structure](https://news.ycombinator.com/item?id=25009263)
    
 ### JSON
 ```json
