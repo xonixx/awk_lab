@@ -4,6 +4,7 @@ BEGIN {
         if ((Instr = trim($0))!="") { Asm[AsmLen++] = Instr; LineNums[AsmLen] = NR }
     }
 
+    split("",AlreadyTracked)
     split("",Stack); split("",PathStack)
     Depth = 0
 
@@ -25,15 +26,17 @@ function inArr() { return "array"==Stack[Depth] }
 function isEnd(s) { return "end_object"==s || "end_array"==s }
 function incArrIdx() { if (inArr()) PathStack[Depth]++ }
 
-function p(v,    row,i,by_idx,segment,segment_unq) {
+function p(v,    row,i,is_arr,by_idx,segment,segment_unq) {
     row="json"
     for(i=1; i<=Depth; i++) {
         segment = PathStack[i]
         segment_unq = stringUnquote(segment)
-        by_idx = "array"==Stack[i] || segment_unq !~ /^[[:alpha:]$_][[:alnum:]$_]*$/
-        row= row (i==0||by_idx?"":".") (by_idx ? "[" segment "]" : segment_unq)
+        by_idx = (is_arr="array"==Stack[i]) || segment_unq !~ /^[[:alpha:]$_][[:alnum:]$_]*$/
+        row = row (i==0||by_idx?"":".") (is_arr ? "[]" : by_idx ? "[" segment "]" : segment_unq)
     }
-    row=row "=" v # ";"
+    if (row in AlreadyTracked) return
+    AlreadyTracked[row]
+    row = row "=" v
     print row
 }
 
