@@ -37,7 +37,7 @@ function p(v,    row,i,is_arr,by_idx,segment,segment_unq) {
     if (row in AlreadyTracked) return
     AlreadyTracked[row]
     if ("{}" == v || "[]" == v) return
-    row = row "=" v
+    row = row " = " v
     print row
 }
 
