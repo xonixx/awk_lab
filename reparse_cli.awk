@@ -44,7 +44,7 @@ function LINE_PART(res) {
 function LINE() {
   return attempt("LINE") && checkRes("LINE",
     optional(SPACES()) &&
-    optional(LINE_REST())) # TODO
+    LINE_REST()) # TODO
 }
 
 function LINE_REST() {
