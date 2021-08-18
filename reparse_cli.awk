@@ -44,7 +44,20 @@ function LINE_PART(res) {
 function LINE() {
   return attempt("LINE") && checkRes("LINE",
     optional(SPACES()) &&
-    optional()) # TODO
+    optional(LINE_REST())) # TODO
+}
+
+function LINE_REST() {
+  # can't consume LINE_PART -> 1
+  # consume LINE_PART
+  #   -> can't consume SPACES -> 1
+  #   -> consume SPACES
+  #        -> LINE_REST
+  if (!LINE_PART(res)) return 1
+  else {
+    if (!SPACES()) return 1
+    else return LINE_REST()
+  }
 }
 
 
