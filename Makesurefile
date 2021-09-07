@@ -3,11 +3,11 @@
 
 @options timing
 
-@goal soft_folder_created
+@goal soft_folder_created @private
 @reached_if [[ -d "soft" ]]
   mkdir soft
 
-@goal tush_installed
+@goal tush_installed @private
 @depends_on soft_folder_created
 @reached_if [[ -f "soft/tush/bin/tush-check" ]]
   echo
@@ -27,58 +27,30 @@
     rm -r tush/.git
   fi
 
-@goal soft_installed
+@goal soft_installed @private
 @depends_on tush_installed
 
-@goal cleaned
-
-@goal cleaned_soft
+@goal cleaned_soft @private
 @reached_if [[ ! -d "soft" ]]
   rm -r "soft"
 
-@goal cleaned_all
-@depends_on cleaned cleaned_soft
+@goal cleaned @private
+@depends_on cleaned_soft
 
-@goal debug
+@goal debug @private
   awk --version | head -n 1
   bash --version| head -n 1
 
-@goal prepared4tests
+@goal prepared4tests @private
 @depends_on tush_installed debug
 
-@goal tests.json_compile.tush
+@goal @glob tests.*.tush @private
 @depends_on prepared4tests
- ./tests_run_single.sh tests.json_compile.tush
-
-@goal tests.json_compile_pretty.tush
-@depends_on prepared4tests
- ./tests_run_single.sh tests.json_compile_pretty.tush
-
-@goal tests.json_parser.tush
-@depends_on prepared4tests
- ./tests_run_single.sh tests.json_parser.tush
-
-@goal tests.json_gron.tush
-@depends_on prepared4tests
- ./tests_run_single.sh tests.json_gron.tush
-
-@goal tests.json_structure.tush
-@depends_on prepared4tests
- ./tests_run_single.sh tests.json_structure.tush
-
-@goal tests.gron_parser.tush
-@depends_on prepared4tests
- ./tests_run_single.sh tests.gron_parser.tush
-
-@goal tests.ungron.tush
-@depends_on prepared4tests
- ./tests_run_single.sh tests.ungron.tush
-
-@goal tests.integration.tush
-@depends_on prepared4tests
- ./tests_run_single.sh tests.integration.tush
+@use_lib
+ tests_run_single "$ITEM"
 
 @goal tested
+@doc run tests
 @depends_on tests.json_compile.tush
 @depends_on tests.json_compile_pretty.tush
 @depends_on tests.json_parser.tush
@@ -89,4 +61,20 @@
 @depends_on tests.integration.tush
 
 @goal default
+@doc same as tested
 @depends_on tested
+
+@lib
+  function tests_run_single() {
+    f="$1"
+
+    export PATH="$PATH:$MYDIR/soft/tush/bin"
+
+    if DIFF="diff --strip-trailing-cr" tush-check "$f"
+    then
+      echo "TESTS PASSED : $f"
+    else
+      echo >&2 "!!! TESTS FAILED !!! : $f"
+      exit 1
+    fi
+  }
