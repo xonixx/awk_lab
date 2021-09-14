@@ -46,8 +46,17 @@
 
 @goal @glob tests.*.tush @private
 @depends_on prepared4tests
-@use_lib
- tests_run_single "$ITEM"
+  f="$ITEM"
+
+  export PATH="$PATH:$MYDIR/soft/tush/bin"
+
+  if DIFF="diff --strip-trailing-cr" tush-check "$f"
+  then
+    echo "TESTS PASSED : $f"
+  else
+    echo >&2 "!!! TESTS FAILED !!! : $f"
+    exit 1
+  fi
 
 @goal tested
 @doc run tests
@@ -63,18 +72,3 @@
 @goal default
 @doc same as tested
 @depends_on tested
-
-@lib
-  function tests_run_single() {
-    f="$1"
-
-    export PATH="$PATH:$MYDIR/soft/tush/bin"
-
-    if DIFF="diff --strip-trailing-cr" tush-check "$f"
-    then
-      echo "TESTS PASSED : $f"
-    else
-      echo >&2 "!!! TESTS FAILED !!! : $f"
-      exit 1
-    fi
-  }
