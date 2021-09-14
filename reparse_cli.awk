@@ -8,20 +8,91 @@ BEGIN {
 
 function dbgLine(name, arr,   i) { print "--- " name ": "; for (i=1; i<=NF; i++) print i " : " $i }
 
-function reparseCli() {
+function reparseCli(res,   resIdx,state,pos,c,nxt,i) {
   Line = $0
 
-  Pos=1
-  Trace="Trace" in ENVIRON
+  # States:
+  #  external = 0
+  #  inside " = 1
+  #  after \  = 2 <-- only inside string
+  #
+  # we will parse
+  # aaa  "bbb \"' ccc" dd -> [aaa],[bbb "' ccc],[dd]
+  # "a\nb" -> [a
+  #            b]
+  # aaa"bbb"              -> error
+  # "bbb"aaa              -> error
+  # "aaa""bbb"            -> error
+  # "bbb                  -> error
+  # TODO parse comments
 
-  if (LINE()) {
-    if (Pos <= length(Line)) {
-      print "Can't advance at pos " Pos ": " substr(Line,Pos,10) "..."
-      exit 1
+  state = 0
+  pos = 1
+  len = length(Line)
+  resIdx = 0
+  nxt = substr(Line,pos,1)
+  for (pos=1; pos<=len; pos++) {
+    c = nxt
+    nxt = substr(Line,pos+1,1)
+
+    if (0 == state) {
+      if ("\\" == c) {
+        state = 1
+        resIdx++
+      }
+    } else if (1 == state) {
+
+    } else if (2 == state) {
+
     }
-  } else
-    print "Can't advance at pos " Pos ": " substr(Line,Pos,10) "..."
+
+    ###
+    if ("\\" == c) {
+      if (2 == state) {
+        res[resIdx] = res[resIdx] c
+      }
+      else if (1 != state) { error("\\ outside string") }
+      else {
+        state = 2
+      }
+    }
+    if ("\"" == c) {
+      if (0 == state) {
+        state = 1
+        resIdx++
+      } else if (1 == state) {
+        state = 0
+        if (pos<len) {
+          pos++
+          c = substr(Line,pos,1)
+          if (" " != c && "\t" != c) error("should have space after \"")
+        }
+      } else if (2 == state) {
+        res[resIdx] = res[resIdx] c
+      } else error("unhandled state " state)
+    } else {
+
+    }
+  }
+  if (0 != state) { error("unbalanced string") }
 }
+
+function error(msg) { print msg | "cat 1>&2" }
+
+#function reparseCli() {
+#  Line = $0
+#
+#  Pos=1
+#  Trace="Trace" in ENVIRON
+#
+#  if (LINE()) {
+#    if (Pos <= length(Line)) {
+#      print "Can't advance at pos " Pos ": " substr(Line,Pos,10) "..."
+#      exit 1
+#    }
+#  } else
+#    print "Can't advance at pos " Pos ": " substr(Line,Pos,10) "..."
+#}
 
 # LINE      ::= SPACES? ( (LINE_PART SPACES)* LINE_PART SPACES? )?
 # LINE_PART ::= STRING | WORD
