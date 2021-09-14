@@ -30,6 +30,26 @@ function natOrder(s1,s2, i1,i2,   c1, c2,n1,n2, l1, l2) {
 function _cmp(v1, v2) { return v1 > v2 ? 1 : v1 == v2 ? 0 : -1 }
 function _digit(c) { return c >= "0" && c <= "9" }
 
+function quicksort(data, left, right,   i, last) {
+  if (left >= right)
+    return
+
+  quicksort_swap(data, left, int((left + right) / 2))
+  last = left
+  for (i = left + 1; i <= right; i++)
+    if (natOrder(data[i], data[left]) < 1)
+      quicksort_swap(data, ++last, i)
+  quicksort_swap(data, left, last)
+  quicksort(data, left, last - 1)
+  quicksort(data, last + 1, right)
+}
+function quicksort_swap(data, i, j,   temp) {
+  temp = data[i]
+  data[i] = data[j]
+  data[j] = temp
+}
+
+#-----------------------------
 function _resToOp(r) { return r == 1 ? ">" : r == 0 ? "=" : "<" }
 function check(s1, expectedOp, s2,   op) {
   op = _resToOp(natOrder(s1, s2, 1, 1))
@@ -39,6 +59,14 @@ function check(s1, expectedOp, s2,   op) {
 function _testDigit(c, expectedRes,   res) {
   res = _digit(c)
   print (expectedRes == res ? "OK  " : "FAIL") ": " c
+}
+
+function arrPush(arr, e) { arr[arr[-7]++] = e }
+function arrLen(arr) { return +arr[-7] }
+
+function dbgA(name, arr,    i) {
+  print "--- " name " ---";
+  for (i=0; i in arr; i++) print i " : " arr[i]
 }
 
 BEGIN {
@@ -65,4 +93,13 @@ BEGIN {
   check("aaa1.20", "<", "aaa01.50")
   check("aaa1.01.1", "=", "aaa01.001.0001")
 
+  arrPush(files, "file10.txt")
+  arrPush(files, "file1.txt")
+  arrPush(files, "file100.txt")
+  arrPush(files, "file20.txt")
+  arrPush(files, "file2.txt")
+
+  dbgA("before", files)
+  quicksort(files, 0, arrLen(files)-1)
+  dbgA("after", files)
 }
