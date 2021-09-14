@@ -3,7 +3,7 @@
 # s1 > s2 -> 1
 # s1== s2 -> 0
 # s1 < s2 -> -1
-function natOrder(s1,s2, i1,i2,   c1, c2,isD1,isD2, l1, l2) {
+function natOrder(s1,s2, i1,i2,   c1, c2, l1, l2) {
   l1 = length(s1)
   l2 = length(s2)
 
@@ -21,13 +21,12 @@ function natOrder(s1,s2, i1,i2,   c1, c2,isD1,isD2, l1, l2) {
     return _cmp(c1, c2)
 
 #  print 222
-
   n1 = ""; while(_digit(c1 = substr(s1,i1++,1))) n1 = n1 c1; gsub(/^0+/,"",n1)
   n2 = ""; while(_digit(c2 = substr(s2,i2++,1))) n2 = n2 c2; gsub(/^0+/,"",n2)
 
-#  print 333
-  if (0 == n1 - n2) return natOrder(s1, s2, i1, i2)
-  return _cmp(n1, n2)
+#  print 333, n1, n2, _cmp(n1, n2)
+  if (+n1 == +n2) return natOrder(s1, s2, i1, i2)
+  return _cmp(+n1, +n2)
 }
 
 function _cmp(v1, v2) { return v1 > v2 ? 1 : v1 == v2 ? 0 : -1 }
@@ -56,8 +55,12 @@ BEGIN {
 
   check("aaa1", "=", "aaa01")
 #  check("1", "=", "01")
+
   check("aaa2", ">", "aaa1")
   check("aaa2", ">", "aaa01")
   check("aaa2", "<", "aaa10")
+  check("aaa20.txt", ">", "aaa10.txt")
+  check("aaa20.txt", "<", "aaa100.txt")
+#  check("2", "<", "10")
 
 }
