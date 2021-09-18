@@ -24,7 +24,7 @@ function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2, l1, l2) {
   return n1 == n2 ? natOrder(s1, s2, i1, i2) : _cmp(n1, n2)
 }
 
-function _cmp(v1, v2) { return v1 > v2 ? 1 : v1 == v2 ? 0 : -1 }
+function _cmp(v1, v2) { return v1 > v2 ? 1 : v1 < v2 ? -1 : 0 }
 function _digit(c) { return c >= "0" && c <= "9" }
 
 function quicksort(data, left, right,   i, last) {
