@@ -30,17 +30,16 @@ function _digit(c) { return c >= "0" && c <= "9" }
 function quicksort(data, left, right,   i, last) {
   if (left >= right)
     return
-
-  quicksort_swap(data, left, int((left + right) / 2))
+  quicksortSwap(data, left, int((left + right) / 2))
   last = left
   for (i = left + 1; i <= right; i++)
     if (natOrder(data[i], data[left]) < 1)
-      quicksort_swap(data, ++last, i)
-  quicksort_swap(data, left, last)
+      quicksortSwap(data, ++last, i)
+  quicksortSwap(data, left, last)
   quicksort(data, left, last - 1)
   quicksort(data, last + 1, right)
 }
-function quicksort_swap(data, i, j,   temp) {
+function quicksortSwap(data, i, j,   temp) {
   temp = data[i]
   data[i] = data[j]
   data[j] = temp
