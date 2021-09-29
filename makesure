@@ -1,5 +1,6 @@
 #!/bin/sh
-exec awk -v "Version=0.9.10" -v "Prog=$0" '
+if command -v gawk >/dev/null;then makesure_awk='gawk -ltime -v Gawk=1';makesure_pre='';else makesure_awk=awk;makesure_pre='function gettimeofday(){}';fi
+exec $makesure_awk -v "Version=0.9.11" -v "Prog=$0" "$makesure_pre"'
 BEGIN {
   Shell = "bash"
   SupportedShells["bash"]
@@ -461,12 +462,14 @@ function topologicalSortPerform(node, result, loop,   i, s) {
   arrPush(result, node)
 }
 function currentTimeMillis(   script, res) {
+  if (Gawk)
+    return int(gettimeofday()*1000)
   res = executeGetLine("date +%s%3N")
   sub(/%?3N/, "000", res)
   return +res
 }
 function selfUpdate(   url, tmp, err, newVer) {
-  url = "https://raw.githubusercontent.com/xonixx/makesure/main/makesure_stable?token=" rand()
+  url = "https://raw.githubusercontent.com/xonixx/makesure/main/makesure?token=" rand()
   tmp = executeGetLine("mktemp /tmp/makesure_new.XXXXXXXXXX")
   err = dl(url, tmp)
   if (!err && !ok("chmod +x " tmp)) err = "can'\''t chmod +x " tmp
