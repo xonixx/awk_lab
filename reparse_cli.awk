@@ -1,11 +1,19 @@
 BEGIN {
-  Pos
-  Line
+  #  Pos
+  #  Line
+  err = reparseCli(" 'aaa'  'bbb ccc'    # comment ",res)
+  if (err)
+    print "error: " err
+  else {
+    for (i=0; i in res; i++) {
+      print res[i]
+    }
+  }
 }
 
-{ dbgLine("before"); reparseCli(); dbgLine("after") }
+#{ dbgLine("before"); reparseCli(); dbgLine("after") }
 
-function dbgLine(name, arr,   i) { print "--- " name ": "; for (i=1; i<=NF; i++) print i " : " $i }
+#function dbgLine(name, arr,   i) { print "--- " name ": "; for (i=1; i<=NF; i++) print i " : " $i }
 
 # we will parse
 # aaa  'bbb "\' ccc' dd -> [aaa],[bbb "' ccc],[dd]
@@ -21,21 +29,28 @@ function dbgLine(name, arr,   i) { print "--- " name ": "; for (i=1; i<=NF; i++)
 ## returns error if any
 function reparseCli(line, res,   pos,c,last) {
   for(;;) {
+    #    trace(0,line,pos)
     pos = _consumeSpaces(line, pos)
+    #    trace(1,line,pos)
     if ((c = substr(line,pos,1))=="#" || c=="")
       return
-    else if (c == "'") { # consume string
+    else if (c == "'") { # start of string
+      # consume string
       res[last = res[-7]++] = ""
       while((c = substr(line,++pos,1)) != "'") { # closing '
+        #        trace(2,line,pos)
         if (c=="")
           return "unterminated argument"
         res[last] = res[last] c
       }
-      if((c = substr(line,pos+1,1) != "" && c != " " && c != "\t"))
+      #      trace(3,line,pos)
+      if((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
         return "joined arguments"
     }
   }
 }
+
+function trace(m,t,pos) { printf "%10s pos %d: %s\n", m, pos, substr(t,pos,10) "..." }
 
 #function _addResChar(res, c) { res[res[-7]] =  }
 
@@ -211,7 +226,7 @@ function tryParse(chars, res, atMost,    i,c,s) {
 function nextChar() { return substr(Line,Pos,1) }
 function checkRes(rule, r) { trace(rule (r?"+":"-")); return r }
 function attempt(rule) { trace(rule "?"); return 1 }
-function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(Line,Pos,10) "..."} }
+#function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(Line,Pos,10) "..."} }
 function optional(r) { return 1 }
 
 ###
