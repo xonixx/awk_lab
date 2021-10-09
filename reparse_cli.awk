@@ -1,22 +1,24 @@
 BEGIN {
-  Trace=0
+#  Trace=1
   testCli(" 'aaa'\t  'bbb ccc'    # comment ")
   testCli(" aaa bbbb\t  ccccc")
+  testCli(" 'aaa\\'bbb'   ")
+  testCli(" 'aaa\\bbb'   ")
+  testCli(" 'aaa#bbb'   ")
 }
 
-function testCli(line,   err,res,i) {
+function testCli(line,   l,err,res,i) {
   print "================="
-  print line
+  l=line; gsub(/\t/,"\\t",l); print "|" l "|"
   print "-----------------"
   err = reparseCli(line, res)
   if (err)
     print "error: " err
   else {
     for (i=0; i in res; i++) {
-      print res[i]
+      print i ": " res[i]
     }
   }
-
 }
 
 #{ dbgLine("before"); reparseCli(); dbgLine("after") }
@@ -49,6 +51,9 @@ function reparseCli(line, res,   pos,c,last) {
         trace(2,line,pos)
         if (c=="")
           return "unterminated argument"
+        else if (c=="\\" && substr(line,pos+1,1)=="'") { # escaped '
+          c = "'"; pos++
+        }
         res[last] = res[last] c
       }
       trace(3,line,pos)
