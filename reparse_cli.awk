@@ -40,7 +40,7 @@ function testCli(line,   l,err,res,i) {
 function reparseCli(line, res,   pos,c,last) {
   for(;;) {
     trace(0,line,pos)
-    pos = _consumeSpaces(line, pos)
+    while((c = substr(line,pos,1))==" " || c == "\t") pos++ # consume spaces
     trace(1,line,pos)
     if ((c = substr(line,pos,1))=="#" || c=="")
       return
@@ -73,11 +73,6 @@ function reparseCli(line, res,   pos,c,last) {
 function trace(m,t,pos) { if (Trace) printf "%10s pos %d: %s\n", m, pos, substr(t,pos,10) "..." }
 
 #function _addResChar(res, c) { res[res[-7]] =  }
-
-function _consumeSpaces(line, pos,   c) {
-  while((c = substr(line,pos,1))==" " || c == "\t") pos++;
-  return pos;
-}
 
 function reparseCli_(res,   resIdx,state,pos,c,nxt,i) {
   Line = $0
