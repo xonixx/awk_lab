@@ -12,7 +12,7 @@
 - [json_structure.awk](json_structure.awk) - JSON asm → [JSON structure](https://news.ycombinator.com/item?id=25009263)
 - [nat_sort.awk](nat_sort.awk) - Natural sorting
 - CLI
-  - [parse_cli_lib.awk](parse_cli_lib.awk) - basic utility to parse CLI `aaa 'bbb cc'  'd\'ee'` -> `[aaa],[bbb cc],[d'ee]`
+  - [parse_cli_lib.awk](parse_cli_lib.awk) - basic utility to parse CLI `"  aaa 'bbb cc'  'd\'ee' "` -> `["aaa", "bbb cc", "d'ee"]`
   - [parse_cli_test.awk](parse_cli_test.awk) - tests for above lib
   - [reparse_cli.awk](reparse_cli.awk) - reparses `$0` to make Awk parsing closer to CLI
     - `awk -f parse_cli_lib.awk -f reparse_cli.awk`
