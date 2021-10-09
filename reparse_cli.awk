@@ -1,5 +1,6 @@
 BEGIN {
 #  Trace=1
+  testCli("a")
   testCli(" 'aaa'\t  'bbb ccc'    # comment ")
   testCli(" aaa bbbb\t  ccccc")
   testCli(" 'aaa\\'\\'\"bbb'   ")
@@ -38,7 +39,7 @@ function testCli(line,   l,err,res,i) {
 ## res - 0-based
 ## returns error if any
 function reparseCli(line, res,   pos,c,last) {
-  for(;;) {
+  for(pos=1;;) {
     trace(0,line,pos)
     while((c = substr(line,pos,1))==" " || c == "\t") pos++ # consume spaces
     trace(1,line,pos)
