@@ -65,3 +65,6 @@
 @goal default
 @doc same as tested
 @depends_on tested
+
+@goal notrace @glob *.awk
+  awk '$1 !~ /^trace\(/' "$ITEM"
