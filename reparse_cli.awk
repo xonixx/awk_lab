@@ -1,7 +1,13 @@
 BEGIN {
-  #  Pos
-  #  Line
-  err = reparseCli(" 'aaa'  'bbb ccc'    # comment ",res)
+  testCli(" 'aaa'\t  'bbb ccc'    # comment ")
+  #testCli(" aaa bbbb\t  ccccc")
+}
+
+function testCli(line,   err,res,i) {
+  print "================="
+  print line
+  print "-----------------"
+  err = reparseCli(line, res)
   if (err)
     print "error: " err
   else {
@@ -9,6 +15,7 @@ BEGIN {
       print res[i]
     }
   }
+
 }
 
 #{ dbgLine("before"); reparseCli(); dbgLine("after") }
