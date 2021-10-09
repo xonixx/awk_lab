@@ -1,4 +1,3 @@
-
 BEGIN {
   Pos
   Line
@@ -8,23 +7,52 @@ BEGIN {
 
 function dbgLine(name, arr,   i) { print "--- " name ": "; for (i=1; i<=NF; i++) print i " : " $i }
 
-function reparseCli(res,   resIdx,state,pos,c,nxt,i) {
+# we will parse
+# aaa  'bbb "\' ccc' dd -> [aaa],[bbb "' ccc],[dd]
+# 'a\nb' -> [a\nb]      // only ' can be escaped, all rest is literal
+# aaa'bbb'              -> error
+# 'bbb'aaa              -> error
+# 'aaa''bbb'            -> error
+# 'bbb                  -> error
+# a 'b # c' # comment   -> [a],[b # c] // parse comments
+
+## res[-7] = res len
+## res - 0-based
+## returns error if any
+function reparseCli(line, res,   pos,c,last) {
+  for(;;) {
+    pos = _consumeSpaces(line, pos)
+    if ((c = substr(line,pos,1))=="#" || c=="")
+      return
+    else if (c == "'") { # consume string
+      res[last = res[-7]++] = ""
+      while((c = substr(line,++pos,1)) != "'") { # closing '
+        if (c=="")
+          return "unterminated argument"
+        res[last] = res[last] c
+      }
+      if((c = substr(line,pos+1,1) != "" && c != " " && c != "\t"))
+        return "joined arguments"
+    }
+  }
+}
+
+#function _addResChar(res, c) { res[res[-7]] =  }
+
+function _consumeSpaces(line, pos,   c) {
+  while((c = substr(line,pos,1))==" " || c == "\t") pos++;
+  return pos;
+}
+
+function reparseCli_(res,   resIdx,state,pos,c,nxt,i) {
   Line = $0
 
   # States:
   #  external = 0
-  #  inside " = 1
+  #  inside ' = 1
   #  after \  = 2 <-- only inside string
   #
-  # we will parse
-  # aaa  "bbb \"' ccc" dd -> [aaa],[bbb "' ccc],[dd]
-  # "a\nb" -> [a
-  #            b]
-  # aaa"bbb"              -> error
-  # "bbb"aaa              -> error
-  # "aaa""bbb"            -> error
-  # "bbb                  -> error
-  # TODO parse comments
+
 
   state = 0
   pos = 1
@@ -102,7 +130,7 @@ function error(msg) { print msg | "cat 1>&2" }
 
 function WORD(res,   c,s) {
   while ((c = nextChar()) != " " && c != "\t") {
-   s = s c
+    s = s c
   }
   res[0] = s
   return s != ""
