@@ -1,17 +1,3 @@
-function testCli(line,   l,err,res,i) {
-  print "================="
-  l=line; gsub(/\t/,"\\t",l); print "|" l "|"
-  print "-----------------"
-  err = parseCli(line, res)
-  if (err)
-    print "error: " err
-  else {
-    for (i=0; i in res; i++) {
-      print i ": " res[i]
-    }
-  }
-}
-
 # we will parse
 # aaa  'bbb "\' ccc' dd -> [aaa],[bbb "' ccc],[dd]
 # 'a\nb' -> [a\nb]      // only ' can be escaped, all rest is literal
