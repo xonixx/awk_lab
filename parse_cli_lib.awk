@@ -37,6 +37,8 @@ function parseCli(line, res,   pos,c,last) {
       res[last = res[-7]++] = c
       while((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes end of arg
         trace(4,line,pos)
+        if(c=="'")
+          return "joined arguments"
         res[last] = res[last] c
       }
     }

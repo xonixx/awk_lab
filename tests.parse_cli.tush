@@ -27,3 +27,31 @@ $ cd "$MYDIR"; awk -f parse_cli_lib.awk -f parse_cli_test.awk
 | | 'aaa#bbb'   |
 | -----------------
 | 0: aaa#bbb
+| =================
+| | 'aaa   |
+| -----------------
+| error: unterminated argument
+| =================
+| | 'aaa\'   |
+| -----------------
+| error: unterminated argument
+| =================
+| |'aa\'a  # comment comment1|
+| -----------------
+| error: unterminated argument
+| =================
+| | aaa'   |
+| -----------------
+| error: joined arguments
+| =================
+| |aaa'bb'   |
+| -----------------
+| error: joined arguments
+| =================
+| | 'aaa''bb'|
+| -----------------
+| error: joined arguments
+| =================
+| |'aaa'bb   |
+| -----------------
+| error: joined arguments
