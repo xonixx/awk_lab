@@ -11,6 +11,7 @@ BEGIN {
   testCli(" 'aaa\\'   ")
   testCli("'aa\\'a  # comment comment1")
   testCli(" aaa'   ")
+  testCli("aaa'bb")
   testCli("aaa'bb'   ")
   testCli(" 'aaa''bb'")
   testCli("'aaa'bb   ")

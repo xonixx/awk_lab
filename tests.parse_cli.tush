@@ -44,6 +44,10 @@ $ cd "$MYDIR"; awk -f parse_cli_lib.awk -f parse_cli_test.awk
 | -----------------
 | error: joined arguments
 | =================
+| |aaa'bb|
+| -----------------
+| error: joined arguments
+| =================
 | |aaa'bb'   |
 | -----------------
 | error: joined arguments
