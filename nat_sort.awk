@@ -27,7 +27,7 @@ function quicksort(data, left, right,   i, last) {
   quicksortSwap(data, left, int((left + right) / 2))
   last = left
   for (i = left + 1; i <= right; i++)
-    if (natOrder(data[i], data[left]) < 1)
+    if (natOrder(data[i], data[left],1,1) < 1)
       quicksortSwap(data, ++last, i)
   quicksortSwap(data, left, last)
   quicksort(data, left, last - 1)
@@ -74,6 +74,7 @@ BEGIN {
 
   check("aaa1", "=", "aaa01")
   check("1", "=", "01")
+  check("01", "=", "1")
 
   check("aaa2", ">", "aaa1")
   check("aaa2", ">", "aaa01")
@@ -81,6 +82,7 @@ BEGIN {
   check("aaa20.txt", ">", "aaa10.txt")
   check("aaa20.txt", "<", "aaa100.txt")
   check("2", "<", "10")
+  check("10", ">", "2")
 
   check("aaa1.20", ">", "aaa01.5")
   check("aaa1.20", "<", "aaa01.50")
@@ -93,7 +95,7 @@ BEGIN {
 
   check("01ca",">","1ba")
 
-  if (0){
+  if (1){
     arrPush(files, "file10.txt")
     arrPush(files, "file1.txt")
     arrPush(files, "file100.txt")
@@ -107,7 +109,7 @@ BEGIN {
     dbgA("after", files)
   }
 
-  if (0) {
+  if (1) {
     arrPush(files1, "0_basic.tush")
     arrPush(files1, "10_define.tush")
     arrPush(files1, "11_goal_glob.tush")
