@@ -2,24 +2,30 @@
 # s1== s2 -> 0
 # s1 < s2 -> -1
 function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2, l1, l2) {
-  l1 = length(s1); l2 = length(s2)
+#  print s1, s2, i1, i2
+  #  l1 = length(s1); l2 = length(s2)
 
-  if (i1 == l1+1 || i2 == l2+1)
-    return _cmp(l1-i1, l2-i2)
+  #  if (i1 == l1+1 || i2 == l2+1)
+  #    return _cmp(l1-i1, l2-i2)
 
-  while ((c1 = substr(s1,i1,1)) == (c2 = substr(s2,i2,1))) {
-    i1++; i2++
-    if (i1>l1 || i2>l2)
-      return _cmp(l1-i1, l2-i2)
+  if (_digit(c1 = substr(s1,i1,1)) && _digit(c2 = substr(s2,i2,1))) {
+    n1 = 0; while(_digit(c1 = substr(s1,i1,1))) { i1++; n1 = n1 * 10 + c1 }
+    n2 = 0; while(_digit(c2 = substr(s2,i2,1))) { i2++; n2 = n2 * 10 + c2 }
+
+    return n1 == n2 ? natOrder(s1, s2, i1, i2) : _cmp(n1, n2)
   }
 
-  if (!_digit(c1) || !_digit(c2))
-    return _cmp(c1, c2)
+  # consume till equal substrings
+  while ((c1 = substr(s1,i1,1)) == (c2 = substr(s2,i2,1)) && c1 != "") {
+    i1++; i2++
+    #    if (i1>l1 || i2>l2)
+    #      return _cmp(l1-i1, l2-i2)
+  }
 
-  n1 = 0; while(_digit(c1 = substr(s1,i1++,1))) { n1 = n1 * 10 + c1 }
-  n2 = 0; while(_digit(c2 = substr(s2,i2++,1))) { n2 = n2 * 10 + c2 }
+  #  if (!_digit(c1) || !_digit(c2))
+#  return _cmp(c1, c2)
+  return _digit(c1) && _digit(c2) ? natOrder(s1, s2, i1, i2) : _cmp(c1, c2)
 
-  return n1 == n2 ? natOrder(s1, s2, i1, i2) : _cmp(n1, n2)
 }
 
 function _cmp(v1, v2) { return v1 > v2 ? 1 : v1 < v2 ? -1 : 0 }
@@ -64,7 +70,8 @@ function dbgA(name, arr,    i) {
 }
 
 BEGIN {
-  if (0){
+
+  if (1){
 
     #  _testDigit("a",0)
     #  _testDigit("A",0)
@@ -77,14 +84,14 @@ BEGIN {
     check("aaaa", ">", "aaa")
 
     check("aaa1", "=", "aaa01")
-    #  check("1", "=", "01")
+    check("1", "=", "01")
 
     check("aaa2", ">", "aaa1")
     check("aaa2", ">", "aaa01")
     check("aaa2", "<", "aaa10")
     check("aaa20.txt", ">", "aaa10.txt")
     check("aaa20.txt", "<", "aaa100.txt")
-    #  check("2", "<", "10")
+    check("2", "<", "10")
 
     check("aaa1.20", ">", "aaa01.5")
     check("aaa1.20", "<", "aaa01.50")
@@ -103,7 +110,12 @@ BEGIN {
     quicksort(files, 0, arrLen(files)-1)
     dbgA("after", files)
   }
-  if (0) {
+  if (1) {
+    check("1_goals.tush", "<", "20_list_goals.tush")
+    check("1_goals.tush", "<", "19_optimize_goals.tush")
+    check("1_goals.tush", ">", "0_basic.tush")
+  }
+  if (1) {
     arrPush(files1, "0_basic.tush")
     arrPush(files1, "10_define.tush")
     arrPush(files1, "11_goal_glob.tush")
@@ -131,7 +143,4 @@ BEGIN {
     quicksort(files1, 0, arrLen(files1)-1)
     dbgA("after", files1)
   }
-  check("1_goals.tush", "<", "20_list_goals.tush")
-  check("1_goals.tush", "<", "19_optimize_goals.tush")
-  check("1_goals.tush", ">", "0_basic.tush")
 }
