@@ -1,5 +1,3 @@
-
-
 # s1 > s2 -> 1
 # s1== s2 -> 0
 # s1 < s2 -> -1
@@ -62,44 +60,73 @@ function arrLen(arr) { return +arr[-7] }
 
 function dbgA(name, arr,    i) {
   print "--- " name " ---";
-  for (i=0; i in arr; i++) print i " : " arr[i]
+  for (i=0; i in arr; i++) printf "%2s : %s\n", i, arr[i]
 }
 
 BEGIN {
-#  _testDigit("a",0)
-#  _testDigit("A",0)
-#  _testDigit("0",1)
-#  _testDigit("7",1)
+  if (0){
 
-  check("aaa", "=", "aaa")
-  check("bbb", ">", "aaa")
-  check("aaa", "<", "aaaa")
-  check("aaaa", ">", "aaa")
+    #  _testDigit("a",0)
+    #  _testDigit("A",0)
+    #  _testDigit("0",1)
+    #  _testDigit("7",1)
 
-  check("aaa1", "=", "aaa01")
-#  check("1", "=", "01")
+    check("aaa", "=", "aaa")
+    check("bbb", ">", "aaa")
+    check("aaa", "<", "aaaa")
+    check("aaaa", ">", "aaa")
 
-  check("aaa2", ">", "aaa1")
-  check("aaa2", ">", "aaa01")
-  check("aaa2", "<", "aaa10")
-  check("aaa20.txt", ">", "aaa10.txt")
-  check("aaa20.txt", "<", "aaa100.txt")
-#  check("2", "<", "10")
+    check("aaa1", "=", "aaa01")
+    #  check("1", "=", "01")
 
-  check("aaa1.20", ">", "aaa01.5")
-  check("aaa1.20", "<", "aaa01.50")
-  check("aaa1.01.1", "=", "aaa01.001.0001")
-  check("aaa1.01.2", ">", "aaa01.001.0001")
+    check("aaa2", ">", "aaa1")
+    check("aaa2", ">", "aaa01")
+    check("aaa2", "<", "aaa10")
+    check("aaa20.txt", ">", "aaa10.txt")
+    check("aaa20.txt", "<", "aaa100.txt")
+    #  check("2", "<", "10")
 
-  arrPush(files, "file10.txt")
-  arrPush(files, "file1.txt")
-  arrPush(files, "file100.txt")
-  arrPush(files, "file20.txt")
-  arrPush(files, "file20.1.txt")
-  arrPush(files, "file2.txt")
-  arrPush(files, "file003.txt")
+    check("aaa1.20", ">", "aaa01.5")
+    check("aaa1.20", "<", "aaa01.50")
+    check("aaa1.01.1", "=", "aaa01.001.0001")
+    check("aaa1.01.2", ">", "aaa01.001.0001")
 
-  dbgA("before", files)
-  quicksort(files, 0, arrLen(files)-1)
-  dbgA("after", files)
+    arrPush(files, "file10.txt")
+    arrPush(files, "file1.txt")
+    arrPush(files, "file100.txt")
+    arrPush(files, "file20.txt")
+    arrPush(files, "file20.1.txt")
+    arrPush(files, "file2.txt")
+    arrPush(files, "file003.txt")
+
+    dbgA("before", files)
+    quicksort(files, 0, arrLen(files)-1)
+    dbgA("after", files)
+  }
+  arrPush(files1, "0_basic.tush")
+  arrPush(files1, "10_define.tush")
+  arrPush(files1, "11_goal_glob.tush")
+  arrPush(files1, "12_errors.tush")
+  arrPush(files1, "13_doc.tush")
+  arrPush(files1, "14_private.tush")
+  arrPush(files1, "15_lib.tush")
+  arrPush(files1, "16_prelude_fail.tush")
+  arrPush(files1, "17_empty_prelude.tush")
+  arrPush(files1, "18_vars_priority.tush")
+  arrPush(files1, "19_optimize_goals.tush")
+  arrPush(files1, "1_goals.tush")
+  arrPush(files1, "20_list_goals.tush")
+  arrPush(files1, "21_parsing.tush")
+  arrPush(files1, "2_mydir.tush")
+  arrPush(files1, "3_loop.tush")
+  arrPush(files1, "4_trace.tush")
+  arrPush(files1, "5_shell.tush")
+  arrPush(files1, "6_reached_if.tush")
+  arrPush(files1, "7_options.tush")
+  arrPush(files1, "8_timing.tush")
+  arrPush(files1, "9_prelude.tush")
+
+  dbgA("before", files1)
+  quicksort(files1, 0, arrLen(files1)-1)
+  dbgA("after", files1)
 }
