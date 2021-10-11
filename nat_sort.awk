@@ -4,8 +4,8 @@
 function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2) {
   #  print s1, s2, i1, i2
   if (_digit(c1 = substr(s1,i1,1)) && _digit(c2 = substr(s2,i2,1))) {
-    n1 = 0; while(_digit(c1 = substr(s1,i1,1))) { i1++; n1 = n1 * 10 + c1 }
-    n2 = 0; while(_digit(c2 = substr(s2,i2,1))) { i2++; n2 = n2 * 10 + c2 }
+    n1 = +c1; while(_digit(c1 = substr(s1,++i1,1))) { n1 = n1 * 10 + c1 }
+    n2 = +c2; while(_digit(c2 = substr(s2,++i2,1))) { n2 = n2 * 10 + c2 }
 
     return n1 == n2 ? natOrder(s1, s2, i1, i2) : _cmp(n1, n2)
   }
