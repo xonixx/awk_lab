@@ -61,33 +61,39 @@ function dbgA(name, arr,    i) {
 
 BEGIN {
 
-  if (1){
 
-    #  _testDigit("a",0)
-    #  _testDigit("A",0)
-    #  _testDigit("0",1)
-    #  _testDigit("7",1)
+  #  _testDigit("a",0)
+  #  _testDigit("A",0)
+  #  _testDigit("0",1)
+  #  _testDigit("7",1)
 
-    check("aaa", "=", "aaa")
-    check("bbb", ">", "aaa")
-    check("aaa", "<", "aaaa")
-    check("aaaa", ">", "aaa")
+  check("aaa", "=", "aaa")
+  check("bbb", ">", "aaa")
+  check("aaa", "<", "aaaa")
+  check("aaaa", ">", "aaa")
 
-    check("aaa1", "=", "aaa01")
-    check("1", "=", "01")
+  check("aaa1", "=", "aaa01")
+  check("1", "=", "01")
 
-    check("aaa2", ">", "aaa1")
-    check("aaa2", ">", "aaa01")
-    check("aaa2", "<", "aaa10")
-    check("aaa20.txt", ">", "aaa10.txt")
-    check("aaa20.txt", "<", "aaa100.txt")
-    check("2", "<", "10")
+  check("aaa2", ">", "aaa1")
+  check("aaa2", ">", "aaa01")
+  check("aaa2", "<", "aaa10")
+  check("aaa20.txt", ">", "aaa10.txt")
+  check("aaa20.txt", "<", "aaa100.txt")
+  check("2", "<", "10")
 
-    check("aaa1.20", ">", "aaa01.5")
-    check("aaa1.20", "<", "aaa01.50")
-    check("aaa1.01.1", "=", "aaa01.001.0001")
-    check("aaa1.01.2", ">", "aaa01.001.0001")
+  check("aaa1.20", ">", "aaa01.5")
+  check("aaa1.20", "<", "aaa01.50")
+  check("aaa1.01.1", "=", "aaa01.001.0001")
+  check("aaa1.01.2", ">", "aaa01.001.0001")
 
+  check("1_goals.tush", "<", "20_list_goals.tush")
+  check("1_goals.tush", "<", "19_optimize_goals.tush")
+  check("1_goals.tush", ">", "0_basic.tush")
+
+  check("01ca",">","1ba")
+
+  if (0){
     arrPush(files, "file10.txt")
     arrPush(files, "file1.txt")
     arrPush(files, "file100.txt")
@@ -100,12 +106,8 @@ BEGIN {
     quicksort(files, 0, arrLen(files)-1)
     dbgA("after", files)
   }
-  if (1) {
-    check("1_goals.tush", "<", "20_list_goals.tush")
-    check("1_goals.tush", "<", "19_optimize_goals.tush")
-    check("1_goals.tush", ">", "0_basic.tush")
-  }
-  if (1) {
+
+  if (0) {
     arrPush(files1, "0_basic.tush")
     arrPush(files1, "10_define.tush")
     arrPush(files1, "11_goal_glob.tush")
@@ -133,6 +135,4 @@ BEGIN {
     quicksort(files1, 0, arrLen(files1)-1)
     dbgA("after", files1)
   }
-
-  check("01ca",">","1ba")
 }
