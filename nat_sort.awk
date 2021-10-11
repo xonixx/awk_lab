@@ -1,13 +1,8 @@
 # s1 > s2 -> 1
 # s1== s2 -> 0
 # s1 < s2 -> -1
-function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2, l1, l2) {
-#  print s1, s2, i1, i2
-  #  l1 = length(s1); l2 = length(s2)
-
-  #  if (i1 == l1+1 || i2 == l2+1)
-  #    return _cmp(l1-i1, l2-i2)
-
+function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2) {
+  #  print s1, s2, i1, i2
   if (_digit(c1 = substr(s1,i1,1)) && _digit(c2 = substr(s2,i2,1))) {
     n1 = 0; while(_digit(c1 = substr(s1,i1,1))) { i1++; n1 = n1 * 10 + c1 }
     n2 = 0; while(_digit(c2 = substr(s2,i2,1))) { i2++; n2 = n2 * 10 + c2 }
@@ -18,14 +13,9 @@ function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2, l1, l2) {
   # consume till equal substrings
   while ((c1 = substr(s1,i1,1)) == (c2 = substr(s2,i2,1)) && c1 != "") {
     i1++; i2++
-    #    if (i1>l1 || i2>l2)
-    #      return _cmp(l1-i1, l2-i2)
   }
 
-  #  if (!_digit(c1) || !_digit(c2))
-#  return _cmp(c1, c2)
   return _digit(c1) && _digit(c2) ? natOrder(s1, s2, i1, i2) : _cmp(c1, c2)
-
 }
 
 function _cmp(v1, v2) { return v1 > v2 ? 1 : v1 < v2 ? -1 : 0 }
@@ -143,4 +133,6 @@ BEGIN {
     quicksort(files1, 0, arrLen(files1)-1)
     dbgA("after", files1)
   }
+
+  check("01ca",">","1ba")
 }
