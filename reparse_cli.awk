@@ -4,9 +4,9 @@
   dbgLine("after")
 }
 
-function dbgLine(name, arr,   i) { print "--- " name ": "; for (i=1; i<=NF; i++) print i " : " $i }
+function dbgLine(name,   i) { print "--- " name ": "; for (i=1; i<=NF; i++) print i " : " $i }
 
-function reparseCli(   res,i) {
+function reparseCli(   res,i,err) {
   err = parseCli($0, res)
   if (err)
     print "error: " err
