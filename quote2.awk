@@ -27,6 +27,10 @@ BEGIN {
   test("a>b", "'a>b'")
   test("a<b", "'a<b'")
   test("a~b", "'a~b'")
+  test("a{b", "'a{b'") # echo test{1,2,3} -> test1 test2 test3
+  ###
+  test("@a.,b_c+-=d/e", "@a.,b_c+-=d/e")
+  test("@a.,b_c+-=d/e", "'@a.,b_c+-=d/e'",1)
 }
 
 function test(str,expected,force,   res, str1, script) {
@@ -54,5 +58,5 @@ function quote2(s,force) {
     gsub(/'/,"\\'",s)
     return "$'" s "'"
   } else
-    return force || s ~ /[ \t\\]/ ? "'" s "'" : s
+    return force || s ~ /[^a-zA-Z0-9.,@_\/=+-]/ ? "'" s "'" : s
 }
