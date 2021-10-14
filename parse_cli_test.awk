@@ -29,4 +29,5 @@ function testCli(line,   l,err,res,i) {
       print i ": " res[i]
     }
   }
+  print "."
 }

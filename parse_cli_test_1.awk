@@ -1,5 +1,8 @@
 BEGIN {
+  # XXX how to represent aaa\' -> $'aaa\\\''
+
   #  Trace=1
+
   testCli_1("a")
   testCli_1(" 'aaa'\t  'bbb ccc'    # comment ")
   testCli_1(" $'aaa'\t  $'bbb ccc'    # comment ")
@@ -8,6 +11,7 @@ BEGIN {
   testCli_1(" 'aaa\\bbb'   ")
   testCli_1(" 'aaa#bbb'   ")
   testCli_1(" 'aaa\\'   ")
+  testCli_1(" $'aaa\\\\\\''   ")
   # errors
   testCli_1(" 'aaa   ")
   testCli_1(" $'aaa\\'   ")
@@ -34,4 +38,5 @@ function testCli_1(line,   l,err,res,i) {
       print i ": " res[i]
     }
   }
+  print "."
 }

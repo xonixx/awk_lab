@@ -5,7 +5,7 @@
 ## res[-7] = res len
 ## res - 0-based
 ## returns error if any
-function parseCli_1(line, res,   pos,c,last, is_doll) {
+function parseCli_1(line, res,   pos,c,last,is_doll,c1) {
   for(pos=1;;) {
     trace(0,line,pos)
     while((c = substr(line,pos,1))==" " || c == "\t") pos++ # consume spaces
@@ -22,8 +22,8 @@ function parseCli_1(line, res,   pos,c,last, is_doll) {
           trace(2,line,pos)
           if (c=="")
             return "unterminated argument"
-          else if (is_doll && c=="\\" && substr(line,pos+1,1)=="'") { # escaped '
-            c = "'"; pos++
+          else if (is_doll && c=="\\" && ((c1=substr(line,pos+1,1))=="'" || c1==c)) { # escaped ' or \
+            c = c1; pos++
           }
           res[last] = res[last] c
         }
