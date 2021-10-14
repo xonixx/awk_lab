@@ -9,6 +9,24 @@ BEGIN {
   test("'", "$'\\''")
   test("a\\b", "'a\\b'")
   test("\\'", "$'\\\\\\''")
+
+  # https://www.cs.ait.ac.th/~on/O/oreilly/unix/upt/ch08_19.htm
+  test("a*b", "'a*b'")
+  test("a$b", "'a$b'")
+  test("a&b", "'a&b'")
+  test("a|b", "'a|b'")
+  test("a(b", "'a(b'")
+  test("a)b", "'a)b'")
+  test("a#b", "'a#b'")
+  test("a!b", "'a!b'")
+  test("a;b", "'a;b'")
+  test("a\"b", "'a\"b'")
+  test("a`b", "'a`b'")
+  test("a?b", "'a?b'")
+  test("a^b", "'a^b'")
+  test("a>b", "'a>b'")
+  test("a<b", "'a<b'")
+  test("a~b", "'a~b'")
 }
 
 function test(str,expected,force,   res, str1, script) {
