@@ -1,6 +1,4 @@
 BEGIN {
-  # XXX how to represent aaa\' -> $'aaa\\\''
-
   #  Trace=1
 
   testCli_1("a")
