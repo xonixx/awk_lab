@@ -7,6 +7,8 @@ BEGIN {
   test("aaa'b", "$'aaa\\'b'")
   test("aaa'b", "$'aaa\\'b'",1)
   test("'", "$'\\''")
+  test("a\\b", "'a\\b'")
+  test("\\'", "$'\\\\\\''")
 }
 
 function test(str,expected,force,   res) {
@@ -22,8 +24,6 @@ function quote2(s,force) {
     gsub(/\\/,"\\\\",s)
     gsub(/'/,"\\'",s)
     return "$'" s "'"
-  } else if (force || s ~ /[ \t]/) {
-    return "'" s "'"
   } else
-    return s
+    return force || s ~ /[ \t]/ ? "'" s "'" : s
 }
