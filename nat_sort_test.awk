@@ -14,7 +14,7 @@ function arrPush(arr, e) { arr[arr[-7]++] = e }
 function arrLen(arr) { return +arr[-7] }
 
 function dbgA(name, arr,    i) {
-  print "--- " name " ---";
+  print "--- " name " ---"
   for (i=0; i in arr; i++) printf "%2s : %s\n", i, arr[i]
 }
 

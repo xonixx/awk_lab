@@ -94,7 +94,7 @@ function KEY(    idx) {
 }
 # lib
 function tryParseExact(s,    l) {
-    l=length(s);
+    l=length(s)
     if(substr(Gron,Pos,l)==s) { Pos += l; return 1 }
     return 0
 }

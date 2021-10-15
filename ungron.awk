@@ -14,7 +14,7 @@ BEGIN {
     split("", AddrKey)   # addr -> last segment name
 
     for (i=0; i<GronAsmLen; i++) {
-        Instr = GronAsm[i];
+        Instr = GronAsm[i]
 
         if("record" == Instr) {
             split("",Path)
@@ -23,7 +23,7 @@ BEGIN {
         }
         else if (isSegmentType(Instr)) { arrPush(Types, Instr); arrPush(Path, GronAsm[++i]) }
         else if ("value" == Instr) {
-            Instr = GronAsm[++i];
+            Instr = GronAsm[++i]
             split("",Value)
             Value[0] = Instr
             if (isValueHolder(Instr))
@@ -104,12 +104,12 @@ function arrLen(arr) { return 0 + arr[-7] }
 function die(msg) { print msg; exit 1 }
 function dbgA(name, arr,    i) {
     if (!Trace) return
-    print "--- " name " ---";
+    print "--- " name " ---"
     for (i=0; i<arrLen(arr); i++) print i " : " arr[i]
 }
 function dbg(name, arr,    i, j, k, maxlen, keys) {
     if (!Trace) return
-    print "--- " name " ---";
+    print "--- " name " ---"
     for (k in arr) { keys[i++] = k; if (maxlen < (j = length(k))) maxlen = j }
     quicksort(keys,0,i-1)
     for (j=0; j<i; j++) { k = keys[j]; printf "%-" maxlen "s : %s\n", k, arr[k] }

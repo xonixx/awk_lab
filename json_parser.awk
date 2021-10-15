@@ -104,7 +104,7 @@ function ELEMENT() {
 }
 # lib
 function tryParseExact(s,    l) {
-    l=length(s);
+    l=length(s)
     if(substr(Json,Pos,l)==s) { Pos += l; return 1 }
     return 0
 }

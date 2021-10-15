@@ -9,8 +9,8 @@ BEGIN {
     Depth = 0
 
     for (i=0; i<AsmLen; i++) {
-        if (isComplex(Instr = Asm[i]))               { p("object"==Instr?"{}":"[]");
-                                                       Stack[++Depth]=Instr;
+        if (isComplex(Instr = Asm[i]))               { p("object"==Instr?"{}":"[]")
+                                                       Stack[++Depth]=Instr
                                                        if (inArr()) { PathStack[Depth]=0 } }
         else if (isSingle(Instr))                    { p(Instr);               incArrIdx() }
         else if (isEnd(Instr))                       { Depth--;                incArrIdx() }
@@ -44,7 +44,7 @@ function p(v,    row,i,is_arr,by_idx,segment,segment_unq) {
 
 function stringUnquote(text,    len)
 {
-    len  = length(text);
+    len  = length(text)
     text = len == 2 ? "" : substr(text, 2, len-2)
 
     gsub(/\\\\/, "\\", text)
