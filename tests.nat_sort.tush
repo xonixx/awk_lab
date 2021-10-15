@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; awk -f nat_sort.awk -f nat_sort_test.awk
+$ cd "$MYDIR"; $AWK -f nat_sort.awk -f nat_sort_test.awk
 | OK  : a
 | OK  : A
 | OK  : 0

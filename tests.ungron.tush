@@ -1,9 +1,9 @@
 
-$ cd "$MYDIR"; awk -f ungron.awk test_data/gron_asm.1.txt | Indent=2 awk -f json_compile.awk
+$ cd "$MYDIR"; $AWK -f ungron.awk test_data/gron_asm.1.txt | Indent=2 $AWK -f json_compile.awk
 | 7
 |
 
-$ cd "$MYDIR"; awk -f ungron.awk test_data/gron_asm.2.txt | Indent=2 awk -f json_compile.awk
+$ cd "$MYDIR"; $AWK -f ungron.awk test_data/gron_asm.2.txt | Indent=2 $AWK -f json_compile.awk
 | {
 |   "a": {
 |     "b": "BBB"
@@ -11,7 +11,7 @@ $ cd "$MYDIR"; awk -f ungron.awk test_data/gron_asm.2.txt | Indent=2 awk -f json
 | }
 |
 
-$ cd "$MYDIR"; awk -f ungron.awk test_data/gron_asm.3.txt | Indent=2 awk -f json_compile.awk
+$ cd "$MYDIR"; $AWK -f ungron.awk test_data/gron_asm.3.txt | Indent=2 $AWK -f json_compile.awk
 | {
 |   "a": {
 |     "b": "BBB"
@@ -19,7 +19,7 @@ $ cd "$MYDIR"; awk -f ungron.awk test_data/gron_asm.3.txt | Indent=2 awk -f json
 | }
 |
 
-$ cd "$MYDIR"; awk -f ungron.awk test_data/gron_asm.4.txt | Indent=2 awk -f json_compile.awk
+$ cd "$MYDIR"; $AWK -f ungron.awk test_data/gron_asm.4.txt | Indent=2 $AWK -f json_compile.awk
 | [
 |   5,
 |   "5",

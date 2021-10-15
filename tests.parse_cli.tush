@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; awk -f parse_cli_lib.awk -f parse_cli_test.awk
+$ cd "$MYDIR"; $AWK -f parse_cli_lib.awk -f parse_cli_test.awk
 | =================
 | |a|
 | -----------------
