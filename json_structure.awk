@@ -31,7 +31,8 @@ function p(v,    row,i,is_arr,by_idx,segment,segment_unq) {
     for(i=1; i<=Depth; i++) {
         segment = PathStack[i]
         segment_unq = stringUnquote(segment)
-        by_idx = (is_arr="array"==Stack[i]) || segment_unq !~ /^[[:alpha:]$_][[:alnum:]$_]*$/
+#        by_idx = (is_arr="array"==Stack[i]) || segment_unq !~ /^[[:alpha:]$_][[:alnum:]$_]*$/   # fails for mawk<=1.3.3
+        by_idx = (is_arr="array"==Stack[i]) || segment_unq !~ /^[a-zA-Z$_][a-zA-Z0-9$_]*$/
         row = row (i==0||is_arr?"":".") (is_arr ? "[]" : by_idx ? segment : segment_unq)
     }
     if (row in AlreadyTracked) return
