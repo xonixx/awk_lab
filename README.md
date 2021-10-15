@@ -140,6 +140,6 @@ cat test_data/1.json \
   | awk -f json_gron.awk \
   | grep "org." \
   | awk -f gron_parser.awk \
-  | awk -f ungron.awk \
+  | awk -f nat_sort.awk -f ungron.awk \
   | Indent=2 awk -f json_compile.awk 
 ```

@@ -48,7 +48,7 @@ function processRecord(   l, addr, type, value, i) {
     addr=""
     for (i=0; i<l; i++) {
         # build addr
-        addr = addr (i>0?",":"") (Types[i] == "index" ? sprintf("%010d",Path[i]) : Path[i]) # proper sorting for index values
+        addr = addr (i>0?",":"") Path[i]
         type = i<l-1 ? (Types[i+1] == "field" ? "object" : "array") : Value[0]
         value = i<l-1 ? "" : Value[1]
         if (addr in AddrType && type != AddrType[addr]) {
@@ -113,23 +113,5 @@ function dbg(name, arr,    i, j, k, maxlen, keys) {
     for (k in arr) { keys[i++] = k; if (maxlen < (j = length(k))) maxlen = j }
     quicksort(keys,0,i-1)
     for (j=0; j<i; j++) { k = keys[j]; printf "%-" maxlen "s : %s\n", k, arr[k] }
-}
-function quicksort(data, left, right,   i, last) {
-    if (left >= right)
-      return
-
-    quicksort_swap(data, left, int((left + right) / 2))
-    last = left
-    for (i = left + 1; i <= right; i++)
-      if (data[i] <= data[left])
-        quicksort_swap(data, ++last, i)
-    quicksort_swap(data, left, last)
-    quicksort(data, left, last - 1)
-    quicksort(data, last + 1, right)
-}
-function quicksort_swap(data, i, j,   temp) {
-    temp = data[i]
-    data[i] = data[j]
-    data[j] = temp
 }
 function trim(s) { sub(/^[ \t\r\n]+/, "", s); sub(/[ \t\r\n]+$/, "", s); return s; }
