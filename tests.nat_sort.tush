@@ -1,0 +1,98 @@
+
+$ cd "$MYDIR"; awk -f nat_sort.awk -f nat_sort_test.awk
+| OK  : a
+| OK  : A
+| OK  : 0
+| OK  : 7
+| OK     : aaa = aaa
+| OK     : bbb > aaa
+| OK     : aaa < aaaa
+| OK     : aaaa > aaa
+| OK     : aaa1 = aaa01
+| OK     : 1 = 01
+| OK     : 01 = 1
+| OK     : aaa2 > aaa1
+| OK     : aaa2 > aaa01
+| OK     : aaa2 < aaa10
+| OK     : aaa20.txt > aaa10.txt
+| OK     : aaa20.txt < aaa100.txt
+| OK     : 2 < 10
+| OK     : 10 > 2
+| OK     : aaa1.20 > aaa01.5
+| OK     : aaa1.20 < aaa01.50
+| OK     : aaa1.01.1 = aaa01.001.0001
+| OK     : aaa1.01.2 > aaa01.001.0001
+| OK     : 1_goals.tush < 20_list_goals.tush
+| OK     : 1_goals.tush < 19_optimize_goals.tush
+| OK     : 1_goals.tush > 0_basic.tush
+| OK     : tests/1_goals.tush < tests/19_optimize_goals.tush
+| OK     : tests/19_goals.tush > tests/1_optimize_goals.tush
+| OK     : tests/200_update.tush > tests/9_update.tush
+| OK     : tests/9_update.tush < tests/200_update.tush
+| OK     : 01ca > 1ba
+| --- before ---
+|  0 : file10.txt
+|  1 : file1.txt
+|  2 : file100.txt
+|  3 : file20.txt
+|  4 : file20.1.txt
+|  5 : file2.txt
+|  6 : file003.txt
+| --- after ---
+|  0 : file1.txt
+|  1 : file2.txt
+|  2 : file003.txt
+|  3 : file10.txt
+|  4 : file20.1.txt
+|  5 : file20.txt
+|  6 : file100.txt
+| --- before ---
+|  0 : tests/0_basic.tush
+|  1 : tests/10_define.tush
+|  2 : tests/11_goal_glob.tush
+|  3 : tests/12_errors.tush
+|  4 : tests/13_doc.tush
+|  5 : tests/14_private.tush
+|  6 : tests/15_lib.tush
+|  7 : tests/16_prelude_fail.tush
+|  8 : tests/17_empty_prelude.tush
+|  9 : tests/18_vars_priority.tush
+| 10 : tests/19_optimize_goals.tush
+| 11 : tests/1_goals.tush
+| 12 : tests/200_update.tush
+| 13 : tests/20_list_goals.tush
+| 14 : tests/21_parsing.tush
+| 15 : tests/22_nat_order.tush
+| 16 : tests/2_mydir.tush
+| 17 : tests/3_loop.tush
+| 18 : tests/4_trace.tush
+| 19 : tests/5_shell.tush
+| 20 : tests/6_reached_if.tush
+| 21 : tests/7_options.tush
+| 22 : tests/8_timing.tush
+| 23 : tests/9_prelude.tush
+| --- after ---
+|  0 : tests/0_basic.tush
+|  1 : tests/1_goals.tush
+|  2 : tests/2_mydir.tush
+|  3 : tests/3_loop.tush
+|  4 : tests/4_trace.tush
+|  5 : tests/5_shell.tush
+|  6 : tests/6_reached_if.tush
+|  7 : tests/7_options.tush
+|  8 : tests/8_timing.tush
+|  9 : tests/9_prelude.tush
+| 10 : tests/10_define.tush
+| 11 : tests/11_goal_glob.tush
+| 12 : tests/12_errors.tush
+| 13 : tests/13_doc.tush
+| 14 : tests/14_private.tush
+| 15 : tests/15_lib.tush
+| 16 : tests/16_prelude_fail.tush
+| 17 : tests/17_empty_prelude.tush
+| 18 : tests/18_vars_priority.tush
+| 19 : tests/19_optimize_goals.tush
+| 20 : tests/20_list_goals.tush
+| 21 : tests/21_parsing.tush
+| 22 : tests/22_nat_order.tush
+| 23 : tests/200_update.tush
