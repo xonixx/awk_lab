@@ -1,13 +1,14 @@
 #!/usr/bin/awk -f
 BEGIN { init() }
 
-function init(   i, arg, line) {
+function init(   i,line,isUngron) {
   Trace="Trace" in ENVIRON
 
   for (i = 1; i < ARGC; i++) {
-    arg = ARGV[i]
-    print i" : "arg
-    delete ARGV[i]
+    if (isUngron = ARGV[i]=="-u") {
+      delete ARGV[i]
+      break
+    }
   }
 
   # ----- parse JSON -----
