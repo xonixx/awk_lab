@@ -1,5 +1,7 @@
 #!/usr/bin/awk -f
-BEGIN {
+BEGIN { init() }
+
+function init(   i, arg, line) {
   Trace="Trace" in ENVIRON
 
   for (i = 1; i < ARGC; i++) {
@@ -10,21 +12,21 @@ BEGIN {
 
   # ----- parse JSON -----
   while (getline line > 0)
-    Json = Json line "\n"
+    In = In line "\n"
 
   Pos=1
   split("", Asm)
   AsmLen=0
 
   if (ELEMENT()) {
-    if (Pos <= length(Json)) {
-      print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
+    if (Pos <= length(In)) {
+      print "Can't advance at pos " Pos ": " substr(In,Pos,10) "..."
       exit 1
     }
     # print "Parsed: "
     #    for (i=0; i<AsmLen; i++)
     #      print Asm[i]
-  } else print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
+  } else print "Can't advance at pos " Pos ": " substr(In,Pos,10) "..."
 
   # ----- generate GRON -----
   split("",Stack); split("",PathStack)
@@ -114,7 +116,7 @@ function ELEMENT() {
 # lib
 function tryParseExact(s,    l) {
   l=length(s)
-  if(substr(Json,Pos,l)==s) { Pos += l; return 1 }
+  if(substr(In,Pos,l)==s) { Pos += l; return 1 }
   return 0
 }
 function tryParse1(chars, res) { return tryParse(chars,res,1) }
@@ -122,17 +124,17 @@ function tryParse(chars, res, atMost,    i,c,s) {
   s=""
   while (index(chars, c = nextChar()) > 0 &&
          (atMost==0 || i++ < atMost) &&
-         Pos <= length(Json)) {
+         Pos <= length(In)) {
     s = s c
     Pos++
   }
   res[0] = res[0] s
   return s != ""
 }
-function nextChar() { return substr(Json,Pos,1) }
+function nextChar() { return substr(In,Pos,1) }
 function checkRes(rule, r) { trace(rule (r?"+":"-")); return r }
 function attempt(rule) { trace(rule "?"); return 1 }
-function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(Json,Pos,10) "..."} }
+function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(In,Pos,10) "..."} }
 
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 
