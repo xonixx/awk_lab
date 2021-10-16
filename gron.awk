@@ -11,30 +11,50 @@ function init(   i,line,isUngron) {
     }
   }
 
-  # ----- parse JSON -----
-  while (getline line > 0)
-    In = In line "\n"
+  if (isUngron) {
+    while (getline In > 0) {
+      Pos=1
+      split("", Asm); AsmLen=0
 
-  Pos=1
-  split("", Asm)
-  AsmLen=0
-
-  if (ELEMENT()) {
-    if (Pos <= length(In)) {
-      print "Can't advance at pos " Pos ": " substr(In,Pos,10) "..."
-      exit 1
+      asm("record")
+      if (STATEMENT()) {
+        asm("end")
+        if (Pos <= length(In)) {
+          print "Can't advance at pos " Pos ": " substr(In,Pos,10) "..."
+          exit 1
+        }
+        # print "Parsed: "
+        for (i=0; i<AsmLen; i++)
+          print Asm[i]
+      } else
+        print "Can't advance at pos " Pos ": " substr(In,Pos,10) "..."
     }
-    # print "Parsed: "
-    #    for (i=0; i<AsmLen; i++)
-    #      print Asm[i]
-  } else print "Can't advance at pos " Pos ": " substr(In,Pos,10) "..."
+  } else {
+    # ----- parse JSON -----
+    while (getline line > 0)
+      In = In line "\n"
 
-  # ----- generate GRON -----
-  split("",Stack); split("",PathStack)
-  Depth = 0
-  generateGron()
+    Pos=1
+    split("", Asm); AsmLen=0
+
+    if (ELEMENT()) {
+      if (Pos <= length(In)) {
+        print "Can't advance at pos " Pos ": " substr(In,Pos,10) "..."
+        exit 1
+      }
+      # print "Parsed: "
+      #    for (i=0; i<AsmLen; i++)
+      #      print Asm[i]
+    } else print "Can't advance at pos " Pos ": " substr(In,Pos,10) "..."
+
+    # ----- generate GRON -----
+    split("",Stack); split("",PathStack)
+    Depth = 0
+    generateIn()
+  }
 }
 
+# --- JSON ---
 function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
 function NUMBER(    res) {
   return attempt("NUMBER") && checkRes("NUMBER",
@@ -114,6 +134,44 @@ function MEMBER() {
 function ELEMENT() {
   return attempt("ELEMENT") && checkRes("ELEMENT", WS() && VALUE() && WS())
 }
+# --- GRON ---
+function STATEMENT() {
+  return attempt("STATEMENT") && checkRes("STATEMENT", PATH() && tryParse1("=") && asm("value") && VALUE_GRON())
+}
+function PATH() {
+  return attempt("PATH") && checkRes("PATH", BARE_WORD() && SEGMENTS())
+}
+function BARE_WORD(    word) {
+  return attempt("BARE_WORD") && checkRes("BARE_WORD",
+    tryParse1("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_", word) &&
+    (tryParse( "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_0123456789", word) || 1) &&
+    asm("field") && asm("\"" word[0] "\""))
+}
+function SEGMENTS() {
+  return attempt("SEGMENTS") && checkRes("SEGMENTS", SEGMENT() && SEGMENTS()) || 1
+}
+function SEGMENT() {
+  return attempt("SEGMENT") && checkRes("SEGMENT",
+    tryParse1(".") && BARE_WORD() ||
+    tryParse1("[") && KEY() && tryParse1("]"))
+}
+function KEY(    idx) {
+  return attempt("KEY") && checkRes("KEY",
+    tryParse("0123456789", idx) &&
+    asm("index") && asm(idx[0]) ||
+    STRING(1))
+}
+function VALUE_GRON() {
+  return attempt("VALUE_GRON") && checkRes("VALUE_GRON",
+    STRING() ||
+    NUMBER() ||
+    tryParseExact("true") && asm("true") ||
+    tryParseExact("false") && asm("false") ||
+    tryParseExact("null") && asm("null") ||
+    tryParseExact("{}") && asm("object") ||
+    tryParseExact("[]") && asm("array"))
+
+}
 # lib
 function tryParseExact(s,    l) {
   l=length(s)
@@ -140,7 +198,7 @@ function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(In,Po
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 
 # -----
-function generateGron(   i, instr) {
+function generateIn(   i, instr) {
   for (i=0; i<AsmLen; i++) {
     if (isComplex(instr = Asm[i]))               { p("object"==instr?"{}":"[]")
     Stack[++Depth]=instr
