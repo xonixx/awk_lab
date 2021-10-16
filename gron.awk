@@ -1,12 +1,12 @@
 # https://www.json.org/json-en.html
 BEGIN {
+  Trace="Trace" in ENVIRON
+
   # ----- parse JSON -----
   while (getline line > 0)
     Json = Json line "\n"
 
   Pos=1
-  Trace="Trace" in ENVIRON
-
   split("", Asm)
   AsmLen=0
 
@@ -16,20 +16,13 @@ BEGIN {
       exit 1
     }
     # print "Parsed: "
-#    for (i=0; i<AsmLen; i++)
-#      print Asm[i]
-  } else
-    print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
+    #    for (i=0; i<AsmLen; i++)
+    #      print Asm[i]
+  } else print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
 
-    # print tryParseExact("{"), Pos
-
-    # ----- generate GRON -----
-#  split("", Asm); split("", LineNums)
-#  while (getline > 0) {
-#    if ((Instr = trim($0))!="") { Asm[AsmLen++] = Instr; LineNums[AsmLen] = NR }
-#  }
-
+  # ----- generate GRON -----
   split("",Stack); split("",PathStack)
+  Depth = 0
   generateGron()
 }
 
@@ -139,8 +132,6 @@ function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 
 # -----
 function generateGron(   i, instr) {
-  Depth = 0
-
   for (i=0; i<AsmLen; i++) {
     if (isComplex(instr = Asm[i]))               { p("object"==instr?"{}":"[]")
     Stack[++Depth]=instr
