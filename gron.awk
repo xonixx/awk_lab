@@ -1,6 +1,12 @@
-# https://www.json.org/json-en.html
+#!/usr/bin/awk -f
 BEGIN {
   Trace="Trace" in ENVIRON
+
+  for (i = 1; i < ARGC; i++) {
+    arg = ARGV[i]
+    print i" : "arg
+    delete ARGV[i]
+  }
 
   # ----- parse JSON -----
   while (getline line > 0)
