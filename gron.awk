@@ -12,9 +12,11 @@ function init(   i,line,isUngron) {
   }
 
   if (isUngron) {
+    split("", Asm); AsmLen=0 # Gron asm
+    split("", JsonAsm); JsonAsmLen=0
+
     while (getline In > 0) {
       Pos=1
-      split("", Asm); AsmLen=0
 
       asm("record")
       if (STATEMENT()) {
@@ -24,11 +26,45 @@ function init(   i,line,isUngron) {
           exit 1
         }
         # print "Parsed: "
-        for (i=0; i<AsmLen; i++)
-          print Asm[i]
-      } else
+        #        for (i=0; i<AsmLen; i++)
+        #          print Asm[i]
+      } else {
         print "Can't advance at pos " Pos ": " substr(In,Pos,10) "..."
+        exit 1
+      }
     }
+
+    # ungron (gron asm -> json asm)
+
+    split("", AddrType)  # addr -> type
+    split("", AddrValue) # addr -> value
+    split("", AddrCount) # addr -> segment count
+    split("", AddrKey)   # addr -> last segment name
+
+    for (i=0; i<AsmLen; i++) {
+      Instr = Asm[i]
+
+      if("record" == Instr) {
+        split("",Path)
+        split("",Types)
+        split("",Value) # [ type, value ]
+      }
+      else if (isSegmentType(Instr)) { arrPush(Types, Instr); arrPush(Path, Asm[++i]) }
+      else if ("value" == Instr) {
+        Instr = Asm[++i]
+        split("",Value)
+        Value[0] = Instr
+        if (isValueHolder(Instr))
+          Value[1] = Asm[++i]
+      } else if ("end" == Instr) { processRecord() }
+    }
+    generateJsonAsm()
+    if (Trace) print "--- JSON asm ---"
+    for (i=0; i<JsonAsmLen; i++)
+      print JsonAsm[i]
+
+
+      # generate JSON
   } else {
     # ----- parse JSON -----
     while (getline line > 0)
@@ -45,12 +81,12 @@ function init(   i,line,isUngron) {
       # print "Parsed: "
       #    for (i=0; i<AsmLen; i++)
       #      print Asm[i]
-    } else print "Can't advance at pos " Pos ": " substr(In,Pos,10) "..."
 
-    # ----- generate GRON -----
-    split("",Stack); split("",PathStack)
-    Depth = 0
-    generateIn()
+      # ----- generate GRON -----
+      split("",Stack); split("",PathStack)
+      Depth = 0
+      generateGron()
+    } else print "Can't advance at pos " Pos ": " substr(In,Pos,10) "..."
   }
 }
 
@@ -172,6 +208,85 @@ function VALUE_GRON() {
     tryParseExact("[]") && asm("array"))
 
 }
+# --- ungron ---
+function isComplex(s) { return "object"==s || "array"==s }
+function isSegmentType(s) { return "field" ==s || "index" ==s }
+function isValueHolder(s) { return "string"==s || "number"==s }
+function processRecord(   l, addr, type, value, i) {
+  if (Trace) print "=================="
+  dbgA("Path",Path)
+  dbgA("Types",Types)
+  dbgA("Value",Value)
+  l = arrLen(Path)
+  addr=""
+  for (i=0; i<l; i++) {
+    # build addr
+    addr = addr (i>0?",":"") Path[i]
+    type = i<l-1 ? (Types[i+1] == "field" ? "object" : "array") : Value[0]
+    value = i<l-1 ? "" : Value[1]
+    if (addr in AddrType && type != AddrType[addr]) {
+      die("Conflicting types for " addr ": " type " and " AddrType[addr])
+    }
+    AddrType[addr] = type
+    AddrValue[addr] = value
+    AddrCount[addr] = i+1
+    AddrKey[addr] = Path[i]
+  }
+}
+function generateJsonAsm(   i,j,l, a,a_prev,aj, type, addrs) {
+  dbg("AddrType",AddrType)
+  dbg("AddrValue",AddrValue)
+  dbg("AddrCount",AddrCount)
+  dbg("AddrKey",AddrKey)
+
+  split("",Stack)
+  Ends["object"] = "end_object"
+  Ends["array"]  = "end_array"
+
+  for (a in AddrType) arrPush(addrs, a)
+  quicksort(addrs, 0, (l=arrLen(addrs))-1)
+  for (i=0; i<l; i++) {
+    a = addrs[i]
+    type = AddrType[a]
+    if (i>0) {
+      a_prev = addrs[i-1]
+      for (j=0; j<AddrCount[a_prev] - AddrCount[a] + (isComplex(AddrType[a_prev])?1:0); j++)
+        asmJson(Ends[arrPop(Stack)])
+        # determine the type of current container (object/array) - for array should not issue "key"
+      for (j=i; AddrCount[a]-AddrCount[aj=addrs[j]] != 1; j--) {} # descend to addr of prev segment
+      if ("array" != AddrType[aj]) {
+        asmJson("key")
+        asmJson(AddrKey[a]) # last segment in addr
+      }
+    }
+    asmJson(type)
+    if (isComplex(type))
+      arrPush(Stack, type)
+    if (isValueHolder(type))
+      asmJson(AddrValue[a])
+    if (i==l-1) { # last
+      for (j=0; j<AddrCount[a] - (isComplex(type)?0:1); j++)
+        asmJson(Ends[arrPop(Stack)])
+    }
+  }
+}
+function asmJson(inst) { JsonAsm[JsonAsmLen++]=inst; return 1 }
+function arrPush(arr, e) { arr[arr[-7]++] = e }
+function arrPop(arr,   e) { e = arr[--arr[-7]]; if (arr[-7]<0) die("Can't pop"); delete arr[arr[-7]]; return e }
+function arrLen(arr) { return 0 + arr[-7] }
+function die(msg) { print msg; exit 1 }
+function dbgA(name, arr,    i) {
+  if (!Trace) return
+  print "--- " name " ---"
+  for (i=0; i<arrLen(arr); i++) print i " : " arr[i]
+}
+function dbg(name, arr,    i, j, k, maxlen, keys) {
+  if (!Trace) return
+  print "--- " name " ---"
+  for (k in arr) { keys[i++] = k; if (maxlen < (j = length(k))) maxlen = j }
+  quicksort(keys,0,i-1)
+  for (j=0; j<i; j++) { k = keys[j]; printf "%-" maxlen "s : %s\n", k, arr[k] }
+}
 # lib
 function tryParseExact(s,    l) {
   l=length(s)
@@ -198,7 +313,7 @@ function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(In,Po
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 
 # -----
-function generateIn(   i, instr) {
+function generateGron(   i, instr) {
   for (i=0; i<AsmLen; i++) {
     if (isComplex(instr = Asm[i]))               { p("object"==instr?"{}":"[]")
     Stack[++Depth]=instr
@@ -212,7 +327,6 @@ function generateIn(   i, instr) {
 }
 
 function isSingle(s) { return "true"==s || "false"==s || "null"==s }
-function isComplex(s) { return "object"==s || "array"==s }
 function inArr() { return "array"==Stack[Depth] }
 function isEnd(s) { return "end_object"==s || "end_array"==s }
 function incArrIdx() { if (inArr()) PathStack[Depth]++ }
@@ -244,4 +358,42 @@ function stringUnquote(text,    len)
   gsub(/\\t/,  "\t", text)
 
   return text
+}
+
+function natOrder(s1,s2, i1,i2,   c1, c2, n1,n2) {
+  #  print s1, s2, i1, i2
+  if (_digit(c1 = substr(s1,i1,1)) && _digit(c2 = substr(s2,i2,1))) {
+    n1 = +c1; while(_digit(c1 = substr(s1,++i1,1))) { n1 = n1 * 10 + c1 }
+    n2 = +c2; while(_digit(c2 = substr(s2,++i2,1))) { n2 = n2 * 10 + c2 }
+
+    return n1 == n2 ? natOrder(s1, s2, i1, i2) : _cmp(n1, n2)
+  }
+
+  # consume till equal substrings
+  while ((c1 = substr(s1,i1,1)) == (c2 = substr(s2,i2,1)) && c1 != "" && !_digit(c1)) {
+    i1++; i2++
+  }
+
+  return _digit(c1) && _digit(c2) ? natOrder(s1, s2, i1, i2) : _cmp(c1, c2)
+}
+
+function _cmp(v1, v2) { return v1 > v2 ? 1 : v1 < v2 ? -1 : 0 }
+function _digit(c) { return c >= "0" && c <= "9" }
+
+function quicksort(data, left, right,   i, last) {
+  if (left >= right)
+    return
+  quicksortSwap(data, left, int((left + right) / 2))
+  last = left
+  for (i = left + 1; i <= right; i++)
+    if (natOrder(data[i], data[left],1,1) < 1)
+      quicksortSwap(data, ++last, i)
+  quicksortSwap(data, left, last)
+  quicksort(data, left, last - 1)
+  quicksort(data, last + 1, right)
+}
+function quicksortSwap(data, i, j,   temp) {
+  temp = data[i]
+  data[i] = data[j]
+  data[j] = temp
 }
