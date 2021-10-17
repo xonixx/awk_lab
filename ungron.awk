@@ -105,7 +105,7 @@ function die(msg) { print msg; exit 1 }
 function dbgA(name, arr,    i) {
     if (!Trace) return
     print "--- " name " ---"
-    for (i=0; i<arrLen(arr); i++) print i " : " arr[i]
+    for (i=0; i in arr; i++) print i " : " arr[i]
 }
 function dbg(name, arr,    i, j, k, maxlen, keys) {
     if (!Trace) return
