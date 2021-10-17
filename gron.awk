@@ -59,12 +59,21 @@ function init(   i,line,isUngron) {
       } else if ("end" == Instr) { processRecord() }
     }
     generateJsonAsm()
-    if (Trace) print "--- JSON asm ---"
-    for (i=0; i<JsonAsmLen; i++)
-      print JsonAsm[i]
-
+#    if (Trace) print "--- JSON asm ---"
+#    for (i=0; i<JsonAsmLen; i++)
+#      print JsonAsm[i]
 
       # generate JSON
+#    Indent = ENVIRON["Indent"] + 0
+    Indent = 2
+    for (i=0; i<Indent; i++)
+      IndentStr=IndentStr " "
+    Open["object"]="{" ; Close["object"]="}" ; Opens["end_object"] = "object"
+    Open["array"] ="[" ; Close["array"] ="]" ; Opens["end_array"]  = "array"
+    split("",Stack)
+    Depth = 0
+    WasPrev = 0
+    generateJson()
   } else {
     # ----- parse JSON -----
     while (getline line > 0)
@@ -287,6 +296,24 @@ function dbg(name, arr,    i, j, k, maxlen, keys) {
   quicksort(keys,0,i-1)
   for (j=0; j<i; j++) { k = keys[j]; printf "%-" maxlen "s : %s\n", k, arr[k] }
 }
+# --- generate JSON ---
+function generateJson(   i) {
+  for (i=0; i<JsonAsmLen; i++) {
+    if (isComplex(Instr = JsonAsm[i]))           { p1(Open[Instr] nlIndent(isEnd(JsonAsm[i+1]), Depth+1))
+    Stack[++Depth]=Instr;                        WasPrev=0 }
+    else if ("key"==Instr)                       { p1(JsonAsm[++i] ":" (Indent==0?"":" "));         WasPrev=0 }
+    else if ("number"==Instr || "string"==Instr) { p1(JsonAsm[++i]);                                WasPrev=1 }
+    else if (isSingle(Instr))                    { p1(Instr);                                   WasPrev=1 }
+    else if (isEnd(Instr))                       { if (Stack[Depth] != Opens[Instr]) die("end mismatch")
+    p(nlIndent(isComplex(JsonAsm[i-1]), Depth-1) Close[Stack[Depth--]])
+    WasPrev=1 }
+    else                                         { die("Wrong opcode") }
+  }
+  print ""
+}
+function p1(s) { p((WasPrev ? "," nlIndent(0, Depth) : "") s) }
+function p(s) { printf "%s", s }
+function nlIndent(unless, d,   i, s) { if (unless || Indent==0) return ""; for (i=0; i<d; i++) s = s IndentStr; return "\n" s }
 # lib
 function tryParseExact(s,    l) {
   l=length(s)
@@ -315,13 +342,13 @@ function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 # -----
 function generateGron(   i, instr) {
   for (i=0; i<AsmLen; i++) {
-    if (isComplex(instr = Asm[i]))               { p("object"==instr?"{}":"[]")
+    if (isComplex(instr = Asm[i]))               { pG("object"==instr?"{}":"[]")
     Stack[++Depth]=instr
     if (inArr()) { PathStack[Depth]=0 } }
-    else if (isSingle(instr))                    { p(instr);               incArrIdx() }
+    else if (isSingle(instr))                    { pG(instr);               incArrIdx() }
     else if (isEnd(instr))                       { Depth--;                incArrIdx() }
     else if ("key" == instr)                     { PathStack[Depth]=Asm[++i];          }
-    else if ("number"==instr || "string"==instr) { p(Asm[++i]);            incArrIdx() }
+    else if ("number"==instr || "string"==instr) { pG(Asm[++i]);            incArrIdx() }
     else { print "Error at instruction#" i ": " instr; exit 1 }
   }
 }
@@ -331,7 +358,7 @@ function inArr() { return "array"==Stack[Depth] }
 function isEnd(s) { return "end_object"==s || "end_array"==s }
 function incArrIdx() { if (inArr()) PathStack[Depth]++ }
 
-function p(v,    row,i,by_idx,segment,segment_unq) {
+function pG(v,    row,i,by_idx,segment,segment_unq) {
   row="json"
   for(i=1; i<=Depth; i++) {
     segment = PathStack[i]
