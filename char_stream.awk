@@ -1,7 +1,7 @@
 BEGIN {
   RS="\n"
   CurrentLine=""
-  Consumed=0
+#  Consumed=0
   PosInLine=1
 
   test()
@@ -16,6 +16,7 @@ function test(   c) {
 
 function getChar(   c) {
   if (!CurrentLine) {
+    PosInLine=1
     if ((getline CurrentLine) <= 0)
       return
   }
