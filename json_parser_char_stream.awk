@@ -1,7 +1,7 @@
 # https://www.json.org/json-en.html
 BEGIN {
-    while (getline line > 0)
-       Json = Json line "\n"
+#    while (getline line > 0)
+#       Json = Json line "\n"
 
     Pos=1
     Trace="Trace" in ENVIRON
@@ -10,15 +10,15 @@ BEGIN {
     AsmLen=0
 
     if (ELEMENT()) {
-        if (Pos <= length(Json)) {
-            print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
+        if ("" != getChar()) {
+            print "1 Can't advance at pos " Pos ": " showPos()
             exit 1
         }
         # print "Parsed: "
         for (i=0; i<AsmLen; i++)
             print Asm[i]
     } else
-        print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
+        print "2 Can't advance at pos " Pos ": " showPos()
 
     # print tryParseExact("{"), Pos
 }
@@ -40,11 +40,11 @@ function tryParseEscapeChar(res) {
         (tryParse1("\\/bfnrt", res) || tryParse1("u", res) && tryParseHex(res) && tryParseHex(res) && tryParseHex(res) && tryParseHex(res))
 }
 function tryParseSafeChar(res,   c) {
-    c = nextChar()
+    c = getChar()
     # https://github.com/antlr/grammars-v4/blob/master/json/JSON.g4#L56
     # \x00 at end since looks like this is line terminator in macos awk(bwk?)
     if (0 == index("\"\\\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x00",c)) {
-        Pos++
+        advance()
         res[0] = res[0] c
         return 1
     }
@@ -103,26 +103,53 @@ function ELEMENT() {
     return attempt("ELEMENT") && checkRes("ELEMENT", WS() && VALUE() && WS())
 }
 # lib
-function tryParseExact(s,    l) {
+function tryParseExact(s,    l, i) {
+    #  if(substr(In,Pos,l=length(s))==s) { Pos += l; return 1 }
+    #  return 0
     l=length(s)
-    if(substr(Json,Pos,l)==s) { Pos += l; return 1 }
-    return 0
+    for (i=1;i<=l;i++) {
+        if (getChar()!=substr(s,i,1))
+            return 0
+        advance()
+    }
+    return 1
 }
 function tryParse1(chars, res) { return tryParse(chars,res,1) }
 function tryParse(chars, res, atMost,    i,c,s) {
     s=""
-    while (index(chars, c = nextChar()) > 0 &&
+    while (index(chars, c = getChar()) > 0 &&
             (atMost==0 || i++ < atMost) &&
-            Pos <= length(Json)) {
+            "" != c) {
         s = s c
-        Pos++
+        advance()
     }
     res[0] = res[0] s
     return s != ""
 }
-function nextChar() { return substr(Json,Pos,1) }
+#function nextChar() { return substr(Json,Pos,1) }
+function getChar(   c) {
+    if (!CurrentLine) {
+        PosInLine=1
+        if ((getline CurrentLine) <= 0)
+            return
+    }
+    c = substr(CurrentLine,PosInLine,1)
+    if (!c) { # line ended
+        # TODO line separator
+        if ((getline CurrentLine) <= 0)
+            return
+        PosInLine=1
+        c = substr(CurrentLine,PosInLine,1)
+    }
+    return c
+}
+
+function advance() {
+    PosInLine++
+}
 function checkRes(rule, r) { trace(rule (r?"+":"-")); return r }
 function attempt(rule) { trace(rule "?"); return 1 }
-function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(Json,Pos,10) "..."} }
+function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, showPos()} }
+function showPos() { return substr(CurrentLine,PosInLine,10) "..." }
 
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
