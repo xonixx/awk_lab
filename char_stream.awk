@@ -17,14 +17,18 @@ function test(   c) {
 function getChar(   c) {
   if (!CurrentLine) {
     PosInLine=1
-    if ((getline CurrentLine) <= 0)
+    if ((getline CurrentLine) <= 0) {
+      CurrentLine=""
       return
+    }
   }
   c = substr(CurrentLine,PosInLine,1)
   if (!c) { # line ended
     # TODO line separator
-    if ((getline CurrentLine) <= 0)
+    if ((getline CurrentLine) <= 0) {
+      CurrentLine=""
       return
+    }
     PosInLine=1
     c = substr(CurrentLine,PosInLine,1)
   }
