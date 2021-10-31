@@ -1,4 +1,5 @@
 BEGIN {
+  RS="\n"
   CurrentLine=""
   Consumed=0
   PosInLine=1
@@ -8,7 +9,7 @@ BEGIN {
 
 function test(   c) {
   while ((c=getChar())!="") {
-    print "'" c "'"
+    print "[" c "]"
     advance()
   }
 }
