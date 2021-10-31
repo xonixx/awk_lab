@@ -7,11 +7,10 @@ BEGIN {
 }
 
 function test(   c) {
-  do {
-    c=getChar()
-    print c
+  while ((c=getChar())!="") {
+    print "'" c "'"
     advance()
-  } while (""!=c)
+  }
 }
 
 function getChar(   c) {
