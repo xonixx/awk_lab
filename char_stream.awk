@@ -12,16 +12,12 @@ function getChar(   c) {
   if (!Pos) {
     Pos=1
     PosInLine=1
-    if (getline CurrentLine <= 0) {
-      CurrentLine=""
-      return
-    }
+    if (getline CurrentLine <= 0)
+      return CurrentLine=""
   }
   if (!(c = 0==PosInLine ? "\n" : substr(CurrentLine,PosInLine,1))) { # line ended
-    if (getline CurrentLine <= 0) {
-      CurrentLine=""
-      return
-    }
+    if (getline CurrentLine <= 0)
+      return CurrentLine=""
     PosInLine = 0
     c = "\n"
   }
