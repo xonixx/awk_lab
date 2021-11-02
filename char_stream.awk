@@ -9,6 +9,9 @@ function test(   c) {
   }
 }
 
+#
+# depends on RS="\n" (default)
+#
 function getChar(   c) {
   if (!CurrentLine) {
     PosInLine=1
@@ -17,8 +20,7 @@ function getChar(   c) {
       return
     }
   }
-  c = 0 == PosInLine ? "\n" : substr(CurrentLine,PosInLine,1)
-  if (!c) { # line ended
+  if (!(c = 0 == PosInLine ? "\n" : substr(CurrentLine,PosInLine,1))) { # line ended
     if ((getline CurrentLine) <= 0) {
       CurrentLine=""
       return
