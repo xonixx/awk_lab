@@ -1,0 +1,21 @@
+
+
+$ cd "$MYDIR"; printf '\naaa\nb cc\nddddd\n' | $AWK -f char_stream.awk
+| [
+| ]
+| [a]
+| [a]
+| [a]
+| [
+| ]
+| [b]
+| [ ]
+| [c]
+| [c]
+| [
+| ]
+| [d]
+| [d]
+| [d]
+| [d]
+| [d]
