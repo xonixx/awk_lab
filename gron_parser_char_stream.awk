@@ -62,8 +62,12 @@ function VALUE() {
 
 }
 function STATEMENTS() {
-  # TODO redo recursion -> iteration
-  return attempt("STATEMENTS") && checkRes("STATEMENTS", STATEMENT() && (tryParse1("\n") ? STATEMENTS() : 1)) || 1
+  for(;;) {
+    STATEMENT()
+    if (!tryParse1("\n"))
+      break
+  }
+  return 1
 }
 function STATEMENT() {
   return attempt("STATEMENT") && checkRes("STATEMENT",
