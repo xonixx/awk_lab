@@ -1,25 +1,19 @@
 BEGIN {
   Trace="Trace" in ENVIRON
 
-  while (getline Gron > 0) {
-    Pos=1
+  split("", Asm)
+  AsmLen=0
 
-    split("", Asm)
-    AsmLen=0
-
-    asm("record")
-    if (STATEMENT()) {
-      asm("end")
-      if (Pos <= length(Gron)) {
-        print "Can't advance at pos " Pos ": " substr(Gron,Pos,10) "..."
-        exit 1
-      }
-      # print "Parsed: "
-      for (i=0; i<AsmLen; i++)
-        print Asm[i]
-    } else
-      print "Can't advance at pos " Pos ": " substr(Gron,Pos,10) "..."
-  }
+  if (STATEMENTS()) {
+    if ("" != getChar()) {
+      print "Can't advance at pos " Pos ": " showPos()
+      exit 1
+    }
+    # print "Parsed: "
+    for (i=0; i<AsmLen; i++)
+      print Asm[i]
+  } else
+    print "Can't advance at pos " Pos ": " showPos()
 }
 
 function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
@@ -39,10 +33,11 @@ function tryParseEscapeChar(res) {
     (tryParse1("\\/bfnrt", res) || tryParse1("u", res) && tryParseHex(res) && tryParseHex(res) && tryParseHex(res) && tryParseHex(res))
 }
 function tryParseSafeChar(res,   c) {
-  c = nextChar()
+  c = getChar()
   # https://github.com/antlr/grammars-v4/blob/master/json/JSON.g4#L56
-  if (0 == index("\"\\\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F",c)) {
-    Pos++
+  # \x00 at end since looks like this is line terminator in macos awk(bwk?)
+  if (0 == index("\"\\\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F\x00",c)) {
+    advance()
     res[0] = res[0] c
     return 1
   }
@@ -65,6 +60,10 @@ function VALUE() {
     tryParseExact("{}") && asm("object") ||
     tryParseExact("[]") && asm("array"))
 
+}
+function STATEMENTS() {
+  # TODO redo recursion -> iteration
+  return attempt("STATEMENTS") && checkRes("STATEMENTS", STATEMENT() && (tryParse1("\n") ? SEGMENTS() : 1)) || 1
 }
 function STATEMENT() {
   return attempt("STATEMENT") && checkRes("STATEMENT", PATH() && tryParse1("=") && asm("value") && VALUE())
@@ -93,26 +92,35 @@ function KEY(    idx) {
     STRING(1))
 }
 # lib
-function tryParseExact(s,    l) {
+function tryParseExact(s,    l, i) {
+  #  if(substr(In,Pos,l=length(s))==s) { Pos += l; return 1 }
+  #  return 0
   l=length(s)
-  if(substr(Gron,Pos,l)==s) { Pos += l; return 1 }
-  return 0
+  for (i=1;i<=l;i++) {
+    if (getChar()!=substr(s,i,1))
+      return 0
+    advance()
+  }
+  return 1
 }
 function tryParse1(chars, res) { return tryParse(chars,res,1) }
 function tryParse(chars, res, atMost,    i,c,s) {
   s=""
-  while (index(chars, c = nextChar()) > 0 &&
+  while (index(chars, c = getChar()) > 0 &&
          (atMost==0 || i++ < atMost) &&
          "" != c) {
     s = s c
-    Pos++
+    advance()
   }
   res[0] = res[0] s
   return s != ""
 }
-function nextChar() { return substr(Gron,Pos,1) }
 function checkRes(rule, r) { trace(rule (r?"+":"-")); return r }
 function attempt(rule) { trace(rule "?"); return 1 }
-function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(Gron,Pos,10) "..."} }
+function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, PosInLine, showPos()} } # TODO showPos() is wrong here
+function showPos(   s,i) {
+  for (i=0;i<10;i++) { s = s sprintf("%s", getChar()); advance() }
+  return s "..."
+}
 
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }

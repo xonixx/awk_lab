@@ -125,7 +125,7 @@ function tryParse(chars, res, atMost,    i,c,s) {
 
 function checkRes(rule, r) { trace(rule (r?"+":"-")); return r }
 function attempt(rule) { trace(rule "?"); return 1 }
-function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, PosInLine, showPos()} }
+function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, PosInLine, showPos()} } # TODO showPos() is wrong here
 function showPos(   s,i) {
   for (i=0;i<10;i++) { s = s sprintf("%s", getChar()); advance() }
   return s "..."
