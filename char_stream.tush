@@ -1,6 +1,6 @@
 
 
-$ cd "$MYDIR"; printf '\naaa\nb cc\nddddd\n' | $AWK -f char_stream.awk
+$ cd "$MYDIR"; printf '\naaa\nb cc\nddddd\n' | $AWK -f char_stream.awk -f char_stream_test.awk
 | [
 | ]
 | [a]

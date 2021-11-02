@@ -126,31 +126,7 @@ function tryParse(chars, res, atMost,    i,c,s) {
   res[0] = res[0] s
   return s != ""
 }
-#function nextChar() { return substr(Json,Pos,1) }
-function getChar(   c) {
-  if (!CurrentLine) {
-    PosInLine=1
-    if ((getline CurrentLine) <= 0) {
-      CurrentLine=""
-      return
-    }
-  }
-  c = substr(CurrentLine,PosInLine,1)
-  if (!c) { # line ended
-    # TODO line separator
-    if ((getline CurrentLine) <= 0) {
-      CurrentLine=""
-      return
-    }
-    PosInLine=1
-    c = substr(CurrentLine,PosInLine,1)
-  }
-  return c
-}
 
-function advance() {
-  PosInLine++
-}
 function checkRes(rule, r) { trace(rule (r?"+":"-")); return r }
 function attempt(rule) { trace(rule "?"); return 1 }
 function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, PosInLine, showPos()} }
