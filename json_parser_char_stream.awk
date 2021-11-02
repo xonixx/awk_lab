@@ -11,14 +11,14 @@ BEGIN {
 
   if (ELEMENT()) {
     if ("" != getChar()) {
-      print "1 Can't advance at pos " Pos ": " showPos()
+      print "Can't advance at pos " Pos ": " showPos()
       exit 1
     }
     # print "Parsed: "
     for (i=0; i<AsmLen; i++)
       print Asm[i]
   } else
-    print "2 Can't advance at pos " Pos ": " showPos()
+    print "Can't advance at pos " Pos ": " showPos()
 
     # print tryParseExact("{"), Pos
 }
@@ -130,6 +130,9 @@ function tryParse(chars, res, atMost,    i,c,s) {
 function checkRes(rule, r) { trace(rule (r?"+":"-")); return r }
 function attempt(rule) { trace(rule "?"); return 1 }
 function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, PosInLine, showPos()} }
-function showPos() { return substr(CurrentLine,PosInLine,10) "..." }
+function showPos(   s,i) {
+  for (i=0;i<10;i++) { s = s sprintf("%s", getChar()); advance() }
+  return s "..."
+}
 
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
