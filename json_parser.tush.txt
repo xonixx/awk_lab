@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; echo '[123,-234.56E+10,"Hello world",true,false,null,{}]' | $AWK -f json_parser.awk
+$ cd "$MYDIR"; echo '[123,-234.56E+10,"Hello world",true,false,null,{}]' | $AWK $ARGS
 | array
 | number
 | 123
@@ -14,7 +14,7 @@ $ cd "$MYDIR"; echo '[123,-234.56E+10,"Hello world",true,false,null,{}]' | $AWK 
 | end_object
 | end_array
 
-$ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"}}' | $AWK -f json_parser.awk
+$ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"}}' | $AWK $ARGS
 | object
 | key
 | "a"
@@ -34,7 +34,7 @@ $ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"}}' | $AWK -f json_parser.awk
 | end_object
 | end_object
 
-$ cd "$MYDIR"; echo '{"a":"b"}' | $AWK -f json_parser.awk
+$ cd "$MYDIR"; echo '{"a":"b"}' | $AWK $ARGS
 | object
 | key
 | "a"
@@ -42,7 +42,7 @@ $ cd "$MYDIR"; echo '{"a":"b"}' | $AWK -f json_parser.awk
 | "b"
 | end_object
 
-$ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"},"g":[123,-234.56E+10,"Hello \u1234 world",true,false,null,{}]}' | $AWK -f json_parser.awk
+$ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"},"g":[123,-234.56E+10,"Hello \u1234 world",true,false,null,{}]}' | $AWK $ARGS
 | object
 | key
 | "a"
@@ -77,29 +77,29 @@ $ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"},"g":[123,-234.56E+10,"Hello \
 | end_array
 | end_object
 
-$ cd "$MYDIR"; echo '"Hello world"' | $AWK -f json_parser.awk
+$ cd "$MYDIR"; echo '"Hello world"' | $AWK $ARGS
 | string
 | "Hello world"
 
-$ cd "$MYDIR"; echo '{}a' | $AWK -f json_parser.awk
+$ cd "$MYDIR"; echo '{}a' | $AWK $ARGS
 | Can't advance at pos 3: a
 | ...
 ? 1
 
-$ cd "$MYDIR"; echo '---1...2' | $AWK -f json_parser.awk
+$ cd "$MYDIR"; echo '---1...2' | $AWK $ARGS
 | Can't advance at pos 2: --1...2
 | ...
 
-$ cd "$MYDIR"; echo '-1.' | $AWK -f json_parser.awk
+$ cd "$MYDIR"; echo '-1.' | $AWK $ARGS
 | number
 | -1.
 
-$ cd "$MYDIR"; printf '"\n"' | $AWK -f json_parser.awk
+$ cd "$MYDIR"; printf '"\n"' | $AWK $ARGS
 | Can't advance at pos 2: 
 | "
 | ...
 
-$ cd "$MYDIR"; echo '[ [[[[],    {}]]]   ,[[{}]] ]' | $AWK -f json_parser.awk
+$ cd "$MYDIR"; echo '[ [[[[],    {}]]]   ,[[{}]] ]' | $AWK $ARGS
 | array
 | array
 | array
@@ -119,7 +119,7 @@ $ cd "$MYDIR"; echo '[ [[[[],    {}]]]   ,[[{}]] ]' | $AWK -f json_parser.awk
 | end_array
 | end_array
 
-$ cd "$MYDIR"; $AWK -f json_parser.awk test_data/1.json
+$ cd "$MYDIR"; $AWK $ARGS test_data/1.json
 | object
 | key
 | "web-app"
@@ -455,7 +455,7 @@ $ cd "$MYDIR"; $AWK -f json_parser.awk test_data/1.json
 | end_object
 |
 
-$ cd "$MYDIR"; $AWK -f json_parser.awk test_data/2.json
+$ cd "$MYDIR"; $AWK $ARGS test_data/2.json
 | object
 | key
 | "a"
@@ -490,7 +490,7 @@ $ cd "$MYDIR"; $AWK -f json_parser.awk test_data/2.json
 | end_object
 |
 
-$ cd "$MYDIR"; $AWK -f json_parser.awk test_data/3.json
+$ cd "$MYDIR"; $AWK $ARGS test_data/3.json
 | array
 | true
 | null
@@ -507,7 +507,7 @@ $ cd "$MYDIR"; $AWK -f json_parser.awk test_data/3.json
 | end_array
 |
 
-$ cd "$MYDIR"; $AWK -f json_parser.awk test_data/4.json
+$ cd "$MYDIR"; $AWK $ARGS test_data/4.json
 | array
 | number
 | 1

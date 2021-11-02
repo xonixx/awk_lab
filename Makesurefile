@@ -52,23 +52,35 @@
 @goal prepared4tests @private
 @depends_on tush_installed debug
 
+@lib
+  run_tush() {
+    local f="$1"
+    export PATH="$PATH:$MYDIR/soft/tush/bin"
+
+    if DIFF="diff --strip-trailing-cr" tush-check "$f"
+    then
+      echo "TESTS PASSED : $f"
+    else
+      echo >&2 "!!! TESTS FAILED !!! : $f"
+      exit 1
+    fi
+  }
+
 @goal @glob *.tush @private
 @depends_on prepared4tests
-  f="$ITEM"
+@use_lib
+  run_tush "$ITEM"
 
-  export PATH="$PATH:$MYDIR/soft/tush/bin"
-
-  if DIFF="diff --strip-trailing-cr" tush-check "$f"
-  then
-    echo "TESTS PASSED : $f"
-  else
-    echo >&2 "!!! TESTS FAILED !!! : $f"
-    exit 1
-  fi
+@goal @glob *.tush.sh @private
+@depends_on prepared4tests
+@use_lib
+  . "$ITEM"
+  run_tush "$FILE"
 
 @goal tested
 @doc run tests
 @depends_on *.tush
+@depends_on *.tush.sh
 
 @goal default
 @doc same as tested
