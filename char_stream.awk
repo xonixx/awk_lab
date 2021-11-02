@@ -8,29 +8,34 @@
 #   PosInLine
 #   Pos
 #
-function getChar(   c) {
+function getChar(   c,prev) {
   if (!Pos) {
     Pos=1
     PosInLine=1
     if ((getline CurrentLine) <= 0) {
-#      print 111
+      #      print 111
       CurrentLine=""
       return
     }
-#    print 111111
-#    if (!CurrentLine)
-#      PosInLine = 0
+    #    print 111111, CurrentLine
   }
-  if (!(c = PosInLine <= 0 ? "\n" : substr(CurrentLine,PosInLine,1))) { # line ended
+  if (!CurrentLine && 1==PosInLine)
+    return "\n"
+  if (!(c = 0==PosInLine ? "\n" : substr(CurrentLine,PosInLine,1))) { # line ended
+    prev=CurrentLine
     if ((getline CurrentLine) <= 0) {
-#      print 222
+      #      print 222
       CurrentLine=""
       return
     }
-#    print 222222
-#    PosInLine = !CurrentLine ? -1 : 0
-    PosInLine = 0
-    c = "\n"
+    #    print 222222, CurrentLine
+    if (prev) {
+      PosInLine = 0
+      c = "\n"
+    } else {
+      PosInLine=1
+      c = substr(CurrentLine,PosInLine,1)
+    }
   }
   return c
 }
