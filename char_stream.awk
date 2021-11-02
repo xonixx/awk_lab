@@ -1,9 +1,4 @@
 BEGIN {
-  RS="\n"
-  CurrentLine=""
-#  Consumed=0
-  PosInLine=1
-
   test()
 }
 
@@ -22,23 +17,18 @@ function getChar(   c) {
       return
     }
   }
-  c = substr(CurrentLine,PosInLine,1)
+  c = 0 == PosInLine ? "\n" : substr(CurrentLine,PosInLine,1)
   if (!c) { # line ended
-    # TODO line separator
     if ((getline CurrentLine) <= 0) {
       CurrentLine=""
       return
     }
-    PosInLine=1
-    c = substr(CurrentLine,PosInLine,1)
+    PosInLine=0
+    c = "\n"
   }
   return c
 }
 
 function advance() {
   PosInLine++
-}
-
-function unshift(c) {
-
 }
