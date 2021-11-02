@@ -5,6 +5,8 @@ $ cd "$MYDIR"; printf 'a' | $AWK -f char_stream.awk -f char_stream_test.awk
 | [a]
 
 $ cd "$MYDIR"; printf '\n' | $AWK -f char_stream.awk -f char_stream_test.awk
+
+$ cd "$MYDIR"; printf '\n\n' | $AWK -f char_stream.awk -f char_stream_test.awk
 | [
 | ]
 
