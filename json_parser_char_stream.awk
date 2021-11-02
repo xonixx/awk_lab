@@ -3,7 +3,7 @@ BEGIN {
   #    while (getline line > 0)
   #       Json = Json line "\n"
 
-  Pos=1
+#  Pos=1
   Trace="Trace" in ENVIRON
 
   split("", Asm)

@@ -1,7 +1,7 @@
 # https://www.json.org/json-en.html
 BEGIN {
   while (getline line > 0)
-    Json = Json line "\n"
+    Json = Json ? Json "\n" line : line
 
   Pos=1
   Trace="Trace" in ENVIRON
