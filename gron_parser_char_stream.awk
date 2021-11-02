@@ -62,12 +62,14 @@ function VALUE() {
 
 }
 function STATEMENTS() {
+  attempt("STATEMENTS")
   for(;;) {
-    STATEMENT()
+    if (!STATEMENT())
+      return checkRes("STATEMENTS",0)
     if (!tryParse1("\n"))
       break
   }
-  return 1
+  return checkRes("STATEMENTS",1)
 }
 function STATEMENT() {
   return attempt("STATEMENT") && checkRes("STATEMENT",
