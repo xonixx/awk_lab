@@ -63,10 +63,11 @@ function VALUE() {
 }
 function STATEMENTS() {
   # TODO redo recursion -> iteration
-  return attempt("STATEMENTS") && checkRes("STATEMENTS", STATEMENT() && (tryParse1("\n") ? SEGMENTS() : 1)) || 1
+  return attempt("STATEMENTS") && checkRes("STATEMENTS", STATEMENT() && (tryParse1("\n") ? STATEMENTS() : 1)) || 1
 }
 function STATEMENT() {
-  return attempt("STATEMENT") && checkRes("STATEMENT", PATH() && tryParse1("=") && asm("value") && VALUE())
+  return attempt("STATEMENT") && checkRes("STATEMENT",
+    asm("record") && PATH() && tryParse1("=") && asm("value") && VALUE() && asm("end"))
 }
 function PATH() {
   return attempt("PATH") && checkRes("PATH", BARE_WORD() && SEGMENTS())
