@@ -32,13 +32,13 @@ function NUMBER(    res) {
     asm("number") && asm(res[0]))
 }
 function tryParseHex(res) { return tryParse1("0123456789ABCDEFabcdef", res) }
-function tryParseCharacters(res) { return tryParseCharacter(res) && tryParseCharacters(res) || 1 }
+function tryParseCharacters(res) { return tryParseCharacter(res) && tryParseCharacters(res) || 1 } # TODO
 function tryParseCharacter(res) { return tryParseSafeChar(res) || tryParseEscapeChar(res) }
 function tryParseEscapeChar(res) {
-  return tryParse1("\\", res) ?
-    (tryParse1("\"\\/bfnrt", res) ||
-    tryParse1("u", res) ? tryParseHex(res) && tryParseHex(res) && tryParseHex(res) && tryParseHex(res) : 0) : 0
+  return attempt("ec") && checkRes("ec",
+    tryParse1("\\", res) ? tryParse1("\"\\/bfnrt", res) || tryParseU(res) : 0)
 }
+function tryParseU(res) { return tryParse1("u", res) ? tryParseHex(res) && tryParseHex(res) && tryParseHex(res) && tryParseHex(res) : 0 }
 function tryParseSafeChar(res,   c) {
   c = nextChar()
   # https://github.com/antlr/grammars-v4/blob/master/json/JSON.g4#L56

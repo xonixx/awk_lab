@@ -268,12 +268,12 @@ $ cd "$MYDIR"; $AWK -f run_json_test_suit.awk
 |  SUCCESS : y_string_1_2_3_bytes_UTF-8_sequences.json
 |  SUCCESS : y_string_accepted_surrogate_pair.json
 |  SUCCESS : y_string_accepted_surrogate_pairs.json
-|     FAIL : y_string_allowed_escapes.json
-|     FAIL : y_string_backslash_and_u_escaped_zero.json
+|  SUCCESS : y_string_allowed_escapes.json
+|  SUCCESS : y_string_backslash_and_u_escaped_zero.json
 |  SUCCESS : y_string_backslash_doublequotes.json
 |  SUCCESS : y_string_comments.json
 |  SUCCESS : y_string_double_escape_a.json
-|     FAIL : y_string_double_escape_n.json
+|  SUCCESS : y_string_double_escape_n.json
 |  SUCCESS : y_string_escaped_control_character.json
 |  SUCCESS : y_string_escaped_noncharacter.json
 |  SUCCESS : y_string_in_array.json
@@ -340,5 +340,5 @@ $ cd "$MYDIR"; $AWK -f run_json_test_suit.awk
 |  SUCCESS : string_3_escaped_invalid_codepoints.json
 |  SUCCESS : string_3_invalid_codepoints.json
 |  SUCCESS : string_with_escaped_NULL.json
-| Successes: 322
-| Fails:     18
+| Successes: 325
+| Fails:     15
