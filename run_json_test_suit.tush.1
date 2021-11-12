@@ -71,7 +71,7 @@ $ cd "$MYDIR"; $AWK -f run_json_test_suit.awk
 |  SUCCESS : n_number_0.3e+.json
 |  SUCCESS : n_number_0_capital_E.json
 |  SUCCESS : n_number_0_capital_E+.json
-|     FAIL : n_number_0.e1.json
+|  SUCCESS : n_number_0.e1.json
 |  SUCCESS : n_number_0e.json
 |  SUCCESS : n_number_0e+.json
 |  SUCCESS : n_number_1_000.json
@@ -83,10 +83,10 @@ $ cd "$MYDIR"; $AWK -f run_json_test_suit.awk
 |  SUCCESS : n_number_.-1.json
 |  SUCCESS : n_number_+1.json
 |  SUCCESS : n_number_.2e-3.json
-|     FAIL : n_number_2.e-3.json
-|     FAIL : n_number_2.e+3.json
-|     FAIL : n_number_2.e3.json
-|     FAIL : n_number_-2..json
+|  SUCCESS : n_number_2.e-3.json
+|  SUCCESS : n_number_2.e+3.json
+|  SUCCESS : n_number_2.e3.json
+|  SUCCESS : n_number_-2..json
 |  SUCCESS : n_number_9.e+.json
 |  SUCCESS : n_number_expression.json
 |  SUCCESS : n_number_hex_1_digit.json
@@ -110,7 +110,7 @@ $ cd "$MYDIR"; $AWK -f run_json_test_suit.awk
 |  SUCCESS : n_number_neg_with_garbage_at_end.json
 |  SUCCESS : n_number_real_garbage_after_e.json
 |  SUCCESS : n_number_real_with_invalid_utf8_after_e.json
-|     FAIL : n_number_real_without_fractional_part.json
+|  SUCCESS : n_number_real_without_fractional_part.json
 |  SUCCESS : n_number_starting_with_dot.json
 |  SUCCESS : n_number_U+FF11_fullwidth_digit_one.json
 |  SUCCESS : n_number_with_alpha_char.json
@@ -340,5 +340,5 @@ $ cd "$MYDIR"; $AWK -f run_json_test_suit.awk
 |  SUCCESS : string_3_escaped_invalid_codepoints.json
 |  SUCCESS : string_3_invalid_codepoints.json
 |  SUCCESS : string_with_escaped_NULL.json
-| Successes: 313
-| Fails:     27
+| Successes: 319
+| Fails:     21
