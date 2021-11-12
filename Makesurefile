@@ -72,6 +72,11 @@
 @use_lib
   run_tush "$ITEM"
 
+@goal @glob *.tush.1 @private
+@depends_on prepared4tests
+@use_lib
+  run_tush "$ITEM"
+
 @goal @glob *.tush.sh @private
 @depends_on prepared4tests
 @use_lib
