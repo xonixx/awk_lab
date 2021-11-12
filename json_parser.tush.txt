@@ -87,6 +87,7 @@ $ cd "$MYDIR"; echo '{}a' | $AWK $ARGS
 
 $ cd "$MYDIR"; echo '---1...2' | $AWK $ARGS
 | Can't advance at pos 2: --1...2...
+? 1
 
 $ cd "$MYDIR"; echo '-1.' | $AWK $ARGS
 | number
@@ -95,6 +96,7 @@ $ cd "$MYDIR"; echo '-1.' | $AWK $ARGS
 $ cd "$MYDIR"; printf '"\n"' | $AWK $ARGS
 | Can't advance at pos 2: 
 | "...
+? 1
 
 $ cd "$MYDIR"; echo '[ [[[[],    {}]]]   ,[[{}]] ]' | $AWK $ARGS
 | array

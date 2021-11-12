@@ -6,15 +6,14 @@ BEGIN {
   AsmLen=0
 
   if (ELEMENT()) {
-    if ("" != getChar()) {
-      print "Can't advance at pos " Pos ": " showPos()
-      exit 1
-    }
+    if ("" != getChar())
+      die("Can't advance at pos " Pos ": " showPos())
+
     # print "Parsed: "
     for (i=0; i<AsmLen; i++)
       print Asm[i]
   } else
-    print "Can't advance at pos " Pos ": " showPos()
+    die("Can't advance at pos " Pos ": " showPos())
 
     # print tryParseExact("{"), Pos
 }
@@ -132,3 +131,4 @@ function showPos(   s,i) {
 }
 
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
+function die(msg) { print msg; exit 1 }
