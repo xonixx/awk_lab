@@ -22,11 +22,10 @@ BEGIN {
 }
 
 function tryParseDigits(res) { return tryParse("0123456789", res) }
-function tryParseDigitsOptional(res) { tryParseDigits(res); return 1 }
 function NUMBER(    res) {
   return attempt("NUMBER") && checkRes("NUMBER",
     (tryParse1("-", res) || 1) &&
-    (tryParse1("0", res) || tryParse1("123456789", res) && tryParseDigitsOptional(res)) &&
+    (tryParse1("0", res) || tryParse1("123456789", res) && (tryParseDigits(res)||1)) &&
     (tryParse1(".", res) ? tryParseDigits(res) : 1) &&
     (tryParse1("eE", res) ? (tryParse1("-+",res)||1) && tryParseDigits(res) : 1) &&
     asm("number") && asm(res[0]))
