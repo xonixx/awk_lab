@@ -12,7 +12,7 @@ BEGIN {
   if (ELEMENT()) {
     if (Pos <= length(Json))
       die("Can't advance at pos " Pos ": " substr(Json,Pos,10) "...")
-    # print "Parsed: "
+      # print "Parsed: "
     for (i=0; i<AsmLen; i++)
       print Asm[i]
   } else
@@ -35,8 +35,9 @@ function tryParseHex(res) { return tryParse1("0123456789ABCDEFabcdef", res) }
 function tryParseCharacters(res) { return tryParseCharacter(res) && tryParseCharacters(res) || 1 }
 function tryParseCharacter(res) { return tryParseSafeChar(res) || tryParseEscapeChar(res) }
 function tryParseEscapeChar(res) {
-  return tryParse1("\\", res) &&
-    (tryParse1("\\/bfnrt", res) || tryParse1("u", res) && tryParseHex(res) && tryParseHex(res) && tryParseHex(res) && tryParseHex(res))
+  return tryParse1("\\", res) ?
+    (tryParse1("\"\\/bfnrt", res) ||
+    tryParse1("u", res) ? tryParseHex(res) && tryParseHex(res) && tryParseHex(res) && tryParseHex(res) : 0) : 0
 }
 function tryParseSafeChar(res,   c) {
   c = nextChar()

@@ -26,6 +26,9 @@ function testFile(folder, f, firstLetter,   cmd,res) {
   if (!firstLetter)
     firstLetter = substr(f,1,1)
   cmd = "awk -f json_parser.awk " folder f " 2>&1 >/dev/null"
+#  cmd = "./soft/bwk -f json_parser.awk " folder f " 2>&1 >/dev/null"
+#  cmd = "./soft/mawk134 -f json_parser.awk " folder f " 2>&1 >/dev/null"
+#  cmd = "./soft/gawk51 -f json_parser.awk " folder f " 2>&1 >/dev/null"
   #    print cmd
   res = system(cmd)
   printf "%8s : %s\n", (res = analyzeResult(firstLetter, res)) ? "SUCCESS" : "FAIL", f
