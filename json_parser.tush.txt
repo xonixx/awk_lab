@@ -1,4 +1,8 @@
 
+$ cd "$MYDIR"; echo '"\""' | $AWK $ARGS
+| string
+| "\""
+
 $ cd "$MYDIR"; echo '[123,-234.56E+10,"Hello world",true,false,null,{}]' | $AWK $ARGS
 | array
 | number
@@ -89,9 +93,9 @@ $ cd "$MYDIR"; echo '---1...2' | $AWK $ARGS
 | Can't advance at pos 2: --1...2...
 ? 1
 
-$ cd "$MYDIR"; echo '-1.' | $AWK $ARGS
+$ cd "$MYDIR"; echo '-1.0' | $AWK $ARGS
 | number
-| -1.
+| -1.0
 
 $ cd "$MYDIR"; printf '"\n"' | $AWK $ARGS
 | Can't advance at pos 2: 
