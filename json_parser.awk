@@ -10,15 +10,13 @@ BEGIN {
   AsmLen=0
 
   if (ELEMENT()) {
-    if (Pos <= length(Json)) {
-      print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
-      exit 1
-    }
+    if (Pos <= length(Json))
+      die("Can't advance at pos " Pos ": " substr(Json,Pos,10) "...")
     # print "Parsed: "
     for (i=0; i<AsmLen; i++)
       print Asm[i]
   } else
-    print "Can't advance at pos " Pos ": " substr(Json,Pos,10) "..."
+    die("Can't advance at pos " Pos ": " substr(Json,Pos,10) "...")
 
     # print tryParseExact("{"), Pos
 }
@@ -126,3 +124,4 @@ function attempt(rule) { trace(rule "?"); return 1 }
 function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(Json,Pos,10) "..."} }
 
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
+function die(msg) { print msg; exit 1 }

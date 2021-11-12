@@ -1,5 +1,6 @@
 
 @define TUSH_REPO=https://github.com/adolfopa/tush
+@define JSONTestSuite_REPO=https://github.com/nst/JSONTestSuite
 @define GOAWK_VERSION=1.9.1
 @define GOAWK=goawk$GOAWK_VERSION
 @define AWK="awk"
@@ -243,3 +244,21 @@
 
   mv goawk $GOAWK
   "./$GOAWK" --version
+
+@goal JSONTestSuite_installed @private
+@depends_on soft_folder_created
+@reached_if [[ -d "soft/JSONTestSuite" ]]
+  echo
+  echo "Fetching JSONTestSuite..."
+  echo
+
+  cd "soft"
+
+  wget $JSONTestSuite_REPO/archive/master.tar.gz -O- \
+    | tar xzvf - JSONTestSuite-master/test_parsing JSONTestSuite-master/test_transform
+  mv JSONTestSuite-master JSONTestSuite
+
+@goal test_suite
+@doc runs JSON Test Suite
+@depends_on JSONTestSuite_installed
+  ./run_json_test_suit.awk
