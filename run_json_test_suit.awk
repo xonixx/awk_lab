@@ -32,9 +32,9 @@ function testFile(folder, f, firstLetter,   cmd,res) {
     cmd = "cat " folder f " | jsqry"
   else
     cmd = "awk -f json_parser.awk " folder f
-    #  cmd = "./soft/bwk -f json_parser.awk " folder f " 2>&1 >/dev/null"
-    #  cmd = "./soft/mawk134 -f json_parser.awk " folder f " 2>&1 >/dev/null"
-    #  cmd = "./soft/gawk51 -f json_parser.awk " folder f " 2>&1 >/dev/null"
+    #  cmd = "./soft/bwk -f json_parser.awk " folder f
+    #  cmd = "./soft/mawk134 -f json_parser.awk " folder f
+    #  cmd = "./soft/gawk51 -f json_parser.awk " folder f
     #  print cmd
   cmd = cmd " >/dev/null 2>&1"
   res = system(cmd)
