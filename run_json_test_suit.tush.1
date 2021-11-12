@@ -146,23 +146,23 @@ $ cd "$MYDIR"; $AWK -f run_json_test_suit.awk
 |  SUCCESS : n_object_with_trailing_garbage.json
 |  SUCCESS : n_single_space.json
 |  SUCCESS : n_string_1_surrogate_then_escape.json
-|     FAIL : n_string_1_surrogate_then_escape_u1.json
+|  SUCCESS : n_string_1_surrogate_then_escape_u1.json
 |  SUCCESS : n_string_1_surrogate_then_escape_u1x.json
-|     FAIL : n_string_1_surrogate_then_escape_u.json
+|  SUCCESS : n_string_1_surrogate_then_escape_u.json
 |  SUCCESS : n_string_accentuated_char_no_quotes.json
 |  SUCCESS : n_string_backslash_00.json
 |  SUCCESS : n_string_escaped_backslash_bad.json
 |  SUCCESS : n_string_escaped_ctrl_char_tab.json
 |  SUCCESS : n_string_escaped_emoji.json
 |  SUCCESS : n_string_escape_x.json
-|     FAIL : n_string_incomplete_escaped_character.json
+|  SUCCESS : n_string_incomplete_escaped_character.json
 |  SUCCESS : n_string_incomplete_escape.json
 |  SUCCESS : n_string_incomplete_surrogate_escape_invalid.json
-|     FAIL : n_string_incomplete_surrogate.json
+|  SUCCESS : n_string_incomplete_surrogate.json
 |  SUCCESS : n_string_invalid_backslash_esc.json
 |  SUCCESS : n_string_invalid_unicode_escape.json
 |  SUCCESS : n_string_invalid_utf8_after_escape.json
-|     FAIL : n_string_invalid-utf-8-in-escape.json
+|  SUCCESS : n_string_invalid-utf-8-in-escape.json
 |  SUCCESS : n_string_leading_uescaped_thinspace.json
 |  SUCCESS : n_string_no_quotes_with_bad_escape.json
 |  SUCCESS : n_string_single_doublequote.json
@@ -340,5 +340,5 @@ $ cd "$MYDIR"; $AWK -f run_json_test_suit.awk
 |  SUCCESS : string_3_escaped_invalid_codepoints.json
 |  SUCCESS : string_3_invalid_codepoints.json
 |  SUCCESS : string_with_escaped_NULL.json
-| Successes: 325
-| Fails:     15
+| Successes: 330
+| Fails:     10

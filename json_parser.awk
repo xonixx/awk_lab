@@ -30,14 +30,15 @@ function NUMBER(    res) {
     (tryParse1("eE", res) ? (tryParse1("-+",res)||1) && tryParseDigits(res) : 1) &&
     asm("number") && asm(res[0]))
 }
-function tryParseHex(res) { return tryParse1("0123456789ABCDEFabcdef", res) }
-function tryParseCharacters(res) { while (tryParseCharacter(res)); return 1 }
-function tryParseCharacter(res) { return tryParseSafeChar(res) || tryParseEscapeChar(res) }
-function tryParseEscapeChar(res) {
+function tryParseHex(res,err) { return tryParse1("0123456789ABCDEFabcdef", res) || setErr(err) }
+function setErr(err) { err[0]=1; return 0 }
+function tryParseCharacters(res,   err) { while (tryParseCharacter(res,err)); return !err[0] }
+function tryParseCharacter(res,err) { return tryParseSafeChar(res) || tryParseEscapeChar(res,err) }
+function tryParseEscapeChar(res,err) {
   return attempt("ec") && checkRes("ec",
-    tryParse1("\\", res) ? tryParse1("\"\\/bfnrt", res) || tryParseU(res) : 0)
+    tryParse1("\\", res) ? tryParse1("\"\\/bfnrt", res) || tryParseU(res,err) : 0)
 }
-function tryParseU(res) { return tryParse1("u", res) ? tryParseHex(res) && tryParseHex(res) && tryParseHex(res) && tryParseHex(res) : 0 }
+function tryParseU(res,err) { return tryParse1("u", res) ? tryParseHex(res,err) && tryParseHex(res,err) && tryParseHex(res,err) && tryParseHex(res,err) : 0 }
 function tryParseSafeChar(res,   c) {
   c = nextChar()
   # https://github.com/antlr/grammars-v4/blob/master/json/JSON.g4#L56
