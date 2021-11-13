@@ -1,26 +1,25 @@
 BEGIN {
   Trace="Trace" in ENVIRON
 
-  while (getline Gron > 0) {
-    Pos=1
-
-    split("", Asm)
-    AsmLen=0
-
-    asm("record")
-    if (STATEMENT()) {
-      asm("end")
-      if (Pos <= length(Gron)) {
-        print "Can't advance at pos " Pos ": " substr(Gron,Pos,10) "..."
-        exit 1
-      }
+  split("", Asm)
+  AsmLen=0
+  Pos=1
+  while (getline line > 0)
+    Gron = Gron line "\n"
+  sub(/[\n]+$/, "", Gron) # TODO redo parsing and remove
+  if (STATEMENTS()) {
+    if (Pos <= length(Gron))
+      dieAtPos("Can't parse GRON")
       # print "Parsed: "
-      for (i=0; i<AsmLen; i++)
-        print Asm[i]
-    } else
-      print "Can't advance at pos " Pos ": " substr(Gron,Pos,10) "..."
-  }
+    for (i=0; i<AsmLen; i++)
+      print Asm[i]
+  } else
+    dieAtPos("Can't parse GRON")
 }
+
+function die(msg) { print msg; exit 1 }
+function dieAtPos(err) { die(err " at pos " Pos ": " esc(substr(Gron,Pos,10)) "...") }
+function esc(s) { gsub(/\n/, "\\n",s); return s }
 
 function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
 function NUMBER(    res) {
@@ -55,7 +54,7 @@ function STRING(isKey,    res) {
     tryParse1("\"",res) &&
     asm(res[0]))
 }
-function VALUE() {
+function VALUE_GRON() {
   return attempt("VALUE") && checkRes("VALUE",
     STRING() ||
     NUMBER() ||
@@ -66,9 +65,23 @@ function VALUE() {
     tryParseExact("[]") && asm("array"))
 
 }
-function STATEMENT() {
-  return attempt("STATEMENT") && checkRes("STATEMENT", PATH() && tryParse1("=") && asm("value") && VALUE())
+function STATEMENTS() {
+  attempt("STATEMENTS")
+  for(;;) {
+    if (!STATEMENT())
+      return checkRes("STATEMENTS",0)
+    if (!tryParse1("\n"))
+      break
+  }
+  return checkRes("STATEMENTS",1)
 }
+function STATEMENT() {
+  return attempt("STATEMENT") && checkRes("STATEMENT",
+    asm("record") &&
+    PATH() && WS1() && tryParse1("=") && WS1() && asm("value") && VALUE_GRON() && (tryParse1(";")||1) &&
+    asm("end"))
+}
+function WS1() { return tryParse("\t ") || 1 }
 function PATH() {
   return attempt("PATH") && checkRes("PATH", BARE_WORD() && SEGMENTS())
 }

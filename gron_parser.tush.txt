@@ -1,6 +1,28 @@
 
 $ cd "$MYDIR"; echo 'aaa' | $AWK $ARGS
-| Can't advance at pos 4: ...
+| Can't parse GRON at pos 4: ...
+? 1
+
+#$ cd "$MYDIR"; printf 'json.a=1\n\n\njson.b=2' | $AWK $ARGS
+$ cd "$MYDIR"; printf 'json.a=1\njson.b=2' | $AWK $ARGS
+| record
+| field
+| "json"
+| field
+| "a"
+| value
+| number
+| 1
+| end
+| record
+| field
+| "json"
+| field
+| "b"
+| value
+| number
+| 2
+| end
 
 $ cd "$MYDIR"; $AWK $ARGS test_data/gron.1.txt
 | record
