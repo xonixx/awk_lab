@@ -6,7 +6,6 @@ BEGIN {
   Pos=1
   while (getline line > 0)
     Gron = Gron line "\n"
-  sub(/[\n]+$/, "", Gron) # TODO redo parsing and remove
   if (STATEMENTS()) {
     if (Pos <= length(Gron))
       dieAtPos("Can't parse GRON")
@@ -18,7 +17,7 @@ BEGIN {
 }
 
 function die(msg) { print msg; exit 1 }
-function dieAtPos(err) { die(err " at pos " Pos ": " esc(substr(Gron,Pos,10)) "...") }
+function dieAtPos(err) { die(err " at pos " Pos ": " posStr()) }
 function esc(s) { gsub(/\n/, "\\n",s); return s }
 
 function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
@@ -67,11 +66,9 @@ function VALUE_GRON() {
 }
 function STATEMENTS() {
   attempt("STATEMENTS")
-  for(;;) {
+  for(;nextChar();tryParse("\n")) {
     if (!STATEMENT())
       return checkRes("STATEMENTS",0)
-    if (!tryParse1("\n"))
-      break
   }
   return checkRes("STATEMENTS",1)
 }
@@ -126,6 +123,7 @@ function tryParse(chars, res, atMost,    i,c,s) {
 function nextChar() { return substr(Gron,Pos,1) }
 function checkRes(rule, r) { trace(rule (r?"+":"-")); return r }
 function attempt(rule) { trace(rule "?"); return 1 }
-function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(Gron,Pos,10) "..."} }
+function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, posStr()} }
+function posStr(   s) { return esc(s = substr(Gron,Pos,10)) (10==length(s)?"...":"") }
 
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
