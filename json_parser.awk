@@ -30,8 +30,9 @@ function NUMBER(    res) {
     (tryParse1("eE", res) ? (tryParse1("-+",res)||1) && tryParseDigits(res) : 1) &&
     asm("number") && asm(res[0]))
 }
-function tryParseHex(res) { return tryParse1("0123456789ABCDEFabcdef", res) }
-function tryParseCharacters(res) { while (tryParseCharacter(res)); return 1 }
+function tryParseHex(res) { return tryParse1("0123456789ABCDEFabcdef", res) || err(res) }
+function err(res) { res[1]=1; return 0 }
+function tryParseCharacters(res) { while (tryParseCharacter(res)); return !res[1] }
 function tryParseCharacter(res) { return tryParseSafeChar(res) || tryParseEscapeChar(res) }
 function tryParseEscapeChar(res) {
   return attempt("ec") && checkRes("ec",
