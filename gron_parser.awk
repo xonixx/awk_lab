@@ -66,7 +66,7 @@ function VALUE_GRON() {
 }
 function STATEMENTS() {
   attempt("STATEMENTS")
-  for(;nextChar();tryParse("\n")) {
+  for(tryParse("\n");nextChar();tryParse("\n")) {
     if (!STATEMENT())
       return checkRes("STATEMENTS",0)
   }
