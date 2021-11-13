@@ -1,7 +1,7 @@
 # https://www.json.org/json-en.html
 BEGIN {
   while (getline line > 0)
-    Json = Json ? Json "\n" line : line
+    In = In ? In "\n" line : line
 
   Pos=1
   Trace="Trace" in ENVIRON
@@ -10,13 +10,13 @@ BEGIN {
   AsmLen=0
 
   if (ELEMENT()) {
-    if (Pos <= length(Json))
-      die("Can't advance at pos " Pos ": " substr(Json,Pos,10) "...")
+    if (Pos <= length(In))
+      die("Can't advance at pos " Pos ": " substr(In,Pos,10) "...")
       # print "Parsed: "
     for (i=0; i<AsmLen; i++)
       print Asm[i]
   } else
-    die("Can't advance at pos " Pos ": " substr(Json,Pos,10) "...")
+    die("Can't advance at pos " Pos ": " substr(In,Pos,10) "...")
 
     # print tryParseExact("{"), Pos
 }
@@ -105,7 +105,7 @@ function ELEMENT() {
 # lib
 function tryParseExact(s,    l) {
   l=length(s)
-  if(substr(Json,Pos,l)==s) { Pos += l; return 1 }
+  if(substr(In,Pos,l)==s) { Pos += l; return 1 }
   return 0
 }
 function tryParse1(chars, res) { return tryParse(chars,res,1) }
@@ -120,10 +120,10 @@ function tryParse(chars, res, atMost,    i,c,s) {
   res[0] = res[0] s
   return s != ""
 }
-function nextChar() { return substr(Json,Pos,1) }
+function nextChar() { return substr(In,Pos,1) }
 function checkRes(rule, r) { trace(rule (r?"+":"-")); return r }
 function attempt(rule) { trace(rule "?"); return 1 }
-function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(Json,Pos,10) "..."} }
+function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, substr(In,Pos,10) "..."} }
 
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
 function die(msg) { print msg; exit 1 }

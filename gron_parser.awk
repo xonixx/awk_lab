@@ -5,9 +5,9 @@ BEGIN {
   AsmLen=0
   Pos=1
   while (getline line > 0)
-    Gron = Gron line "\n"
+    In = In line "\n"
   if (STATEMENTS()) {
-    if (Pos <= length(Gron))
+    if (Pos <= length(In))
       dieAtPos("Can't parse GRON")
       # print "Parsed: "
     for (i=0; i<AsmLen; i++)
@@ -17,7 +17,7 @@ BEGIN {
 }
 
 function die(msg) { print msg; exit 1 }
-function dieAtPos(err) { die(err " at pos " Pos ": " posStr()) }
+function dieAtPos(msg) { die(msg " at pos " Pos ": " posStr()) }
 function esc(s) { gsub(/\n/, "\\n",s); return s }
 
 function tryParseDigitOptional(res) { tryParse("0123456789", res); return 1 }
@@ -105,7 +105,7 @@ function KEY(    idx) {
 # lib
 function tryParseExact(s,    l) {
   l=length(s)
-  if(substr(Gron,Pos,l)==s) { Pos += l; return 1 }
+  if(substr(In,Pos,l)==s) { Pos += l; return 1 }
   return 0
 }
 function tryParse1(chars, res) { return tryParse(chars,res,1) }
@@ -120,10 +120,10 @@ function tryParse(chars, res, atMost,    i,c,s) {
   res[0] = res[0] s
   return s != ""
 }
-function nextChar() { return substr(Gron,Pos,1) }
+function nextChar() { return substr(In,Pos,1) }
 function checkRes(rule, r) { trace(rule (r?"+":"-")); return r }
 function attempt(rule) { trace(rule "?"); return 1 }
 function trace(x) { if (Trace){ printf "%10s pos %d: %s\n", x, Pos, posStr()} }
-function posStr(   s) { return esc(s = substr(Gron,Pos,10)) (10==length(s)?"...":"") }
+function posStr(   s) { return esc(s = substr(In,Pos,10)) (10==length(s)?"...":"") }
 
 function asm(inst) { Asm[AsmLen++]=inst; return 1 }
