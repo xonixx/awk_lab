@@ -1,11 +1,10 @@
+@options timing
 
 @define TUSH_REPO='https://github.com/adolfopa/tush'
 @define JSONTestSuite_REPO='https://github.com/nst/JSONTestSuite'
 @define GOAWK_VERSION='1.13.0'
 @define GOAWK="goawk$GOAWK_VERSION"
 @define AWK='awk'
-
-@options timing
 
 @goal soft_folder_created @private
 @reached_if [[ -d "soft" ]]
