@@ -103,6 +103,7 @@
 @depends_on tested_mawk134
 @depends_on tested_gawk51
 @depends_on tested_goawk
+#@depends_on tested_goawk_branch
 
 @goal tested_bwk @private
 @depends_on installed_bwk
@@ -119,6 +120,10 @@
 @goal tested_goawk @private
 @depends_on installed_goawk
   ./makesure -D AWK="$(pwd)/soft/$GOAWK" tested
+
+@goal tested_goawk_branch @private
+@depends_on installed_goawk_branch
+  ./makesure -D AWK="$(pwd)/soft/$GOAWK_BRANCH_EXE" tested
 
 @goal tested_mawk @private
   if [[ -x /usr/bin/mawk ]]
@@ -248,6 +253,30 @@
 
   mv goawk $GOAWK
   "./$GOAWK" --version
+
+@define GOAWK_BRANCH='bytecode'
+@define GOAWK_BRANCH_EXE="goawk_$GOAWK_BRANCH"
+
+@goal installed_goawk_branch @private
+@reached_if [[ -f soft/$GOAWK_BRANCH_EXE ]]
+@depends_on soft_folder_created
+  echo
+  echo "Installing GoAWK branch=$GOAWK_BRANCH ..."
+  echo
+
+  cd "soft"
+
+  zip="https://github.com/benhoyt/goawk/archive/refs/heads/$GOAWK_BRANCH.zip"
+  curl -L "$zip" -o "$GOAWK_BRANCH.zip"
+  unzip -o "$GOAWK_BRANCH.zip"
+  cd "goawk-$GOAWK_BRANCH"
+  ~/soft/go1.17/bin/go build # TODO go path
+  mv goawk ../"$GOAWK_BRANCH_EXE"
+
+  cd ..
+  ./"$GOAWK_BRANCH_EXE" --version
+  rm -r "goawk-$GOAWK_BRANCH" "$GOAWK_BRANCH.zip"
+
 
 @goal JSONTestSuite_installed @private
 @depends_on soft_folder_created
