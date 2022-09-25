@@ -18,7 +18,7 @@ BEGIN {
 
   Dependencies        ["do_work",1] = "document_processed"
   DependenciesArgsCnt ["do_work",1] = 1
-  DependenciesArgs    ["do_work",1,0] = "file2"
+  DependenciesArgs    ["do_work",1,0] = "file 2"
   DependenciesArgsType["do_work",1,0] = "string"
 
   DependenciesCnt     ["document_processed"] = 1
@@ -35,15 +35,19 @@ BEGIN {
   # - document_downloaded @params F1
   #
   # - do_work
-  #   - document_processed @args "file1"
-  #   - document_processed @args "file2"
+  #   - document_processed @args 'file1'
+  #   - document_processed @args 'file 2'
   #
   # === what we need ===
   #
+  # - document_processed@file1
+  # - document_downloaded@file1
+  # - document_processed@'file 2'
+  # - document_downloaded@'file 2'
   # - do_work
-  #   - document_processed @args "file1"
-  #     - document_downloaded @args "file1"
-  #   - document_processed @args "file2"
-  #     - document_downloaded @args "file2"
+  #   - document_processed@file1
+  #     - document_downloaded@file1
+  #   - document_processed@'file 2'
+  #     - document_downloaded@'file 2'
 }
 
