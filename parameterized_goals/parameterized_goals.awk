@@ -49,5 +49,20 @@ BEGIN {
   #     - document_downloaded@file1
   #   - document_processed@'file 2'
   #     - document_downloaded@'file 2'
+
+  printDepsTree("do_work")
+}
+
+function panic(s){ print s; exit 1 }
+function indent(ind) {
+  printf "%" ind*2 "s", ""
+}
+function printDepsTree(goal,   ind) {
+  if (!(goal in Goal)) { panic("unknown goal: " goal) }
+  indent(ind)
+  print goal
+  for (i=0; i < DependenciesCnt[goal]; i++) {
+    printDepsTree(Dependencies[goal,i],ind+1)
+  }
 }
 
