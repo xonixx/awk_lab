@@ -7,7 +7,7 @@ BEGIN {
   GoalParams   ["document_processed",0] = "F"
 
   GoalParamsCnt["document_downloaded"] = 1
-  GoalParams   ["document_downloaded",0] = "F"
+  GoalParams   ["document_downloaded",0] = "F1"
 
   DependenciesCnt     ["do_work"] = 2
 
@@ -26,5 +26,24 @@ BEGIN {
   DependenciesArgsCnt ["document_processed",0] = 1
   DependenciesArgs    ["document_processed",0,0] = "F"
   DependenciesArgsType["document_processed",0,0] = "var"
+
+  # === what we have ===
+  #
+  # - document_processed @params F
+  #   - document_downloaded @args F
+  #
+  # - document_downloaded @params F1
+  #
+  # - do_work
+  #   - document_processed @args "file1"
+  #   - document_processed @args "file2"
+  #
+  # === what we need ===
+  #
+  # - do_work
+  #   - document_processed @args "file1"
+  #     - document_downloaded @args "file1"
+  #   - document_processed @args "file2"
+  #     - document_downloaded @args "file2"
 }
 
