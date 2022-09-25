@@ -50,6 +50,12 @@ BEGIN {
   #   - document_processed@'file 2'
   #     - document_downloaded@'file 2'
 
+  print "BEFORE:"
+  printDepsTree("do_work")
+
+  instantiate("do_work")
+
+  print "AFTER:"
   printDepsTree("do_work")
 }
 
@@ -63,6 +69,12 @@ function printDepsTree(goal,ind,   i) {
   print goal
   for (i=0; i < DependenciesCnt[goal]; i++) {
     printDepsTree(Dependencies[goal,i],ind+1)
+  }
+}
+function instantiate(goal,args,   i) {
+  if (!(goal in Goal)) { panic("unknown goal: " goal) }
+  for (i=0; i < DependenciesCnt[goal]; i++) {
+    instantiate(Dependencies[goal,i])
   }
 }
 
