@@ -57,7 +57,7 @@ function panic(s){ print s; exit 1 }
 function indent(ind) {
   printf "%" ind*2 "s", ""
 }
-function printDepsTree(goal,   ind) {
+function printDepsTree(goal,ind,   i) {
   if (!(goal in Goal)) { panic("unknown goal: " goal) }
   indent(ind)
   print goal
