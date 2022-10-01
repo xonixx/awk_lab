@@ -10,7 +10,7 @@ BEGIN {
 }
 
 function newArr() { return ++DYN_ARR_IDX }
-function arrSize(arr) { return DYN_ARR_SIZE[arr] }
+function arrSize(arr) { return +DYN_ARR_SIZE[arr] }
 function arrGet(arr, key) { return DYN_ARR[arr,key] }
 
 # returns prev val
@@ -41,7 +41,9 @@ BEGIN {
 
 function test(   a,it,key) {
   a = newArr()
+  print "size0: " arrSize(a)
   arrSet(a, 1, 2)
+  arrSet(a, "b", "BBB111")
   arrSet(a, "b", "BBB")
 
   print "size: " arrSize(a)
