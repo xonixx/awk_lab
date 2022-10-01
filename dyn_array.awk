@@ -1,8 +1,12 @@
 BEGIN {
   DYN_ARR_IDX = 0
-  split("", DYN_ARR_SIZE) # i     -> keys_count
-  split("", DYN_ARR_KEYS) # i,j   -> key
-  split("", DYN_ARR)      # i,key -> val
+  split("", DYN_ARR_SIZE) # arr     -> keys_count
+  split("", DYN_ARR_KEYS) # arr,j   -> key
+  split("", DYN_ARR)      # arr,key -> val
+
+  DYN_ARR_ITER_IDX = 0
+  split("", DYN_ARR_ITER_ARR) # it  -> arr
+  split("", DYN_ARR_ITER)     # it  -> currKeyIndex
 }
 
 function newArr() { return ++DYN_ARR_IDX }
@@ -25,24 +29,27 @@ function arrSet(arr, key, val,   k,hasKey,oldVal) {
   return oldVal
 }
 
-function iterator(arr) {}
-function itNext(it) {}
-function itGetKey(it) {}
-function itGetVal(it) {}
+function iterator(arr,   it) { DYN_ARR_ITER_ARR[it = ++DYN_ARR_ITER_IDX] = arr; DYN_ARR_ITER[it] = -1; return it }
+function itNext(it) { return ++DYN_ARR_ITER[it] < DYN_ARR_SIZE[DYN_ARR_ITER_ARR[it]] }
+function itGetKey(it,   arr) { return DYN_ARR_KEYS[arr=DYN_ARR_ITER_ARR[it],DYN_ARR_ITER[arr]] }
+#function itGetVal(it) {}
 
 
 BEGIN {
   test()
 }
 
-function test(   a,it) {
+function test(   a,it,key) {
   a = newArr()
   arrSet(a, 1, 2)
   arrSet(a, "b", "BBB")
 
   print "size: " arrSize(a)
+  print "1 -> " arrGet(a,1)
+  print "b -> " arrGet(a,"b")
 
   for (it = iterator(a); itNext(it);) {
-    print itGetKey(it) " -> " itGetVal(it)
+#    print itGetKey(it) " -> " itGetVal(it)
+    print (key = itGetKey(it)) " -> " arrGet(a, key)
   }
 }
