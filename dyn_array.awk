@@ -29,10 +29,14 @@ function arrSet(arr, key, val,   k,hasKey,oldVal) {
   return oldVal
 }
 
-function iterator(arr,   it) { DYN_ARR_ITER_ARR[it = ++DYN_ARR_ITER_IDX] = arr; DYN_ARR_ITER[it] = -1; return it }
+function iterator(arr,   it) {
+  DYN_ARR_ITER_ARR[it = ++DYN_ARR_ITER_IDX] = arr
+  DYN_ARR_ITER[it] = -1
+  return it
+}
 function itNext(it) { return ++DYN_ARR_ITER[it] < DYN_ARR_SIZE[DYN_ARR_ITER_ARR[it]] }
 function itGetKey(it,   arr) { return DYN_ARR_KEYS[arr=DYN_ARR_ITER_ARR[it],DYN_ARR_ITER[arr]] }
-#function itGetVal(it) {}
+function itGetVal(it) { return DYN_ARR[DYN_ARR_ITER_ARR[it],itGetKey(it)] }
 
 
 BEGIN {
@@ -51,7 +55,7 @@ function test(   a,it,key) {
   print "b -> " arrGet(a,"b")
 
   for (it = iterator(a); itNext(it);) {
-#    print itGetKey(it) " -> " itGetVal(it)
-    print (key = itGetKey(it)) " -> " arrGet(a, key)
+    print itGetKey(it) " -> " itGetVal(it)
+    #    print (key = itGetKey(it)) " -> " arrGet(a, key)
   }
 }
