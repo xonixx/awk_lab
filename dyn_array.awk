@@ -37,25 +37,3 @@ function iterator(arr,   it) {
 function itNext(it) { return ++DYN_ARR_ITER[it] < DYN_ARR_SIZE[DYN_ARR_ITER_ARR[it]] }
 function itGetKey(it,   arr) { return DYN_ARR_KEYS[arr=DYN_ARR_ITER_ARR[it],DYN_ARR_ITER[arr]] }
 function itGetVal(it) { return DYN_ARR[DYN_ARR_ITER_ARR[it],itGetKey(it)] }
-
-
-BEGIN {
-  test()
-}
-
-function test(   a,it,key) {
-  a = newArr()
-  print "size0: " arrSize(a)
-  arrSet(a, 1, 2)
-  arrSet(a, "b", "BBB111")
-  arrSet(a, "b", "BBB")
-
-  print "size: " arrSize(a)
-  print "1 -> " arrGet(a,1)
-  print "b -> " arrGet(a,"b")
-
-  for (it = iterator(a); itNext(it);) {
-    print itGetKey(it) " -> " itGetVal(it)
-    #    print (key = itGetKey(it)) " -> " arrGet(a, key)
-  }
-}

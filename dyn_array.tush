@@ -1,0 +1,2 @@
+
+$ cd "$MYDIR"; $AWK -f assert.awk -f dyn_array.awk -f dyn_array_test.awk
