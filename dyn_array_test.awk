@@ -8,9 +8,9 @@ function test(   a,it) {
 #  print "size0: " arrSize(a)
   assertEquals(0, arrSize(a), "wrong arrSize")
 
-  arrSet(a, 1, 2)
-  arrSet(a, "b", "BBB111")
-  arrSet(a, "b", "BBB")
+  assertEquals("",       arrSet(a, 1, 2))
+  assertEquals("",       arrSet(a, "b", "BBB111"))
+  assertEquals("BBB111", arrSet(a, "b", "BBB"))
 
   assertEquals(2, arrSize(a), "wrong arrSize 2")
   assertEquals(2, arrGet(a,1), "wrong arrGet 1")
