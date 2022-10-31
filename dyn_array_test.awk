@@ -31,6 +31,11 @@ function test(   a,it) {
 
   assertEquals(0, itNext(it))
 
+  assertEquals("BBB", arrDel(a, "b"), "wrond arrDel return val")
+  assertEquals(1, arrSize(a))
+  assertEquals(2, arrGet(a,1), "wrong arrGet 1 #2")
+  assertEquals("", arrGet(a,"b"), "wrong arrGet b #2")
+
 #  for (it = iterator(a); itNext(it);) {
 #    print itGetKey(it) " -> " itGetVal(it)
     #    print (key = itGetKey(it)) " -> " arrGet(a, key)

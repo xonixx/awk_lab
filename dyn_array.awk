@@ -14,8 +14,21 @@ function arrSize(arr) { return +DYN_ARR_SIZE[arr] }
 function arrGet(arr, key) { return DYN_ARR_VALS[arr,key] }
 
 # returns prev val
-function arrDel(arr, key) {
-
+function arrDel(arr, key,   size,j,found,oldVal,k) {
+  size = arrSize(arr)
+  for (j=0; j<size; j++) {
+    if (found) {
+      DYN_ARR_KEYS[arr,j-1]=DYN_ARR_KEYS[arr,j]
+    } else if (DYN_ARR_KEYS[arr,j] == key) {
+      found = 1
+    }
+  }
+  if (found) {
+    oldVal = DYN_ARR_VALS[k = arr SUBSEP key]
+    delete DYN_ARR_VALS[k]
+    delete DYN_ARR_KEYS[arr,--DYN_ARR_SIZE[arr]]
+    return oldVal
+  }
 }
 
 # returns prev val
