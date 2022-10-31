@@ -4,7 +4,7 @@ BEGIN {
 }
 
 function test(   a,it) {
-  a = newArr()
+  a = arrNew()
 #  print "size0: " arrSize(a)
   assertEquals(0, arrSize(a), "wrong arrSize")
 
