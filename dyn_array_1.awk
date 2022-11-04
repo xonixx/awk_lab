@@ -47,7 +47,7 @@ function arrSet(arr, key, val,   k,a,z,hasKey,oldVal) {
     a = DYN_ARR_KEYS_NEXT[k] = DYN_ARR_KEYS_NEXT[z = arr SUBSEP ""]
     DYN_ARR_KEYS_NEXT[z] = key
     DYN_ARR_KEYS_PREV[k] = ""
-    DYN_ARR_KEYS_PREV[a] = key
+    DYN_ARR_KEYS_PREV[arr,a] = key
   }
   DYN_ARR_VALS[k] = val
   return oldVal
@@ -58,6 +58,9 @@ function iterator(arr,   it) {
   DYN_ARR_ITER_KEY[it] = ""
   return it
 }
-function itNext(it) { return "" != (DYN_ARR_ITER_KEY[it] = DYN_ARR_KEYS_NEXT[DYN_ARR_ITER_KEY[it]])  }
+function itNext(it) { return "" != (DYN_ARR_ITER_KEY[it] = DYN_ARR_KEYS_PREV[DYN_ARR_ITER_ARR[it],DYN_ARR_ITER_KEY[it]])  }
 function itGetKey(it) { return DYN_ARR_ITER_KEY[it] }
 function itGetVal(it) { return DYN_ARR_VALS[DYN_ARR_ITER_ARR[it],itGetKey(it)] }
+
+
+function dump(arr,arrName,   k) { print arrName ":"; for (k in arr) print k " : " arr[k] }
