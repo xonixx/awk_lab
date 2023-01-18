@@ -26,6 +26,7 @@ BEGIN {
   Dependency        ["document_processed",0] = "document_downloaded"
   DependencyArgsCnt ["document_processed",0] = 1
   DependencyArgs    ["document_processed",0,0] = "F"
+#  DependencyArgs    ["document_processed",0,0] = "F7" # check wrong arg
   DependencyArgsType["document_processed",0,0] = "var"
 
   Dependency        ["document_processed",1] = "document_downloaded"
@@ -111,7 +112,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
         depArgType == "string" ? \
           depArg : \
           depArgType == "var" ? \
-            args[depArg] : \
+            (depArg in args ? args[depArg] : panic("wrong arg " depArg)) :\
             panic("wrong depArgType: " depArgType)
     }
 
@@ -124,8 +125,7 @@ function instantiateGoalName(goal, args,   res){
   if (GoalParamsCnt[goal] == 0) { return goal }
   res = goal
   for (i=0; i<GoalParamsCnt[goal]; i++) {
-    res = res "@" args[GoalParams[goal,i]] # TODO fail if arg is not present in args?
-    # TODO escape name with space
+    res = res "@" args[GoalParams[goal,i]]
   }
 #  print "@@ " res
   return res
