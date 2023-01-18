@@ -104,7 +104,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
 
     if (DependencyArgsCnt[goal,i] != GoalParamsCnt[dep]) { panic("wrong args count") }
 
-    for (j=0; j<DependencyArgsCnt[goal,i]; j++) {
+    for (j=0; j < DependencyArgsCnt[goal,i]; j++) {
       depArg     = DependencyArgs    [goal,i,j]
       depArgType = DependencyArgsType[goal,i,j]
 
@@ -121,10 +121,10 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
 
   return goalNameInstantiated
 }
-function instantiateGoalName(goal, args,   res){
-  if (GoalParamsCnt[goal] == 0) { return goal }
+function instantiateGoalName(goal, args,   res,cnt){
+  if ((cnt = GoalParamsCnt[goal]) == 0) { return goal }
   res = goal
-  for (i=0; i<GoalParamsCnt[goal]; i++) {
+  for (i=0; i < cnt; i++) {
     res = res "@" args[GoalParams[goal,i]]
   }
 #  print "@@ " res
