@@ -9,23 +9,23 @@ BEGIN {
   GoalParamsCnt["document_downloaded"] = 1
   GoalParams   ["document_downloaded",0] = "F1"
 
-  DependenciesCnt     ["do_work"] = 2
+  DependencyCnt     ["do_work"] = 2
 
-  Dependencies        ["do_work",0] = "document_processed"
-  DependenciesArgsCnt ["do_work",0] = 1
-  DependenciesArgs    ["do_work",0,0] = "file1"
-  DependenciesArgsType["do_work",0,0] = "string"
+  Dependency        ["do_work",0] = "document_processed"
+  DependencyArgsCnt ["do_work",0] = 1
+  DependencyArgs    ["do_work",0,0] = "file1"
+  DependencyArgsType["do_work",0,0] = "string"
 
-  Dependencies        ["do_work",1] = "document_processed"
-  DependenciesArgsCnt ["do_work",1] = 1
-  DependenciesArgs    ["do_work",1,0] = "file 2"
-  DependenciesArgsType["do_work",1,0] = "string"
+  Dependency        ["do_work",1] = "document_processed"
+  DependencyArgsCnt ["do_work",1] = 1
+  DependencyArgs    ["do_work",1,0] = "file 2"
+  DependencyArgsType["do_work",1,0] = "string"
 
-  DependenciesCnt     ["document_processed"] = 1
-  Dependencies        ["document_processed",0] = "document_downloaded"
-  DependenciesArgsCnt ["document_processed",0] = 1
-  DependenciesArgs    ["document_processed",0,0] = "F"
-  DependenciesArgsType["document_processed",0,0] = "var"
+  DependencyCnt     ["document_processed"] = 1
+  Dependency        ["document_processed",0] = "document_downloaded"
+  DependencyArgsCnt ["document_processed",0] = 1
+  DependencyArgs    ["document_processed",0,0] = "F"
+  DependencyArgsType["document_processed",0,0] = "var"
 
   # === what we have ===
   #
@@ -67,14 +67,41 @@ function printDepsTree(goal,ind,   i) {
   if (!(goal in Goal)) { panic("unknown goal: " goal) }
   indent(ind)
   print goal
-  for (i=0; i < DependenciesCnt[goal]; i++) {
-    printDepsTree(Dependencies[goal,i],ind+1)
+  for (i=0; i < DependencyCnt[goal]; i++) {
+    printDepsTree(Dependency[goal,i],ind+1)
   }
 }
-function instantiate(goal,args,   i) {
+function renderArgs(args,   s,k) {
+  s = ""
+  for (k in args) {
+    s = s k "=>" args[k] " "
+  }
+  return s
+}
+#
+# args: { F => "file1" }
+#
+function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep) {
+  print ">instantiating " goal " { " renderArgs(args) "} ..."
   if (!(goal in Goal)) { panic("unknown goal: " goal) }
-  for (i=0; i < DependenciesCnt[goal]; i++) {
-    instantiate(Dependencies[goal,i])
+  for (i=0; i < DependencyCnt[goal]; i++) {
+    dep = Dependency[goal,i]
+
+    if (DependencyArgsCnt[goal,i] != GoalParamsCnt[dep]) { panic("wrong args count") }
+
+    for (j=0; j<DependencyArgsCnt[goal,i]; j++) {
+      depArg     = DependencyArgs    [goal,i,j]
+      depArgType = DependencyArgsType[goal,i,j]
+
+      newArgs[GoalParams[dep,j]] = \
+        depArgType == "string" ? \
+          depArg : \
+          depArgType == "var" ? \
+            args[depArg] : \
+            panic("wrong depArgType: " depArgType)
+    }
+
+    instantiate(dep,newArgs)
   }
 }
 
