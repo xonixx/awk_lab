@@ -92,7 +92,7 @@ function renderArgs(args,   s,k) {
 # args: { F => "file1" }
 #
 function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt) { # -> goalNameInstantiated
-  print ">instantiating " goal " { " renderArgs(args) "} ..."
+#  print ">instantiating " goal " { " renderArgs(args) "} ..."
 
   if (!(goal in Goal)) { panic("unknown goal: " goal) }
 

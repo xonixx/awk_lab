@@ -1,0 +1,18 @@
+
+$ cd "$MYDIR"; $AWK -f parameterized_goals.awk
+| BEFORE:
+| do_work
+|   document_processed
+|     document_downloaded
+|     document_downloaded
+|   document_processed
+|     document_downloaded
+|     document_downloaded
+| AFTER:
+| do_work
+|   document_processed@file1
+|     document_downloaded@file1
+|     document_downloaded@file333
+|   'document_processed@file 2'
+|     'document_downloaded@file 2'
+|     document_downloaded@file333
