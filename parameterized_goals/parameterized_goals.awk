@@ -21,16 +21,23 @@ BEGIN {
   DependencyArgs    ["do_work",1,0] = "file 2"
   DependencyArgsType["do_work",1,0] = "string"
 
-  DependencyCnt     ["document_processed"] = 1
+  DependencyCnt     ["document_processed"] = 2
+
   Dependency        ["document_processed",0] = "document_downloaded"
   DependencyArgsCnt ["document_processed",0] = 1
   DependencyArgs    ["document_processed",0,0] = "F"
   DependencyArgsType["document_processed",0,0] = "var"
 
+  Dependency        ["document_processed",1] = "document_downloaded"
+  DependencyArgsCnt ["document_processed",1] = 1
+  DependencyArgs    ["document_processed",1,0] = "file333"
+  DependencyArgsType["document_processed",1,0] = "string"
+
   # === what we have ===
   #
   # - document_processed @params F
   #   - document_downloaded @args F
+  #   - document_downloaded @args 'file333'
   #
   # - document_downloaded @params F1
   #
@@ -47,8 +54,10 @@ BEGIN {
   # - do_work
   #   - document_processed@file1
   #     - document_downloaded@file1
+  #     - document_downloaded@file3
   #   - document_processed@'file 2'
   #     - document_downloaded@'file 2'
+  #     - document_downloaded@file3
 
   print "BEFORE:"
   printDepsTree("do_work")
