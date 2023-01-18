@@ -90,9 +90,14 @@ function renderArgs(args,   s,k) {
 #
 # args: { F => "file1" }
 #
-function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep) {
+function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated) { # -> goalNameInstantiated
   print ">instantiating " goal " { " renderArgs(args) "} ..."
+
   if (!(goal in Goal)) { panic("unknown goal: " goal) }
+
+  Goal[goalNameInstantiated = instantiateGoalName(goal, args)]
+  DependencyCnt[goalNameInstantiated] = DependencyCnt[goal]
+
   for (i=0; i < DependencyCnt[goal]; i++) {
     dep = Dependency[goal,i]
 
@@ -110,7 +115,19 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep) {
             panic("wrong depArgType: " depArgType)
     }
 
-    instantiate(dep,newArgs)
+    Dependency[goalNameInstantiated,i] = instantiate(dep,newArgs)
   }
+
+  return goalNameInstantiated
+}
+function instantiateGoalName(goal, args,   res){
+  if (GoalParamsCnt[goal] == 0) { return goal }
+  res = goal
+  for (i=0; i<GoalParamsCnt[goal]; i++) {
+    res = res "@" args[GoalParams[goal,i]] # TODO fail if arg is not present in args?
+    # TODO escape name with space
+  }
+  print "@@ " res
+  return res
 }
 
