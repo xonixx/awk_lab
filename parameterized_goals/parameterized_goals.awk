@@ -91,7 +91,7 @@ function renderArgs(args,   s,k) {
 #
 # args: { F => "file1" }
 #
-function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated) { # -> goalNameInstantiated
+function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInstantiated,argsCnt) { # -> goalNameInstantiated
   print ">instantiating " goal " { " renderArgs(args) "} ..."
 
   if (!(goal in Goal)) { panic("unknown goal: " goal) }
@@ -102,9 +102,9 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
   for (i=0; i < DependencyCnt[goal]; i++) {
     dep = Dependency[goal,i]
 
-    if (DependencyArgsCnt[goal,i] != GoalParamsCnt[dep]) { panic("wrong args count") }
+    if ((argsCnt = DependencyArgsCnt[goal,i]) != GoalParamsCnt[dep]) { panic("wrong args count") }
 
-    for (j=0; j < DependencyArgsCnt[goal,i]; j++) {
+    for (j=0; j < argsCnt; j++) {
       depArg     = DependencyArgs    [goal,i,j]
       depArgType = DependencyArgsType[goal,i,j]
 
@@ -112,7 +112,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
         depArgType == "string" ? \
           depArg : \
           depArgType == "var" ? \
-            (depArg in args ? args[depArg] : panic("wrong arg " depArg)) :\
+            (depArg in args ? args[depArg] : panic("wrong arg " depArg)) : \
             panic("wrong depArgType: " depArgType)
     }
 
