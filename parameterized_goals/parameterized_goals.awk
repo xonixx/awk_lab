@@ -75,7 +75,7 @@ function indent(ind) {
 function printDepsTree(goal,ind,   i) {
   if (!(goal in Goal)) { panic("unknown goal: " goal) }
   indent(ind)
-  print goal
+  print quote2(goal)
   for (i=0; i < DependencyCnt[goal]; i++) {
     printDepsTree(Dependency[goal,i],ind+1)
   }
@@ -127,7 +127,16 @@ function instantiateGoalName(goal, args,   res){
     res = res "@" args[GoalParams[goal,i]] # TODO fail if arg is not present in args?
     # TODO escape name with space
   }
-  print "@@ " res
+#  print "@@ " res
   return res
 }
+function quote2(s,force) {
+  if (index(s,"'")) {
+    gsub(/\\/,"\\\\",s)
+    gsub(/'/,"\\'",s)
+    return "$'" s "'"
+  } else
+    return force || s ~ /[^a-zA-Z0-9.,@_\/=+-]/ ? "'" s "'" : s
+}
+
 
