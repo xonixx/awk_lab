@@ -121,7 +121,7 @@ function instantiate(goal,args,newArgs,   i,j,depArg,depArgType,dep,goalNameInst
 
   return goalNameInstantiated
 }
-function instantiateGoalName(goal, args,   res,cnt){
+function instantiateGoalName(goal, args,   i,res,cnt){
   if ((cnt = GoalParamsCnt[goal]) == 0) { return goal }
   res = goal
   for (i=0; i < cnt; i++) {
