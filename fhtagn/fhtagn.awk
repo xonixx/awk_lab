@@ -5,13 +5,19 @@ BEGIN {
   fhtagn()
   srand()
 }
-function fhtagn(   file,l,code,r,exitCode) {
+function fhtagn(   file,l,code,r,exitCode,stdOutF,stdErrF,testStarted,expected) {
   file = "1.tush" # TODO from input
 
   # 1. parse line-by-line
 
   while ((getline l) > 0) {
     if (l ~ /^\$/) {
+      if (testStarted) {
+        testStarted = 0
+        # TODO finish
+      } else {
+        testStarted = 1
+      }
       # 2. execute line starting '$', producing out & err & exit_code
       code = substr(l,2)
       r = rnd()
@@ -19,10 +25,17 @@ function fhtagn(   file,l,code,r,exitCode) {
       stdErrF = Tmp "/" Prog "." r ".err"
       code = "(" code ") 1>" stdOutF " 2>" stdErrF
       exitCode = system(code)
+    } else if (l ~ /^[|@?]/) {
+      # 3. parse result block (|@?)
+      expected = expected l "\n"
+    } else {
+      if (testStarted) {
+        testStarted = 0
+        # TODO finish
+      }
     }
   }
 
-  # 3. parse result block (|@?)
   # 4. compile actual result block
   # 5. compare
   # 6. repeat from 1.
