@@ -6,7 +6,9 @@ BEGIN {
   srand()
 }
 function fhtagn(   file,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
-  file = "2.tush" # TODO from input
+  for (i=1; i<ARGC; i++) {
+    file = ARGV[i]
+  }
 
   while ((getline l < file) > 0) {
     if (l ~ /^\$/) {
