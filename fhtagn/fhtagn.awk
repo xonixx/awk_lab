@@ -1,7 +1,7 @@
 #!/usr/bin/awk -f
 BEGIN {
   Prog = "fhtagn"
-  Tmp = ok("[ -d /dev/shm ]" ? "/dev/shm" : "/tmp")
+  Tmp = ok("[ -d /dev/shm ]") ? "/dev/shm" : "/tmp"
   fhtagn()
   srand()
 }
@@ -41,16 +41,17 @@ function fhtagn(   file,l,code,r,exitCode,stdOutF,stdErrF,testStarted,expected) 
     checkTestResult(expected,stdOutF,stdErrF,exitCode)
   }
 
-  # 4. compile actual result block
-  # 5. compare
-  # 6. repeat from 1.
+  # TODO rm files
 }
 function checkTestResult(expected, stdOutF, stdErrF, exitCode,   actual) {
+  # 4. compile actual result block
   actual = prefixFile("|",stdOutF) prefixFile("@",stdErrF)
   if (exitCode != 0) actual = actual "? " exitCode
+  # 5. compare
   if (expected != actual) {
     # TODO diff
-    printf "FAIL: \n expected:\n%s\n\nactual:\n%s", expected, actual
+    printf "FAIL:\nexpected:\n%s\nactual:\n%s\n", expected, actual
+    exit 1
   }
 }
 function prefixFile(prefix, fname,   l,res) {
