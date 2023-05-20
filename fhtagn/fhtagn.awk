@@ -5,52 +5,53 @@ BEGIN {
   fhtagn()
   srand()
 }
-function fhtagn(   file,l,code,r,exitCode,stdOutF,stdErrF,testStarted,expected) {
-  file = "1.tush" # TODO from input
-
-  # 1. parse line-by-line
+function fhtagn(   file,l,code,random,exitCode,stdOutF,stdErrF,testStarted,expected) {
+  file = "2.tush" # TODO from input
 
   while ((getline l < file) > 0) {
     if (l ~ /^\$/) {
       if (testStarted) {
         testStarted = 0
-        checkTestResult(expected,stdOutF,stdErrF,exitCode)
+        checkTestResult(expected,stdOutF,stdErrF,exitCode,random)
       } else {
         testStarted = 1
         expected = ""
       }
-      # 2. execute line starting '$', producing out & err & exit_code
+      # execute line starting '$', producing out & err & exit_code
       code = substr(l,2)
-      r = rnd()
-      stdOutF = Tmp "/" Prog "." r ".out"
-      stdErrF = Tmp "/" Prog "." r ".err"
+      random = rnd()
+      stdOutF = Tmp "/" Prog "." random ".out"
+      stdErrF = Tmp "/" Prog "." random ".err"
       code = "(" code ") 1>" stdOutF " 2>" stdErrF
       exitCode = system(code)
     } else if (l ~ /^[|@?]/) {
-      # 3. parse result block (|@?)
+      # parse result block (|@?)
       expected = expected l "\n"
     } else {
       if (testStarted) {
         testStarted = 0
-        checkTestResult(expected,stdOutF,stdErrF,exitCode)
+        checkTestResult(expected,stdOutF,stdErrF,exitCode,random)
       }
     }
   }
   close(file)
   if (testStarted) {
-    checkTestResult(expected,stdOutF,stdErrF,exitCode)
+    checkTestResult(expected,stdOutF,stdErrF,exitCode,random)
   }
 
   # TODO rm files
 }
-function checkTestResult(expected, stdOutF, stdErrF, exitCode,   actual) {
-  # 4. compile actual result block
+function checkTestResult(expected, stdOutF, stdErrF, exitCode, random,   actual,expectF,actualF) {
   actual = prefixFile("|",stdOutF) prefixFile("@",stdErrF)
-  if (exitCode != 0) actual = actual "? " exitCode
-  # 5. compare
+  if (exitCode != 0) actual = actual "? " exitCode "\n"
   if (expected != actual) {
-    # TODO diff
-    printf "FAIL:\nexpected:\n%s\nactual:\n%s\n", expected, actual
+    # printf "FAIL:\nexpected:\n#%s#\nactual:\n#%s#\n", expected, actual
+    # use diff to show the difference
+    expectF = Tmp "/" Prog "." random ".exp"
+    actualF = Tmp "/" Prog "." random ".act"
+    print expected > expectF
+    print actual > actualF
+    system("diff " expectF " " actualF "; rm " expectF " " actualF)
     exit 1
   }
 }
