@@ -1,0 +1,3 @@
+BEGIN {
+  system("./b.awk")
+}
