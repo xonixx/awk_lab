@@ -456,7 +456,6 @@ $ cd "$MYDIR"; $AWK $ARGS test_data/1.json
 | end_object
 | end_object
 | end_object
-|
 
 $ cd "$MYDIR"; $AWK $ARGS test_data/2.json
 | object
@@ -491,7 +490,6 @@ $ cd "$MYDIR"; $AWK $ARGS test_data/2.json
 | end_array
 | end_object
 | end_object
-|
 
 $ cd "$MYDIR"; $AWK $ARGS test_data/3.json
 | array
@@ -508,7 +506,6 @@ $ cd "$MYDIR"; $AWK $ARGS test_data/3.json
 | end_array
 | end_object
 | end_array
-|
 
 $ cd "$MYDIR"; $AWK $ARGS test_data/4.json
 | array
@@ -537,6 +534,3 @@ $ cd "$MYDIR"; $AWK $ARGS test_data/4.json
 | number
 | 12
 | end_array
-|
-
-

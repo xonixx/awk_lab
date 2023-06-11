@@ -1,7 +1,8 @@
 # vim: syntax=bash
 @options timing
 
-@define TUSH_REPO='https://github.com/adolfopa/tush'
+@define FHTAGN_VERSION='0e70ab0329858ebbfd22b74bbf6fb51cb3e6d359'
+@define FHTAGN_URL="https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
 @define JSONTestSuite_REPO='https://github.com/nst/JSONTestSuite'
 @define GOAWK_VERSION='1.21.0'
 @define GOAWK="goawk$GOAWK_VERSION"
@@ -11,28 +12,25 @@
 @reached_if [[ -d "soft" ]]
   mkdir soft
 
-@goal tush_installed @private
+@define FHTAGN="soft/fhtagn.awk"
+
+@goal fhtagn_installed @private
 @depends_on soft_folder_created
-@reached_if [[ -f "soft/tush/bin/tush-check" ]]
-  echo
-  echo "Fetching tush..."
-  echo
-
-  cd "soft"
-
-  if which wget >/dev/null 2>/dev/null
+@reached_if [[ -x "$FHTAGN" ]]
+  if command -v wget >/dev/null
   then
-    wget $TUSH_REPO/archive/master.tar.gz -O./tush.tar.gz
-    tar xzvf ./tush.tar.gz
-    rm ./tush.tar.gz
-    mv tush-master tush
+    wget "$FHTAGN_URL" -O"$FHTAGN"
+  elif command -v curl >/dev/null
+  then
+    curl -L "$FHTAGN_URL" -o "$FHTAGN"
   else
-    git clone --depth 1 $TUSH_REPO.git
-    rm -r tush/.git
+    echo "can't dl fhtagn"
+    exit 2
   fi
+  chmod +x "$FHTAGN"
 
 @goal soft_installed @private
-@depends_on tush_installed
+@depends_on fhtagn_installed
 
 @goal cleaned_soft @private
 @reached_if [[ ! -d "soft" ]]
@@ -51,14 +49,13 @@
   bash --version| head -n 1
 
 @goal prepared4tests @private
-@depends_on tush_installed debug
+@depends_on fhtagn_installed debug
 
 @lib
   run_tush() {
     local f="$1"
-    export PATH="$PATH:$MYDIR/soft/tush/bin"
 
-    if DIFF="diff --strip-trailing-cr" tush-check "$f"
+    if ./soft/fhtagn.awk "$f"
     then
       echo "TESTS PASSED : $f"
     else

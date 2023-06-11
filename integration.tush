@@ -6,7 +6,6 @@ $ cd "$MYDIR"; echo '[[[]],[]]' | $AWK -f json_parser.awk | $AWK -f json_gron.aw
 |   ],
 |   []
 | ]
-|
 
 $ cd "$MYDIR"; echo '[1]' | $AWK -f json_parser.awk | $AWK -f json_gron.awk | $AWK -f gron_parser.awk | ./ungron.sh | Indent=2 $AWK -f json_compile.awk
 | [

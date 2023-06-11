@@ -98,7 +98,6 @@ $ cd "$MYDIR"; $AWK $ARGS test_data/gron.1.txt
 | value
 | array
 | end
-|
 
 $ cd "$MYDIR"; $AWK $ARGS test_data/gron.2.txt
 | record
@@ -132,7 +131,6 @@ $ cd "$MYDIR"; $AWK $ARGS test_data/gron.2.txt
 | number
 | 5
 | end
-|
 
 $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.1.txt | $AWK $ARGS
 | record
@@ -305,7 +303,6 @@ $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.1.txt | $AWK $ARGS
 | value
 | null
 | end
-|
 
 $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.2.txt | $AWK $ARGS
 | record
@@ -364,7 +361,6 @@ $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.2.txt | $AWK $ARGS
 | value
 | object
 | end
-|
 
 $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.3.txt | $AWK $ARGS
 | record
@@ -459,4 +455,3 @@ $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.3.txt | $AWK $ARGS
 | value
 | object
 | end
-|
