@@ -15,7 +15,6 @@ $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.1.txt
 | json.page[1].age=24
 | json.page[1].active=false
 | json.page[1].hobby=null
-|
 
 $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.2.txt
 | json=[]
@@ -25,7 +24,6 @@ $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.2.txt
 | json[3]=false
 | json[4]=null
 | json[5]={}
-|
 
 $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.3.txt
 | json=[]
@@ -39,4 +37,3 @@ $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.3.txt
 | json[7]=false
 | json[8]=null
 | json[9]={}
-|
