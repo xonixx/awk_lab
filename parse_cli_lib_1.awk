@@ -10,7 +10,7 @@ function parseCli_1(line, res,   pos,c,last,is_doll,c1) {
     trace(0,line,pos)
     while((c = substr(line,pos,1))==" " || c == "\t") pos++ # consume spaces
     trace(1,line,pos)
-    if ((c = substr(line,pos,1))=="#" || c=="")
+    if (c=="#" || c=="")
       return
     else {
       if ((is_doll = c == "$") && substr(line,pos+1,1)=="'" || c == "'") { # start of string

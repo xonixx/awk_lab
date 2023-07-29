@@ -15,7 +15,7 @@ function parseCli(line, res,   pos,c,last) {
     trace(0,line,pos)
     while((c = substr(line,pos,1))==" " || c == "\t") pos++ # consume spaces
     trace(1,line,pos)
-    if ((c = substr(line,pos,1))=="#" || c=="")
+    if (c=="#" || c=="")
       return
     else if (c == "'") { # start of string
       # consume quoted string

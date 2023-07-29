@@ -1,41 +1,41 @@
 #
-# parses: arg 'arg with spaces' $'arg with \' single quote'
+# parses: arg 'arg with spaces' $'arg with \' single quote' "arg ${WITH} $VARS"
 #
 
 ## res[-7] = res len
 ## res - 0-based
 ## returns error if any
-function parseCli_1(line, res,   pos,c,last,is_doll,c1) {
-  for(pos=1;;) {
+function parseCli_2(line, vars, res,   pos,c,last,is_doll,c1) {
+  for (pos = 1; ;) {
     trace(0,line,pos)
-    while((c = substr(line,pos,1))==" " || c == "\t") pos++ # consume spaces
+    while ((c = substr(line,pos,1)) == " " || c == "\t") pos++ # consume spaces
     trace(1,line,pos)
-    if ((c = substr(line,pos,1))=="#" || c=="")
+    if (c == "#" || c == "")
       return
     else {
-      if ((is_doll = c == "$") && substr(line,pos+1,1)=="'" || c == "'") { # start of string
-        if(is_doll)
+      if ((is_doll = c == "$") && substr(line,pos + 1,1) == "'" || c == "'") { # start of string
+        if (is_doll)
           pos++
         # consume quoted string
         res[last = res[-7]++] = ""
-        while((c = substr(line,++pos,1)) != "'") { # closing '
+        while ((c = substr(line,++pos,1)) != "'") { # closing '
           trace(2,line,pos)
-          if (c=="")
+          if (c == "")
             return "unterminated argument"
-          else if (is_doll && c=="\\" && ((c1=substr(line,pos+1,1))=="'" || c1==c)) { # escaped ' or \
+          else if (is_doll && c == "\\" && ((c1 = substr(line,pos + 1,1)) == "'" || c1 == c)) { # escaped ' or \
             c = c1; pos++
           }
           res[last] = res[last] c
         }
         trace(3,line,pos)
-        if((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
+        if ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
           return "joined arguments"
       } else {
         # consume unquoted argument
         res[last = res[-7]++] = c
-        while((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes end of arg
+        while ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes end of arg
           trace(4,line,pos)
-          if(c=="'")
+          if (c == "'")
             return "joined arguments"
           res[last] = res[last] c
         }
