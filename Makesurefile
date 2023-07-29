@@ -1,7 +1,7 @@
 # vim: syntax=bash
 @options timing
 
-@define FHTAGN_VERSION='0e70ab0329858ebbfd22b74bbf6fb51cb3e6d359'
+@define FHTAGN_VERSION='v0.1.0'
 @define FHTAGN_URL="https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
 @define JSONTestSuite_REPO='https://github.com/nst/JSONTestSuite'
 @define GOAWK_VERSION='1.21.0'
