@@ -1,7 +1,9 @@
 BEGIN {
   #  Trace=1
 
+  testCli_1("#comment")
   testCli_1("a")
+  testCli_1("a#comment")
   testCli_1(" 'aaa'\t  'bbb ccc'    # comment ")
   testCli_1(" $'aaa'\t  $'bbb ccc'    # comment ")
   testCli_1(" aaa bbbb\t  ccccc")
