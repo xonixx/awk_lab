@@ -1,0 +1,1 @@
+BEGIN { print "BEGIN 3.awk" }
