@@ -7,3 +7,7 @@ $ cd mglwnafh; ./mglwn.awk 1.awk
 | BEGIN 1.awk
 | f2
 ? 77
+
+$ cd mglwnafh; ./mglwn.awk 5_nonexistent.awk
+@ error: file not found: nonexistent.awk
+? 1
