@@ -4,6 +4,6 @@
 BEGIN { print "BEGIN 2.awk" }
 
 function f2() {
-  return "f2"
-  exit 77
+  print "f2"
+  return 77
 }

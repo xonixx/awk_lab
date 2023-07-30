@@ -1,6 +1,6 @@
 
 
-$ ./mglwn.awk 1.awk
+$ cd mglwnafh; ./mglwn.awk 1.awk
 | BEGIN 3.awk
 | BEGIN 4.awk
 | BEGIN 2.awk

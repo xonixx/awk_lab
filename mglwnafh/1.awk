@@ -2,5 +2,5 @@
 
 BEGIN {
   print "BEGIN 1.awk"
-  print f2()
+  exit f2()
 }
