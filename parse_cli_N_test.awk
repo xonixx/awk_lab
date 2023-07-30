@@ -1,17 +1,19 @@
 BEGIN {
   #  Trace=1
+}
 
-  while (getline < "parse_cli_1.txt") {
+function runTestFile(file) {
+  while (getline < file) {
     if (/^\|/) {
       if (!/\|$/) print "error: must end '|'"
       gsub(/\\t/,"\t",$0)
-#      print(substr($0,2,length-2))
-      testCli_1(substr($0,2,length-2))
+      #      print(substr($0,2,length-2))
+      testCli_N(substr($0,2,length-2))
     }
   }
 }
 
-function testCli_1(line,   l,err,res,i) {
+function testCli_N(line,   l,err,res,i) {
   print "================="
   l=line; gsub(/\t/,"\\t",l); print "|" l "|"
   print "-----------------"

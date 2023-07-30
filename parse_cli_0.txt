@@ -1,0 +1,73 @@
+=================
+|a|
+-----------------
+0: a
+.
+=================
+| 'aaa'\t  'bbb ccc'    # comment |
+-----------------
+0: aaa
+1: bbb ccc
+.
+=================
+| aaa bbbb\t  ccccc|
+-----------------
+0: aaa
+1: bbbb
+2: ccccc
+.
+=================
+| 'aaa\'\'"bbb'   |
+-----------------
+0: aaa''"bbb
+.
+=================
+| 'aaa\bbb'   |
+-----------------
+0: aaa\bbb
+.
+=================
+| 'aaa#bbb'   |
+-----------------
+0: aaa#bbb
+.
+=================
+| 'aaa   |
+-----------------
+error: unterminated argument
+.
+=================
+| 'aaa\'   |
+-----------------
+error: unterminated argument
+.
+=================
+|'aa\'a  # comment comment1|
+-----------------
+error: unterminated argument
+.
+=================
+| aaa'   |
+-----------------
+error: joined arguments
+.
+=================
+|aaa'bb|
+-----------------
+error: joined arguments
+.
+=================
+|aaa'bb'   |
+-----------------
+error: joined arguments
+.
+=================
+| 'aaa''bb'|
+-----------------
+error: joined arguments
+.
+=================
+|'aaa'bb   |
+-----------------
+error: joined arguments
+.
