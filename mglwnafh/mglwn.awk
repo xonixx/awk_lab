@@ -9,7 +9,7 @@ function mglwnafh(   i,file,includes,cmdLine,awk) {
   parseIncludes(includes,file)
   #  for (i=0;i in includes;i++) printf "include[%d]=%s\n", i, includes[i]
   for (i=0;i in includes;i++) cmdLine = "-f " includes[i] " " cmdLine
-#  print cmdLine
+  print cmdLine
   awk = ENVIRON["AWK"]
   if (!awk) awk = "awk"
   exit system(awk " " cmdLine)
