@@ -1,6 +1,8 @@
 #!/usr/bin/awk -f
 # TODO catch include loops
 # TODO implement "only once" include semantics
+# TODO pass -v
+# TODO pass arguments
 BEGIN {
   mglwnafh()
 }

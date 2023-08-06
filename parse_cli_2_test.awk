@@ -2,6 +2,11 @@
 #include parse_cli_N_test.awk
 
 BEGIN {
+  #  Trace=1
+  Vars["AAA"] = "aaa"
+  Vars["BBB"] = "bbb"
+  Vars["CCC_CCC"] = "ccc_ccc"
+  Vars["__DDD"] = "__ddd"
   runTestFile("parse_cli_2.txt")
 }
 

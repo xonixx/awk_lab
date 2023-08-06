@@ -13,12 +13,13 @@ function parseCli_2(line, vars, res,   pos,c,last,is_doll,c1) {
     if (c == "#" || c == "")
       return
     else {
-      if ((is_doll = c == "$") && substr(line,pos + 1,1) == "'" || c == "'") { # start of string
+      q = c
+      if ((is_doll = c == "$") && (q = substr(line,pos + 1,1)) == "'" || q == "'" || q == "\"") { # start of string
         if (is_doll)
           pos++
         # consume quoted string
         res[last = res[-7]++] = ""
-        while ((c = substr(line,++pos,1)) != "'") { # closing '
+        while ((c = substr(line,++pos,1)) != q) { # closing ' or "
           trace(2,line,pos)
           if (c == "")
             return "unterminated argument"
