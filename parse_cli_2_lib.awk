@@ -5,7 +5,7 @@
 ## res[-7] = res len
 ## res - 0-based
 ## returns error if any
-function parseCli_2(line, vars, res,   pos,c,last,is_doll,c1) {
+function parseCli_2(line, vars, res,   pos,c,last,is_doll,c1,q) {
   for (pos = 1; ;) {
     trace(0,line,pos)
     while ((c = substr(line,pos,1)) == " " || c == "\t") pos++ # consume spaces
@@ -13,8 +13,7 @@ function parseCli_2(line, vars, res,   pos,c,last,is_doll,c1) {
     if (c == "#" || c == "")
       return
     else {
-      q = c
-      if ((is_doll = c == "$") && (q = substr(line,pos + 1,1)) == "'" || q == "'" || q == "\"") { # start of string
+      if ((is_doll = (q = c) == "$") && (q = substr(line,pos + 1,1)) == "'" || q == "'" || q == "\"") { # start of string
         if (is_doll)
           pos++
         # consume quoted string
@@ -23,7 +22,7 @@ function parseCli_2(line, vars, res,   pos,c,last,is_doll,c1) {
           trace(2,line,pos)
           if (c == "")
             return "unterminated argument"
-          else if (is_doll && c == "\\" && ((c1 = substr(line,pos + 1,1)) == "'" || c1 == c)) { # escaped ' or \
+          else if (c == "\\" && ((c1 = substr(line,pos + 1,1)) == "'" && is_doll || c1 == c || q == "\"" && c1 = q)) { # escaped ' or \ or "
             c = c1; pos++
           }
           res[last] = res[last] c
