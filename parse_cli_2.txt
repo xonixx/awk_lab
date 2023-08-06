@@ -123,6 +123,11 @@ error: unterminated argument
 0: 1aaa;bbb,ccc_ccc
 .
 =================
+| "$AAA$BBB$CCC_CCC$__DDD$_333"   |
+-----------------
+0: aaabbbccc_ccc__ddd_ttt
+.
+=================
 | 'aaa   |
 -----------------
 error: unterminated argument
