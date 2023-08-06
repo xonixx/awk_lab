@@ -108,6 +108,21 @@ error: unterminated argument
 0: 1aaa2bbb3
 .
 =================
+| '$AAA'   |
+-----------------
+0: $AAA
+.
+=================
+| "$AAA"   |
+-----------------
+0: aaa
+.
+=================
+| "1$AAA;$BBB,$CCC_CCC"   |
+-----------------
+0: 1aaa;bbb,ccc_ccc
+.
+=================
 | 'aaa   |
 -----------------
 error: unterminated argument

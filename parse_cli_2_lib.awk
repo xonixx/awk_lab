@@ -28,10 +28,8 @@ function parseCli_2(line, vars, res,   pos,c,last,is_doll,c1,q,var) {
             var = ""
             if ((c1 = substr(line,pos + 1,1)) == "{") {
               pos++
-              while ((c = substr(line,++pos,1)) != "}") { # closing }
+              while ((c = substr(line,++pos,1)) != "}") # closing }
                 var = var c
-#                print var
-              }
             }
             res[last] = res[last] vars[var]
             continue
