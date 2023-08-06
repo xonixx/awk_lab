@@ -7,6 +7,7 @@ BEGIN {
   Vars["BBB"] = "bbb"
   Vars["CCC_CCC"] = "ccc_ccc"
   Vars["__DDD"] = "__ddd"
+  Vars["_333"] = "_TTT"
   runTestFile("parse_cli_2.txt")
 }
 
