@@ -1,0 +1,4 @@
+
+$ cd "$MYDIR"; \
+    ./mglwnafh/mglwn.awk parse_cli_2_test.awk > /tmp/parse_cli_2_res.txt; \
+    diff --strip-trailing-cr -u parse_cli_2.txt /tmp/parse_cli_2_res.txt
