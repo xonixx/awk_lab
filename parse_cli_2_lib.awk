@@ -33,6 +33,8 @@ function parseCli_2(line, vars, res,   pos,c,last,is_doll,c1,q,var) {
             } else {
               while ((c = substr(line,++pos,1)) ~ /[_A-Za-z0-9]/)
                 var = var c
+              if (var !~ /^[_A-Za-z]/)
+                return "wrong var"
               pos--
             }
 #            print "var="var

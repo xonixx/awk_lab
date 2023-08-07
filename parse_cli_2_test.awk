@@ -4,6 +4,7 @@
 BEGIN {
   #  Trace=1
   Vars["AAA"] = "aaa"
+  Vars["A77"] = "a77"
   Vars["BBB"] = "bbb"
   Vars["CCC_CCC"] = "ccc_ccc"
   Vars["__DDD"] = "__ddd"
