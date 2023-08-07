@@ -22,7 +22,7 @@ function parseCli_2(line, vars, res,   pos,c,last,is_doll,c1,q,var) {
           trace(2,line,pos)
           if (c == "")
             return "unterminated argument"
-          else if (c == "\\" && ((c1 = substr(line,pos + 1,1)) == "'" && is_doll || c1 == c || q == "\"" && c1 == q)) { # escaped ' or \ or "
+          else if (c == "\\" && ((c1 = substr(line,pos + 1,1)) == "'" && is_doll || c1 == c || q == "\"" && (c1 == q || c1 == "$"))) { # escaped ' or \ or "
             c = c1; pos++
           } else if (c == "$" && q == "\"") {
             var = ""

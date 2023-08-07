@@ -118,6 +118,11 @@ error: unterminated argument
 0: aaa
 .
 =================
+| "\$AAA"   |
+-----------------
+0: $AAA
+.
+=================
 | "1$AAA;$BBB,$CCC_CCC"   |
 -----------------
 0: 1aaa;bbb,ccc_ccc
