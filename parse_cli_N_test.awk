@@ -13,7 +13,7 @@ function runTestFile(file) {
   }
 }
 
-function testCli_N(line,   l,err,res,i,resBash,a) {
+function testCli_N(line,   l,err,res,i,resBash,a,v,script,scriptBashed) {
   print "================="
   l = line; gsub(/\t/,"\\t",l); print "|" l "|"
   print "-----------------"
@@ -26,23 +26,30 @@ function testCli_N(line,   l,err,res,i,resBash,a) {
     }
     if (CompareToBash) {
       delete resBash
-      script = "./parse_cli_N_bashChecker.sh " line
-      while (script | getline a) {
+      for (v in Vars) {
+        script = script v "=" Vars[v] "; "
+      }
+      script = script "./parse_cli_N_bashChecker.sh " line
+      scriptBashed = "bash -c " quoteArg(script)
+#      print "script: " script
+      while (scriptBashed | getline a) {
         resBash[length(resBash)] = a
       }
       close(script)
-      compareArrays(res,resBash)
+      compareArrays(res,resBash,script)
     }
   }
   print "."
 }
-function compareArrays(res, resBash,   s1,s2) {
+function quoteArg(a) { gsub("'", "'\\''", a); return "'" a "'" }
+function compareArrays(res, resBash, script,   s1,s2) {
   s1 = arrToStr(res)
   s2 = arrToStr(resBash)
   if (s1 != s2) {
     print "NOT_MATCH:"
     print "  awk : " s1
     print "  bash: " s2
+    print "script: " script
   }
 }
 function arrToStr(arr,   s,i) {
