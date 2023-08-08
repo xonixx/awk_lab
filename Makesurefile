@@ -4,7 +4,7 @@
 @define FHTAGN_VERSION='v0.1.0'
 @define FHTAGN_URL="https://github.com/xonixx/fhtagn/raw/$FHTAGN_VERSION/fhtagn.awk"
 @define JSONTestSuite_REPO='https://github.com/nst/JSONTestSuite'
-@define GOAWK_VERSION='1.21.0'
+@define GOAWK_VERSION='1.24.0'
 @define GOAWK="goawk$GOAWK_VERSION"
 @define AWK='awk'
 
