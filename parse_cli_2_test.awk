@@ -3,6 +3,7 @@
 
 BEGIN {
   #  Trace=1
+  CompareToBash = 1
   Vars["AAA"] = "aaa"
   Vars["A77"] = "a77"
   Vars["BBB"] = "bbb"
