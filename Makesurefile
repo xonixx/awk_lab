@@ -94,7 +94,7 @@
 
 #-------------------------------
 @goal tested_awks
-@doc tests with all awks
+@doc 'tests with all awks'
 @depends_on tested
 @depends_on tested_bwk
 @depends_on tested_mawk
