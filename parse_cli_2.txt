@@ -148,6 +148,16 @@ error: wrong var
 0: aaabbbccc_ccc__ddd_ttt
 .
 =================
+| "a$(b)c"   |
+-----------------
+error: command substitution disallowed
+.
+=================
+| "a\$(b)c"   |
+-----------------
+0: a$(b)c
+.
+=================
 | 'aaa   |
 -----------------
 error: unterminated argument
