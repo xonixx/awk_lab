@@ -16,7 +16,7 @@ jobs:
         id: cache-soft
         with:
           path: soft
-          key: ${{ runner.os }}-soft-3
+          key: ${{ runner.os }}-soft-4
 
       - name: "run tests"
         run: |
