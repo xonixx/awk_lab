@@ -26,16 +26,13 @@ function parseCli_2(line, vars, res,   pos,c,last,is_doll,c1,q,var) {
             c = c1; pos++
           } else if (c == "$" && q == "\"") {
             var = ""
-            if ((c1 = substr(line,pos + 1,1)) == "{") {
-              pos++
-              while ((c = substr(line,++pos,1)) != "}") # closing }
+            if ((c1 = substr(line,pos + 1,1)) == "{")
+              for (pos++; (c = substr(line,++pos,1)) != "}";) # closing }
                 var = var c
-            } else {
-              while ((c = substr(line,++pos,1)) ~ /[_A-Za-z0-9]/)
+            else
+              for (; (c = substr(line,pos + 1,1)) ~ /[_A-Za-z0-9]/; pos++)
                 var = var c
-              pos--
-            }
-#            print "var="var
+            #            print "var="var
             if (var !~ /^[_A-Za-z][_A-Za-z0-9]*$/)
               return "wrong var"
             res[last] = res[last] vars[var]
