@@ -32,7 +32,7 @@ function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var) {
               for (pos++; (c = substr(line,++pos,1)) != "}";) { # till closing '}'
                 if (c == "")
                   return "unterminated argument"
-                if (":" == c && "-" == substr(line,pos + 1,1)) {
+                if (!inDef && ":" == c && "-" == substr(line,pos + 1,1)) {
                   pos += 2
                   c = substr(line,pos,1)
 #                  print ">>> "c
