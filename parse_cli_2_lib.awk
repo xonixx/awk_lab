@@ -5,7 +5,7 @@
 ## res[-7] = res len
 ## res - 0-based
 ## returns error if any
-function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var) {
+function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var,inDef,defVal,val) {
   for (pos = 1; ;) {
     trace(0,line,pos)
     while ((c = substr(line,pos,1)) == " " || c == "\t") pos++ # consume spaces
@@ -33,16 +33,15 @@ function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var) {
                 if (c == "")
                   return "unterminated argument"
                 if (!inDef && ":" == c && "-" == substr(line,pos + 1,1)) {
-                  pos += 2
-                  c = substr(line,pos,1)
-#                  print ">>> "c
                   inDef = 1
+                  c = substr(line,pos += 2,1)
                 }
                 if (inDef) {
                   if ("}" == c)
                     break
-                  if ("\\" == c)
-                    c = substr(line,++pos,1)
+                  if ("\\" == c && ((c1 = substr(line,pos+1,1)) == "$" || c1 == "\\" || c1 == "}" || c1 == "\"")) {
+                    c = c1; pos++
+                  }
                   defVal = defVal c
                 } else
                   var = var c
