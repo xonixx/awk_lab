@@ -195,17 +195,17 @@ error: wrong var
 =================
 | "1${UNSET:-\}2"   |
 -----------------
-error:
+error: unterminated argument
 .
 =================
 | "1${UNSET:}2"   |
 -----------------
-error:
+error: wrong var
 .
 =================
 | "${:-def}"   |
 -----------------
-error:
+error: wrong var
 .
 =================
 | "1${AAA:-default}2"   |

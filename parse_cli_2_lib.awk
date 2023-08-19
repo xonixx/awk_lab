@@ -34,9 +34,13 @@ function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var) {
                   return "unterminated argument"
                 if (":" == c && "-" == substr(line,pos + 1,1)) {
                   pos += 2
+                  c = substr(line,pos,1)
+#                  print ">>> "c
                   inDef = 1
                 }
                 if (inDef) {
+                  if ("}" == c)
+                    break
                   if ("\\" == c)
                     c = substr(line,++pos,1)
                   defVal = defVal c
