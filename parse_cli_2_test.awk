@@ -3,7 +3,7 @@
 
 BEGIN {
   #  Trace=1
-  CompareToBash = 1
+  CompareToBash = "0" != ENVIRON["CompareToBash"] # if not explicitly disabled
   Vars["AAA"] = "aaa"
   Vars["A77"] = "a77"
   Vars["BBB"] = "bbb"

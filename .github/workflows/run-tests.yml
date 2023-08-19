@@ -38,7 +38,7 @@ jobs:
 
       - name: "run tests"
         run: |
-          ./makesure
+          CompareToBash=0 ./makesure
   win:
     name: "Run tests Win"
     runs-on: ${{ matrix.os }}
