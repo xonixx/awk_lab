@@ -253,6 +253,11 @@ error: joined arguments
 error: joined arguments
 .
 =================
+|aaa"bb|
+-----------------
+error: joined arguments
+.
+=================
 |aaa'bb'   |
 -----------------
 error: joined arguments
@@ -278,6 +283,11 @@ error: joined arguments
 error: joined arguments
 .
 =================
+|"aaa"bb   |
+-----------------
+error: joined arguments
+.
+=================
 |$'aaa'bb   |
 -----------------
 error: joined arguments
@@ -285,10 +295,15 @@ error: joined arguments
 =================
 | $"aaa"   |
 -----------------
-error: todo
+error: unquoted $
 .
 =================
 | $AAA   |
 -----------------
-error: todo
+error: unquoted $
+.
+=================
+| AAA$BBB   |
+-----------------
+error: unquoted $
 .

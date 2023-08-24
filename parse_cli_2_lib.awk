@@ -13,7 +13,6 @@ function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var,inDef,defVal,v
     if (c == "#" || c == "")
       return
     else {
-#      if ((isDoll = (q = c) == "$") && (q = substr(line,pos + 1,1)) == "'" || q == "'" || q == "\"") { # start of string
       if ((isDoll = substr(line,pos,2) == "$'") || c == "'" || c == "\"") { # start of string
         if (isDoll)
           pos++
@@ -62,12 +61,16 @@ function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var,inDef,defVal,v
         trace(3,line,pos)
         if ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
           return "joined arguments"
-      } else {
+      } else if (c == "$")
+        return "unquoted $"
+      else {
         # consume unquoted argument
         res[last = res[-7]++] = c
-        while ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes end of arg
+        while ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes the end of arg
           trace(4,line,pos)
-          if (c == "'")
+          if (c == "$")
+            return "unquoted $"
+          if (c == "'" || c == "\"")
             return "joined arguments"
           res[last] = res[last] c
         }
