@@ -5,7 +5,7 @@
 ## res[-7] = res len
 ## res - 0-based
 ## returns error if any
-function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var,inDef,defVal,val,w) {
+function parseCli_2(line, vars, res,   pos,c,isDoll,c1,q,var,inDef,defVal,val,w) {
   for (pos = 1; ;) {
     trace(0,line,pos)
     while ((c = substr(line,pos,1)) == " " || c == "\t") pos++ # consume spaces
@@ -18,7 +18,7 @@ function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var,inDef,defVal,v
           pos++
         q = isDoll ? "'" : c # quote
         # consume quoted string
-        res[last = res[-7]++] = ""
+        w = ""
         while ((c = substr(line,++pos,1)) != q) { # closing ' or "
           trace(2,line,pos)
           if (c == "")
@@ -53,11 +53,12 @@ function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var,inDef,defVal,v
             #            print "var="var
             if (var !~ /^[_A-Za-z][_A-Za-z0-9]*$/)
               return "wrong var: '" var "'"
-            res[last] = res[last] ((val = vars[var]) != "" ? val : defVal)
+            w = w ((val = vars[var]) != "" ? val : defVal)
             continue
           }
-          res[last] = res[last] c
+          w = w c
         }
+        res[res[-7]++] = w
         trace(3,line,pos)
         if ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
           return "joined arguments"
