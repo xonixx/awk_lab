@@ -5,7 +5,7 @@
 ## res[-7] = res len
 ## res - 0-based
 ## returns error if any
-function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var,inDef,defVal,val) {
+function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var,inDef,defVal,val,w) {
   for (pos = 1; ;) {
     trace(0,line,pos)
     while ((c = substr(line,pos,1)) == " " || c == "\t") pos++ # consume spaces
@@ -52,7 +52,7 @@ function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var,inDef,defVal,v
                 var = var c
             #            print "var="var
             if (var !~ /^[_A-Za-z][_A-Za-z0-9]*$/)
-              return "wrong var"
+              return "wrong var: '" var "'"
             res[last] = res[last] ((val = vars[var]) != "" ? val : defVal)
             continue
           }
@@ -61,19 +61,16 @@ function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var,inDef,defVal,v
         trace(3,line,pos)
         if ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
           return "joined arguments"
-      } else if (c == "$")
-        return "unquoted $"
-      else {
+      } else {
         # consume unquoted argument
-        res[last = res[-7]++] = c
+        w = c
         while ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t") { # whitespace denotes the end of arg
           trace(4,line,pos)
-          if (c == "$")
-            return "unquoted $"
-          if (c == "'" || c == "\"")
-            return "joined arguments"
-          res[last] = res[last] c
+          w = w c
         }
+        if (w !~ /^[_A-Za-z0-9]*$/)
+          return "wrong unquoted: '" w "'"
+        res[res[-7]++] = w
       }
     }
   }

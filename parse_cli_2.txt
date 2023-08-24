@@ -10,7 +10,7 @@
 =================
 |a#comment|
 -----------------
-0: a#comment
+error: wrong unquoted: 'a#comment'
 .
 =================
 | 'aaa'\t  'bbb ccc'    # comment |
@@ -120,12 +120,12 @@ error: unterminated argument
 =================
 | "$777"   |
 -----------------
-error: wrong var
+error: wrong var: '777'
 .
 =================
 | " $,,,"   |
 -----------------
-error: wrong var
+error: wrong var: ''
 .
 =================
 | "$A77"   |
@@ -150,27 +150,27 @@ error: wrong var
 =================
 | "a$(b)c"   |
 -----------------
-error: wrong var
+error: wrong var: ''
 .
 =================
 | "$[1+2]"   |
 -----------------
-error: wrong var
+error: wrong var: ''
 .
 =================
 | "$$"   |
 -----------------
-error: wrong var
+error: wrong var: ''
 .
 =================
 | "${}"   |
 -----------------
-error: wrong var
+error: wrong var: ''
 .
 =================
 | "${a|b}"   |
 -----------------
-error: wrong var
+error: wrong var: 'a|b'
 .
 =================
 | "a\$(b)c"   |
@@ -205,12 +205,12 @@ error: unterminated argument
 =================
 | "1${UNSET:}2"   |
 -----------------
-error: wrong var
+error: wrong var: 'UNSET:'
 .
 =================
 | "${:-def}"   |
 -----------------
-error: wrong var
+error: wrong var: ''
 .
 =================
 | "1${AAA:-default}2"   |
@@ -245,22 +245,22 @@ error: unterminated argument
 =================
 | aaa'   |
 -----------------
-error: joined arguments
+error: wrong unquoted: 'aaa''
 .
 =================
 |aaa'bb|
 -----------------
-error: joined arguments
+error: wrong unquoted: 'aaa'bb'
 .
 =================
 |aaa"bb|
 -----------------
-error: joined arguments
+error: wrong unquoted: 'aaa"bb'
 .
 =================
 |aaa'bb'   |
 -----------------
-error: joined arguments
+error: wrong unquoted: 'aaa'bb''
 .
 =================
 | 'aaa''bb'|
@@ -295,15 +295,15 @@ error: joined arguments
 =================
 | $"aaa"   |
 -----------------
-error: unquoted $
+error: wrong unquoted: '$"aaa"'
 .
 =================
 | $AAA   |
 -----------------
-error: unquoted $
+error: wrong unquoted: '$AAA'
 .
 =================
 | AAA$BBB   |
 -----------------
-error: unquoted $
+error: wrong unquoted: 'AAA$BBB'
 .
