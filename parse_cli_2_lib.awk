@@ -13,9 +13,11 @@ function parseCli_2(line, vars, res,   pos,c,last,isDoll,c1,q,var,inDef,defVal,v
     if (c == "#" || c == "")
       return
     else {
-      if ((isDoll = (q = c) == "$") && (q = substr(line,pos + 1,1)) == "'" || q == "'" || q == "\"") { # start of string
+#      if ((isDoll = (q = c) == "$") && (q = substr(line,pos + 1,1)) == "'" || q == "'" || q == "\"") { # start of string
+      if ((isDoll = substr(line,pos,2) == "$'") || c == "'" || c == "\"") { # start of string
         if (isDoll)
           pos++
+        q = isDoll ? "'" : c # quote
         # consume quoted string
         res[last = res[-7]++] = ""
         while ((c = substr(line,++pos,1)) != q) { # closing ' or "

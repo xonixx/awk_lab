@@ -282,3 +282,13 @@ error: joined arguments
 -----------------
 error: joined arguments
 .
+=================
+| $"aaa"   |
+-----------------
+error: todo
+.
+=================
+| $AAA   |
+-----------------
+error: todo
+.
