@@ -5,7 +5,7 @@
 ## res[-7] = res len
 ## res - 0-based
 ## returns error if any
-function parseCli_2(line, vars, res,   pos,c,isDoll,c1,q,var,inDef,defVal,val,w) {
+function parseCli_2(line, vars, res,   pos,c,isDoll,c1,q,var,inDef,defVal,val,w,i) {
   for (pos = 1; ;) {
     trace(0,line,pos)
     while ((c = substr(line,pos,1)) == " " || c == "\t") pos++ # consume spaces
@@ -58,8 +58,8 @@ function parseCli_2(line, vars, res,   pos,c,isDoll,c1,q,var,inDef,defVal,val,w)
           }
           w = w c
         }
-        res[+res[-7],"quote"] = isDoll ? "$" : q
-        res[res[-7]++] = w
+        res[i=+res[-7]++,"quote"] = isDoll ? "$" : q
+        res[i] = w
         trace(3,line,pos)
         if ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
           return "joined arguments"
@@ -72,8 +72,8 @@ function parseCli_2(line, vars, res,   pos,c,isDoll,c1,q,var,inDef,defVal,val,w)
         }
         if (w !~ /^[_A-Za-z0-9]+$/)
           return "wrong unquoted: '" w "'"
-        res[+res[-7],"quote"] = "u"
-        res[res[-7]++] = w
+        res[i=+res[-7]++,"quote"] = "u"
+        res[i] = w
       }
     }
   }
