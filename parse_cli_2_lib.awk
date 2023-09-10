@@ -58,6 +58,7 @@ function parseCli_2(line, vars, res,   pos,c,isDoll,c1,q,var,inDef,defVal,val,w)
           }
           w = w c
         }
+        res[+res[-7],"quote"] = isDoll ? "$" : q
         res[res[-7]++] = w
         trace(3,line,pos)
         if ((c = substr(line,++pos,1)) != "" && c != " " && c != "\t")
@@ -71,6 +72,7 @@ function parseCli_2(line, vars, res,   pos,c,isDoll,c1,q,var,inDef,defVal,val,w)
         }
         if (w !~ /^[_A-Za-z0-9]+$/)
           return "wrong unquoted: '" w "'"
+        res[+res[-7],"quote"] = "u"
         res[res[-7]++] = w
       }
     }

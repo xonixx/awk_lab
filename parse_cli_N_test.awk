@@ -22,7 +22,7 @@ function testCli_N(line,   l,err,res,i,resBash,a,v,script,scriptBashed) {
     print "error: " err
   else {
     for (i = 0; i in res; i++) {
-      print i ": " res[i]
+      print i ":" ((i SUBSEP "quote") in res ? res[i,"quote"]":" : "") " " res[i]
     }
     if (CompareToBash) {
       delete resBash
