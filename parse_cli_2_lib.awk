@@ -5,7 +5,7 @@
 ## res[-7] = res len
 ## res - 0-based
 ## returns error if any
-function parseCli_2(line, vars, res,   pos,c,isDoll,c1,q,var,inDef,defVal,val,w,i) {
+function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,i) {
   for (pos = 1; ;) {
     trace(0,line,pos)
     while ((c = substr(line,pos,1)) == " " || c == "\t") pos++ # consume spaces
