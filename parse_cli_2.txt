@@ -314,3 +314,9 @@ error: wrong unquoted: '$AAA'
 -----------------
 error: wrong unquoted: 'AAA$BBB'
 .
+=================
+|@goal g1|
+-----------------
+0:u: @goal
+1:u: g1
+.
