@@ -315,8 +315,9 @@ error: wrong unquoted: '$AAA'
 error: wrong unquoted: 'AAA$BBB'
 .
 =================
-|@goal g1|
+|@goal g1 f.txt|
 -----------------
 0:u: @goal
 1:u: g1
+2:u: f.txt
 .

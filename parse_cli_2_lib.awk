@@ -69,7 +69,7 @@ function parseCli_2(line, vars, res,   pos,c,c1,isDoll,q,var,inDef,defVal,val,w,
           trace(4,line,pos)
           w = w c
         }
-        if (w !~ /^[_A-Za-z0-9@]+$/)
+        if (w !~ /^[_A-Za-z0-9@.]+$/)
           return "wrong unquoted: '" w "'"
         res[i=+res[-7]++,"quote"] = "u"
         res[i] = w
