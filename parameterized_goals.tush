@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; $AWK -f parameterized_goals.awk
+$ $AWK -f parameterized_goals.awk
 | BEFORE:
 | do_work
 |   document_processed

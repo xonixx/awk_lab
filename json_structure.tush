@@ -1,5 +1,5 @@
 
-$ cd "$MYDIR"; $AWK -f json_structure.awk test_data/json_asm.1.txt
+$ $AWK -f json_structure.awk test_data/json_asm.1.txt
 | .total = 57
 | .page[].firstName = "John"
 | .page[].lastName = "Doe"
@@ -8,13 +8,13 @@ $ cd "$MYDIR"; $AWK -f json_structure.awk test_data/json_asm.1.txt
 | .page[].hobby = "football"
 
 
-$ cd "$MYDIR"; $AWK -f json_structure.awk test_data/json_asm.2.txt
+$ $AWK -f json_structure.awk test_data/json_asm.2.txt
 | [] = "hello"
 
-$ cd "$MYDIR"; $AWK -f json_structure.awk test_data/json_asm.3.txt
+$ $AWK -f json_structure.awk test_data/json_asm.3.txt
 | [] = "string"
 
-$ cd "$MYDIR"; $AWK -f json_parser.awk test_data/1.json | $AWK -f json_structure.awk
+$ $AWK -f json_parser.awk test_data/1.json | $AWK -f json_structure.awk
 | ."web-app".servlet[]."servlet-name" = "cofaxCDS"
 | ."web-app".servlet[]."servlet-class" = "org.cofax.cds.CDSServlet"
 | ."web-app".servlet[]."init-param"."configGlossary:installationAt" = "Philadelphia, PA"

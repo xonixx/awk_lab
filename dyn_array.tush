@@ -1,4 +1,4 @@
 
-$ cd "$MYDIR"; $AWK -f assert.awk -f dyn_array.awk -f dyn_array_test.awk
+$ $AWK -f assert.awk -f dyn_array.awk -f dyn_array_test.awk
 
-$ cd "$MYDIR"; $AWK -f assert.awk -f dyn_array_1.awk -f dyn_array_test.awk
+$ $AWK -f assert.awk -f dyn_array_1.awk -f dyn_array_test.awk

@@ -1,9 +1,9 @@
 
-$ cd "$MYDIR"; echo 'aaa' | $AWK $ARGS
+$ echo 'aaa' | $AWK $ARGS
 | Can't parse GRON at pos 4: \n
 ? 1
 
-$ cd "$MYDIR"; printf '\n\njson.a=1\n\n\njson.b=2\n\n' | $AWK $ARGS
+$ printf '\n\njson.a=1\n\n\njson.b=2\n\n' | $AWK $ARGS
 | record
 | field
 | "json"
@@ -23,7 +23,7 @@ $ cd "$MYDIR"; printf '\n\njson.a=1\n\n\njson.b=2\n\n' | $AWK $ARGS
 | 2
 | end
 
-$ cd "$MYDIR"; $AWK $ARGS test_data/gron.1.txt
+$ $AWK $ARGS test_data/gron.1.txt
 | record
 | field
 | "json"
@@ -99,7 +99,7 @@ $ cd "$MYDIR"; $AWK $ARGS test_data/gron.1.txt
 | array
 | end
 
-$ cd "$MYDIR"; $AWK $ARGS test_data/gron.2.txt
+$ $AWK $ARGS test_data/gron.2.txt
 | record
 | field
 | "json"
@@ -132,7 +132,7 @@ $ cd "$MYDIR"; $AWK $ARGS test_data/gron.2.txt
 | 5
 | end
 
-$ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.1.txt | $AWK $ARGS
+$ $AWK -f json_gron.awk test_data/json_asm.1.txt | $AWK $ARGS
 | record
 | field
 | "json"
@@ -304,7 +304,7 @@ $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.1.txt | $AWK $ARGS
 | null
 | end
 
-$ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.2.txt | $AWK $ARGS
+$ $AWK -f json_gron.awk test_data/json_asm.2.txt | $AWK $ARGS
 | record
 | field
 | "json"
@@ -362,7 +362,7 @@ $ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.2.txt | $AWK $ARGS
 | object
 | end
 
-$ cd "$MYDIR"; $AWK -f json_gron.awk test_data/json_asm.3.txt | $AWK $ARGS
+$ $AWK -f json_gron.awk test_data/json_asm.3.txt | $AWK $ARGS
 | record
 | field
 | "json"

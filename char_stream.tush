@@ -1,31 +1,31 @@
 
-$ cd "$MYDIR"; printf '' | $AWK -f char_stream.awk -f char_stream_test.awk
+$ printf '' | $AWK -f char_stream.awk -f char_stream_test.awk
 
-$ cd "$MYDIR"; printf 'a' | $AWK -f char_stream.awk -f char_stream_test.awk
+$ printf 'a' | $AWK -f char_stream.awk -f char_stream_test.awk
 | [a]
 
-$ cd "$MYDIR"; printf '\n' | $AWK -f char_stream.awk -f char_stream_test.awk
+$ printf '\n' | $AWK -f char_stream.awk -f char_stream_test.awk
 
-$ cd "$MYDIR"; printf '\n\n' | $AWK -f char_stream.awk -f char_stream_test.awk
+$ printf '\n\n' | $AWK -f char_stream.awk -f char_stream_test.awk
 | [
 | ]
 
 # Awk is not able to distinguish 'a' vs 'a\n' inputs, so let's parse 2 as 1
-$ cd "$MYDIR"; printf 'a\n' | $AWK -f char_stream.awk -f char_stream_test.awk
+$ printf 'a\n' | $AWK -f char_stream.awk -f char_stream_test.awk
 | [a]
 
-$ cd "$MYDIR"; printf '\na' | $AWK -f char_stream.awk -f char_stream_test.awk
+$ printf '\na' | $AWK -f char_stream.awk -f char_stream_test.awk
 | [
 | ]
 | [a]
 
-$ cd "$MYDIR"; printf 'a\nb' | $AWK -f char_stream.awk -f char_stream_test.awk
+$ printf 'a\nb' | $AWK -f char_stream.awk -f char_stream_test.awk
 | [a]
 | [
 | ]
 | [b]
 
-$ cd "$MYDIR"; printf 'a\n\nb' | $AWK -f char_stream.awk -f char_stream_test.awk
+$ printf 'a\n\nb' | $AWK -f char_stream.awk -f char_stream_test.awk
 | [a]
 | [
 | ]
@@ -33,7 +33,7 @@ $ cd "$MYDIR"; printf 'a\n\nb' | $AWK -f char_stream.awk -f char_stream_test.awk
 | ]
 | [b]
 
-$ cd "$MYDIR"; printf '\naaa\nb cc\nddddd\n' | $AWK -f char_stream.awk -f char_stream_test.awk
+$ printf '\naaa\nb cc\nddddd\n' | $AWK -f char_stream.awk -f char_stream_test.awk
 | [
 | ]
 | [a]

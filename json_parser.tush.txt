@@ -1,9 +1,9 @@
 
-$ cd "$MYDIR"; echo '"\""' | $AWK $ARGS
+$ echo '"\""' | $AWK $ARGS
 | string
 | "\""
 
-$ cd "$MYDIR"; echo '[123,-234.56E+10,"Hello world",true,false,null,{}]' | $AWK $ARGS
+$ echo '[123,-234.56E+10,"Hello world",true,false,null,{}]' | $AWK $ARGS
 | array
 | number
 | 123
@@ -18,7 +18,7 @@ $ cd "$MYDIR"; echo '[123,-234.56E+10,"Hello world",true,false,null,{}]' | $AWK 
 | end_object
 | end_array
 
-$ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"}}' | $AWK $ARGS
+$ echo '{"a":"b","c":{},"d":{"e":"f"}}' | $AWK $ARGS
 | object
 | key
 | "a"
@@ -38,7 +38,7 @@ $ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"}}' | $AWK $ARGS
 | end_object
 | end_object
 
-$ cd "$MYDIR"; echo '{"a":"b"}' | $AWK $ARGS
+$ echo '{"a":"b"}' | $AWK $ARGS
 | object
 | key
 | "a"
@@ -46,7 +46,7 @@ $ cd "$MYDIR"; echo '{"a":"b"}' | $AWK $ARGS
 | "b"
 | end_object
 
-$ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"},"g":[123,-234.56E+10,"Hello \u1234 world",true,false,null,{}]}' | $AWK $ARGS
+$ echo '{"a":"b","c":{},"d":{"e":"f"},"g":[123,-234.56E+10,"Hello \u1234 world",true,false,null,{}]}' | $AWK $ARGS
 | object
 | key
 | "a"
@@ -81,28 +81,28 @@ $ cd "$MYDIR"; echo '{"a":"b","c":{},"d":{"e":"f"},"g":[123,-234.56E+10,"Hello \
 | end_array
 | end_object
 
-$ cd "$MYDIR"; echo '"Hello world"' | $AWK $ARGS
+$ echo '"Hello world"' | $AWK $ARGS
 | string
 | "Hello world"
 
-$ cd "$MYDIR"; echo '{}a' | $AWK $ARGS
+$ echo '{}a' | $AWK $ARGS
 | Can't advance at pos 3: a...
 ? 1
 
-$ cd "$MYDIR"; echo '---1...2' | $AWK $ARGS
+$ echo '---1...2' | $AWK $ARGS
 | Can't advance at pos 2: --1...2...
 ? 1
 
-$ cd "$MYDIR"; echo '-1.0' | $AWK $ARGS
+$ echo '-1.0' | $AWK $ARGS
 | number
 | -1.0
 
-$ cd "$MYDIR"; printf '"\n"' | $AWK $ARGS
+$ printf '"\n"' | $AWK $ARGS
 | Can't advance at pos 2: 
 | "...
 ? 1
 
-$ cd "$MYDIR"; echo '[ [[[[],    {}]]]   ,[[{}]] ]' | $AWK $ARGS
+$ echo '[ [[[[],    {}]]]   ,[[{}]] ]' | $AWK $ARGS
 | array
 | array
 | array
@@ -122,7 +122,7 @@ $ cd "$MYDIR"; echo '[ [[[[],    {}]]]   ,[[{}]] ]' | $AWK $ARGS
 | end_array
 | end_array
 
-$ cd "$MYDIR"; $AWK $ARGS test_data/1.json
+$ $AWK $ARGS test_data/1.json
 | object
 | key
 | "web-app"
@@ -457,7 +457,7 @@ $ cd "$MYDIR"; $AWK $ARGS test_data/1.json
 | end_object
 | end_object
 
-$ cd "$MYDIR"; $AWK $ARGS test_data/2.json
+$ $AWK $ARGS test_data/2.json
 | object
 | key
 | "a"
@@ -491,7 +491,7 @@ $ cd "$MYDIR"; $AWK $ARGS test_data/2.json
 | end_object
 | end_object
 
-$ cd "$MYDIR"; $AWK $ARGS test_data/3.json
+$ $AWK $ARGS test_data/3.json
 | array
 | true
 | null
@@ -507,7 +507,7 @@ $ cd "$MYDIR"; $AWK $ARGS test_data/3.json
 | end_object
 | end_array
 
-$ cd "$MYDIR"; $AWK $ARGS test_data/4.json
+$ $AWK $ARGS test_data/4.json
 | array
 | number
 | 1
