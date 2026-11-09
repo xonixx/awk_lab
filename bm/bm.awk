@@ -3,6 +3,10 @@
 # Timing requires a date command supporting +%s.%N (for example GNU date).
 
 BEGIN {
+    bm()
+}
+
+function bm(   elapsed,result,started,name,bench,selected,count,selection,option,arg,descriptions,available,iterations) {
     iterations = 10000000
     available = "empty,inc,preinc,add_int,add_float,mul_float,div_float,assign,concat"
     descriptions["empty"] = "empty loop (baseline)"
@@ -74,6 +78,7 @@ BEGIN {
     exit
 }
 
+
 function usage() {
     print "Usage: /path/to/goawk -f bm/bm.awk -- [options]"
     print "  -n, --iterations N     Iterations per benchmark (default: 10000000)"
@@ -83,7 +88,7 @@ function usage() {
     print "Timing requires date +%s.%N. Times include loop and clock-command overhead."
 }
 
-function list_benchmarks(    names, n, i) {
+function list_benchmarks(    names, n, i,descriptions,available) {
     n = split(available, names, ",")
     for (i = 1; i <= n; i++)
         printf "%-12s %s\n", names[i], descriptions[names[i]]
