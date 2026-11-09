@@ -9,7 +9,7 @@ BEGIN {
 function bm(   elapsed,result,started,name,bench,selected,count,selection,option,arg,available,iterations,
                empty_elapsed,empty_result) {
   iterations = 10000000 # 10 million
-  available = "empty,inc,preinc,add_int,add_float,mul_float,div_float,assign"
+  available = "empty,inc,preinc,add_int,add_float,add_float_expr,sub_float,mul_float,div_float,assign"
 
   for (arg = 1; arg < ARGC; arg++) {
     option = ARGV[arg]
@@ -52,7 +52,7 @@ function bm(   elapsed,result,started,name,bench,selected,count,selection,option
   }
 
   printf "Iterations per benchmark: %.0f\n", iterations
-  printf "%-12s %12s %14s %16s\n", "benchmark", "seconds", "ns/op", "result"
+  printf "%-16s %12s %14s %16s\n", "benchmark", "seconds", "ns/op", "result"
   fflush()
 
   # Measure the common loop once, even when empty is not selected.
@@ -76,7 +76,7 @@ function bm(   elapsed,result,started,name,bench,selected,count,selection,option
       if (elapsed <= 0)
         fail("clock did not advance; increase iterations and rerun")
     }
-    printf "%-12s %12.2f %14.2f %16s\n", name, elapsed, \
+    printf "%-16s %12.2f %14.2f %16s\n", name, elapsed, \
       (elapsed - empty_elapsed) * 1e9 / (iterations * 10), result
     fflush()
   }
@@ -124,6 +124,8 @@ function run_benchmark(name, n) {
   if (name == "preinc") return bm_preinc(n)
   if (name == "add_int") return bm_add_int(n)
   if (name == "add_float") return bm_add_float(n)
+  if (name == "add_float_expr") return bm_add_float_expr(n)
+  if (name == "sub_float") return bm_sub_float(n)
   if (name == "mul_float") return bm_mul_float(n)
   if (name == "div_float") return bm_div_float(n)
   if (name == "assign") return bm_assign(n)
@@ -164,6 +166,23 @@ function bm_add_float(n,    i, b) {
   for (i = 0; i < n; i++) {
     b += 1.1;b += 1.1;b += 1.1;b += 1.1;b += 1.1
     b += 1.1;b += 1.1;b += 1.1;b += 1.1;b += 1.1
+  }
+  return b
+}
+
+function bm_add_float_expr(n,    i, b) {
+  b = 0
+  for (i = 0; i < n; i++) {
+    b += 1.1 + 1.1 + 1.1 + 1.1 + 1.1 + 1.1 + 1.1 + 1.1 + 1.1 + 1.1
+  }
+  return b
+}
+
+function bm_sub_float(n,    i, b) {
+  b = 0
+  for (i = 0; i < n; i++) {
+    b -= 1.1;b -= 1.1;b -= 1.1;b -= 1.1;b -= 1.1
+    b -= 1.1;b -= 1.1;b -= 1.1;b -= 1.1;b -= 1.1
   }
   return b
 }
