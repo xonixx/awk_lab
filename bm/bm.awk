@@ -6,7 +6,8 @@ BEGIN {
   bm()
 }
 
-function bm(   elapsed,result,started,name,bench,selected,count,selection,option,arg,available,iterations) {
+function bm(   elapsed,result,started,name,bench,selected,count,selection,option,arg,available,iterations,
+               empty_elapsed,empty_result) {
   iterations = 10000000 # 10 million
   available = "empty,inc,preinc,add_int,add_float,mul_float,div_float,assign"
 
@@ -51,18 +52,32 @@ function bm(   elapsed,result,started,name,bench,selected,count,selection,option
   }
 
   printf "Iterations per benchmark: %.0f\n", iterations
-  printf "%-12s %12s %14s %s\n", "benchmark", "seconds", "ns/op", "result"
+  printf "%-12s %12s %14s %14s %s\n", "benchmark", "seconds", "ns/iter", "net ns/op", "result"
   fflush()
+
+  # Measure the common loop once, even when empty is not selected.
+  started = now()
+  empty_result = run_benchmark("empty", iterations)
+  empty_elapsed = now() - started
+  if (empty_elapsed <= 0)
+    fail("clock did not advance for empty loop; increase iterations and rerun")
+
   for (bench = 1; bench <= count; bench++) {
     name = selected[bench]
     #        printf "Running %s\n", name
     fflush()
-    started = now()
-    result = run_benchmark(name, iterations)
-    elapsed = now() - started
-    if (elapsed <= 0)
-      fail("clock did not advance; increase iterations and rerun")
-    printf "%-12s %12.2f %14.2f %s\n", name, elapsed, elapsed * 1e9 / iterations, result
+    if (name == "empty") {
+      result = empty_result
+      elapsed = empty_elapsed
+    } else {
+      started = now()
+      result = run_benchmark(name, iterations)
+      elapsed = now() - started
+      if (elapsed <= 0)
+        fail("clock did not advance; increase iterations and rerun")
+    }
+    printf "%-12s %12.2f %14.2f %14.2f %s\n", name, elapsed, elapsed * 1e9 / iterations, \
+      (elapsed - empty_elapsed) * 1e9 / (iterations * 10), result
     fflush()
   }
   # Do not read stdin or treat script options as input filenames.
@@ -77,6 +92,7 @@ function usage() {
   print "      --list             List benchmarks"
   print "  -h, --help             Show help"
   print "Timing uses Linux /proc/uptime (0.01-second resolution). Times include loop and clock-read overhead."
+  print "net ns/op subtracts the empty-loop time and divides by 10 operations per iteration."
 }
 
 function list_benchmarks(available,    names, n, i) {
