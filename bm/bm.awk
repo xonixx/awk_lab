@@ -52,7 +52,7 @@ function bm(   elapsed,result,started,name,bench,selected,count,selection,option
   }
 
   printf "Iterations per benchmark: %.0f\n", iterations
-  printf "%-12s %12s %14s %14s %s\n", "benchmark", "seconds", "ns/iter", "net ns/op", "result"
+  printf "%-12s %12s %14s %16s\n", "benchmark", "seconds", "ns/op", "result"
   fflush()
 
   # Measure the common loop once, even when empty is not selected.
@@ -76,7 +76,7 @@ function bm(   elapsed,result,started,name,bench,selected,count,selection,option
       if (elapsed <= 0)
         fail("clock did not advance; increase iterations and rerun")
     }
-    printf "%-12s %12.2f %14.2f %14.2f %s\n", name, elapsed, elapsed * 1e9 / iterations, \
+    printf "%-12s %12.2f %14.2f %16s\n", name, elapsed, \
       (elapsed - empty_elapsed) * 1e9 / (iterations * 10), result
     fflush()
   }
@@ -92,7 +92,7 @@ function usage() {
   print "      --list             List benchmarks"
   print "  -h, --help             Show help"
   print "Timing uses Linux /proc/uptime (0.01-second resolution). Times include loop and clock-read overhead."
-  print "net ns/op subtracts the empty-loop time and divides by 10 operations per iteration."
+  print "ns/op subtracts the empty-loop time and divides by 10 operations per iteration."
 }
 
 function list_benchmarks(available,    names, n, i) {
