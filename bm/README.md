@@ -11,13 +11,14 @@ iterations. Selection order is preserved. Progress is printed before each
 benchmark, followed by elapsed seconds, nanoseconds per iteration, and the
 final result.
 
-Timing uses the external `date +%s.%N` command (GNU date on Linux). Reported
-times include loop overhead, function dispatch, and clock-command overhead;
+Timing reads the first field of Linux `/proc/uptime`, with 0.01-second
+resolution. The file is reopened for each reading. Reported times include
+loop overhead, function dispatch, and clock-read overhead;
 they are wall-clock measurements, not isolated CPU instruction timings.
 Use enough iterations for each benchmark to take at least a second, and repeat
 runs to assess noise. The `empty` benchmark measures the loop baseline; it is
 reported separately and is not automatically subtracted. Output and progress
 reporting occur outside the timed loops.
 
-To add an operation, add a `bm_*` function, its name and description in `BEGIN`,
+To add an operation, add a `bm_*` function, its name to `available` in `bm`,
 and a dispatch branch in `run_benchmark`.
