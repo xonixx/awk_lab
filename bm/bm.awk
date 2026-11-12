@@ -3,14 +3,12 @@
 # Timing reads Linux /proc/uptime (0.01-second resolution).
 
 BEGIN {
+  Iterations = 10000000 # 10 million
+  Available = "empty,inc,preinc,add_int,add_float,add_float_expr,sub_float,mul_float,div_float,assign"
   bm()
 }
 
-function bm(   elapsed,result,started,name,bench,selected,count,selection,option,arg,available,iterations,
-               empty_elapsed,empty_result) {
-  iterations = 10000000 # 10 million
-  available = "empty,inc,preinc,add_int,add_float,add_float_expr,sub_float,mul_float,div_float,assign"
-
+function bm(   elapsed,result,started,name,bench,selected,count,selection,option,arg,empty_elapsed,empty_result) {
   for (arg = 1; arg < ARGC; arg++) {
     option = ARGV[arg]
     if (option == "--")
@@ -20,13 +18,13 @@ function bm(   elapsed,result,started,name,bench,selected,count,selection,option
       exit
     }
     if (option == "--list") {
-      list_benchmarks(available)
+      list_benchmarks(Available)
       exit
     }
     if (option == "-n" || option == "--iterations") {
       if (++arg >= ARGC)
         fail("missing value for " option)
-      iterations = ARGV[arg]
+      Iterations = ARGV[arg]
     } else if (option == "-b" || option == "--benchmarks") {
       if (++arg >= ARGC)
         fail("missing value for " option)
@@ -38,46 +36,46 @@ function bm(   elapsed,result,started,name,bench,selected,count,selection,option
     }
   }
 
-  if (iterations !~ /^[0-9]+$/ || iterations + 0 < 1 || iterations + 0 > 9007199254740991)
+  if (Iterations !~ /^[0-9]+$/ || Iterations + 0 < 1 || Iterations + 0 > 9007199254740991)
     fail("iterations must be a positive integer at most 9007199254740991")
-  iterations += 0
+  Iterations += 0
   if (selection == "")
-    selection = available
+    selection = Available
   count = split(selection, selected, ",")
   # Validate the entire selection before running any benchmarks.
   for (bench = 1; bench <= count; bench++) {
     name = selected[bench]
-    if (index("," available ",", "," name ",") == 0)
+    if (index("," Available ",", "," name ",") == 0)
       fail("unknown benchmark: '" name "' (use --list)")
   }
 
-  printf "Iterations per benchmark: %.0f\n", iterations
+  printf "Iterations per benchmark: %.0f\n", Iterations
   printf "%-16s %12s %14s %16s\n", "benchmark", "seconds", "ns/op", "result"
   fflush()
 
   # Measure the common loop once, even when empty is not selected.
   started = now()
-  empty_result = run_benchmark("empty", iterations)
+  empty_result = run_benchmark("empty", Iterations)
   empty_elapsed = now() - started
   if (empty_elapsed <= 0)
     fail("clock did not advance for empty loop; increase iterations and rerun")
 
   for (bench = 1; bench <= count; bench++) {
     name = selected[bench]
-    #        printf "Running %s\n", name
-    fflush()
+#    printf "Running %s\n", name
+#    fflush()
     if (name == "empty") {
       result = empty_result
       elapsed = empty_elapsed
     } else {
       started = now()
-      result = run_benchmark(name, iterations)
+      result = run_benchmark(name, Iterations)
       elapsed = now() - started
       if (elapsed <= 0)
         fail("clock did not advance; increase iterations and rerun")
     }
     printf "%-16s %12.2f %14.2f %16s\n", name, elapsed, \
-      (elapsed - empty_elapsed) * 1e9 / (iterations * 10), result
+      (elapsed - empty_elapsed) * 1e9 / (Iterations * 10), result
     fflush()
   }
   # Do not read stdin or treat script options as input filenames.
