@@ -4,7 +4,8 @@
 
 BEGIN {
   Iterations = 10000000 # 10 million
-  Available = "empty,inc,preinc,add_int,add_float,add_float_expr,sub_float,mul_float,div_float,assign"
+  Available = "empty,inc,preinc,add_int,add_float,add_float_expr,sub_float,sub_float_expr"
+  Available = Available ",mul_float,mul_float_expr,div_float,div_float_expr,mod_float_expr,assign"
   Available = Available ",unary_plus,unary_minus"
   Available = Available ",bit_and,bit_or,bit_xor,bit_not,bit_lshift,bit_rshift,bit_urshift"
   Available = Available ",bit_and_assign,bit_or_assign,bit_xor_assign,bit_lshift_assign,bit_rshift_assign,bit_urshift_assign"
@@ -127,8 +128,12 @@ function run_benchmark(name, n) {
   if (name == "add_float") return bm_add_float(n)
   if (name == "add_float_expr") return bm_add_float_expr(n)
   if (name == "sub_float") return bm_sub_float(n)
+  if (name == "sub_float_expr") return bm_sub_float_expr(n)
   if (name == "mul_float") return bm_mul_float(n)
+  if (name == "mul_float_expr") return bm_mul_float_expr(n)
   if (name == "div_float") return bm_div_float(n)
+  if (name == "div_float_expr") return bm_div_float_expr(n)
+  if (name == "mod_float_expr") return bm_mod_float_expr(n)
   if (name == "assign") return bm_assign(n)
   if (name == "unary_plus") return bm_unary_plus(n)
   if (name == "unary_minus") return bm_unary_minus(n)
@@ -203,6 +208,14 @@ function bm_sub_float(n,    i, b) {
   return b
 }
 
+function bm_sub_float_expr(n,    i, b) {
+  b = 0
+  for (i = 0; i < n; i++) {
+    b = b - 1.1 - 1.1 - 1.1 - 1.1 - 1.1 - 1.1 - 1.1 - 1.1 - 1.1 - 1.1
+  }
+  return b
+}
+
 function bm_mul_float(n,    i, b) {
   b = 1
   for (i = 0; i < n; i++) {
@@ -212,11 +225,35 @@ function bm_mul_float(n,    i, b) {
   return b
 }
 
+function bm_mul_float_expr(n,    i, b) {
+  b = 1
+  for (i = 0; i < n; i++) {
+    b = b * 1.00000001 * 1.00000001 * 1.00000001 * 1.00000001 * 1.00000001 * 1.00000001 * 1.00000001 * 1.00000001 * 1.00000001 * 1.00000001
+  }
+  return b
+}
+
 function bm_div_float(n,    i, b) {
   b = 1
   for (i = 0; i < n; i++) {
     b /= 1.00000001;b /= 1.00000001;b /= 1.00000001;b /= 1.00000001;b /= 1.00000001
     b /= 1.00000001;b /= 1.00000001;b /= 1.00000001;b /= 1.00000001;b /= 1.00000001
+  }
+  return b
+}
+
+function bm_div_float_expr(n,    i, b) {
+  b = 1
+  for (i = 0; i < n; i++) {
+    b = b / 1.00000001 / 1.00000001 / 1.00000001 / 1.00000001 / 1.00000001 / 1.00000001 / 1.00000001 / 1.00000001 / 1.00000001 / 1.00000001
+  }
+  return b
+}
+
+function bm_mod_float_expr(n,    i, b) {
+  b = 42.5
+  for (i = 0; i < n; i++) {
+    b = b % 1.1 % 1.1 % 1.1 % 1.1 % 1.1 % 1.1 % 1.1 % 1.1 % 1.1 % 1.1
   }
   return b
 }
