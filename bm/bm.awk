@@ -231,8 +231,7 @@ function bm_bit_and(n,    i, a, b) {
   a = 0x123456789abcdef0
   b = 0x0f0f0f0f0f0f0f0f
   for (i = 0; i < n; i++) {
-    a = a & b;a = a & b;a = a & b;a = a & b;a = a & b
-    a = a & b;a = a & b;a = a & b;a = a & b;a = a & b
+    a = a & b & b & b & b & b & b & b & b & b & b
   }
   return a
 }
@@ -241,8 +240,7 @@ function bm_bit_or(n,    i, a, b) {
   a = 0x123456789abcdef0
   b = 0x0f0f0f0f0f0f0f0f
   for (i = 0; i < n; i++) {
-    a = a | b;a = a | b;a = a | b;a = a | b;a = a | b
-    a = a | b;a = a | b;a = a | b;a = a | b;a = a | b
+    a = a | b | b | b | b | b | b | b | b | b | b
   }
   return a
 }
@@ -251,8 +249,7 @@ function bm_bit_xor(n,    i, a, b) {
   a = 0x123456789abcdef0
   b = 0x0f0f0f0f0f0f0f0f
   for (i = 0; i < n; i++) {
-    a = a ^ b;a = a ^ b;a = a ^ b;a = a ^ b;a = a ^ b
-    a = a ^ b;a = a ^ b;a = a ^ b;a = a ^ b;a = a ^ b
+    a = a ^ b ^ b ^ b ^ b ^ b ^ b ^ b ^ b ^ b ^ b
   }
   return a
 }
@@ -260,8 +257,7 @@ function bm_bit_xor(n,    i, a, b) {
 function bm_bit_not(n,    i, a) {
   a = 0x123456789abcdef0
   for (i = 0; i < n; i++) {
-    a = ~a;a = ~a;a = ~a;a = ~a;a = ~a
-    a = ~a;a = ~a;a = ~a;a = ~a;a = ~a
+    a = ~~~~~~~~~~a
   }
   return a
 }
@@ -271,8 +267,7 @@ function bm_bit_not(n,    i, a) {
 function bm_bit_lshift(n,    i, a) {
   a = 0x123456789abcdef0
   for (i = 0; i < n; i++) {
-    a = a << 1;a = a << 1;a = a << 1;a = a << 1;a = a << 1
-    a = a << 1;a = a << 1;a = a << 1;a = a << 1;a = a << 1
+    a = a << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 1 << 1
   }
   return a
 }
@@ -280,8 +275,7 @@ function bm_bit_lshift(n,    i, a) {
 function bm_bit_rshift(n,    i, a) {
   a = -0x123456789abcdef0
   for (i = 0; i < n; i++) {
-    a = a >> 1;a = a >> 1;a = a >> 1;a = a >> 1;a = a >> 1
-    a = a >> 1;a = a >> 1;a = a >> 1;a = a >> 1;a = a >> 1
+    a = a >> 1 >> 1 >> 1 >> 1 >> 1 >> 1 >> 1 >> 1 >> 1 >> 1
   }
   return a
 }
@@ -289,8 +283,7 @@ function bm_bit_rshift(n,    i, a) {
 function bm_bit_urshift(n,    i, a) {
   a = -0x123456789abcdef0
   for (i = 0; i < n; i++) {
-    a = a >>> 1;a = a >>> 1;a = a >>> 1;a = a >>> 1;a = a >>> 1
-    a = a >>> 1;a = a >>> 1;a = a >>> 1;a = a >>> 1;a = a >>> 1
+    a = a >>> 1 >>> 1 >>> 1 >>> 1 >>> 1 >>> 1 >>> 1 >>> 1 >>> 1 >>> 1
   }
   return a
 }
