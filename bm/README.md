@@ -43,3 +43,66 @@ its name to `Available` in `BEGIN`, and a dispatch branch in `run_benchmark`.
 ### Reproducible benchmarking
 
 `taskset -c 17 ./goawk -f /path/to/bm.awk -- -n 20000000`
+
+### Compare commits
+
+Run the awk driver with commit hashes in comparison order (usually oldest
+first):
+
+```sh
+awk -f bm/compare_commits.awk -- -o bm/comparison.md ab32447 8850c11 7553277
+```
+
+By default it checks out each commit in `/home/xonix/proj/goawk-xonixx`,
+builds it with `go build`, and runs `/home/xonix/proj/awk_lab/bm/bm.awk`
+three times, with 20,000,000 iterations per benchmark on CPU core 17.
+It retains the lowest `ns/op` **independently for each benchmark** across
+those runs. Columns follow the supplied commit order, with the hash and a
+short excerpt from its commit subject. The full resolved hash is included
+in the column's HTML `title` attribute.
+
+```sh
+awk -f bm/compare_commits.awk -- \
+  --runs 5 --iterations 30000000 --cpu 17 \
+  --benchmarks inc,add_float --output bm/comparison.md \
+  ab32447 8850c11 7553277
+
+# Override the repository and suite paths if needed:
+awk -f bm/compare_commits.awk -- \
+  --repo /path/to/goawk --suite /path/to/bm.awk \
+  --output comparison.md HASH1 HASH2
+```
+
+Short options are `-r` (runs), `-n` (iterations), `-c` (CPU), `-b`
+(benchmark selection), and `-o` (output). The default output is
+`benchmark-report.md` in the current directory. Use `--help` for all options.
+Requires Linux, a POSIX awk (tested with gawk and mawk), Git, Go, `taskset`,
+and standard shell utilities. Choose a CPU allowed by your environment;
+the driver checks affinity before building. Each commit must support the
+suite's syntax, including bitwise operators even when using `-b`.
+
+Each cell is compared with the **previous column**: a decrease of at least
+5% is bold green, and an increase of at least 3% is bold red. Other cells
+use plain text. Percentage highlighting requires both values to be positive;
+zero (including `empty`) and negative baseline-subtracted timings are retained
+without highlighting. Color uses inline HTML (`span` with `style` and
+`strong`); viewers that strip inline styles, including GitHub, may display
+only the bold formatting.
+
+The repository must have no staged or unstaged changes to tracked files.
+Untracked files are left in place, and checkout is never forced. Each build
+uses a temporary binary and restores the original branch or detached HEAD
+before benchmarking, including on build failure or catchable build interrupts.
+An existing `goawk` binary is left untouched. Run only one driver at a time
+per repository, and avoid editing or switching that repository during a run.
+The report is written only after all commits and runs succeed; an existing
+report is preserved if a build or benchmark fails. Temporary files are cleaned
+up on normal completion and errors.
+
+Test the driver using small temporary Git repositories and deterministic
+build/benchmark substitutes:
+
+```sh
+python3 -m unittest discover -s bm -p 'test_*.py'
+AWK=mawk python3 -m unittest discover -s bm -p 'test_*.py'
+```
