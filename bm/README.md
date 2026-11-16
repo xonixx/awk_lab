@@ -57,8 +57,8 @@ By default it checks out each commit in `/home/xonix/proj/goawk-xonixx`,
 builds it with `go build`, and runs `/home/xonix/proj/awk_lab/bm/bm.awk`
 three times, with 20,000,000 iterations per benchmark on CPU core 17.
 It retains the lowest `ns/op` **independently for each benchmark** across
-those runs. Columns follow the supplied commit order, with the hash and a
-short excerpt from its commit subject. The full resolved hash is included
+those runs. Columns follow the supplied commit order, with a 7-character hash and a
+short excerpt from its commit subject. The hash as supplied is included
 in the column's HTML `title` attribute.
 
 ```sh

@@ -30,12 +30,8 @@ BEGIN {
   if (capture(Git "status --porcelain --untracked-files=no", "check repository status") != "")
     fail("repository has staged or unstaged tracked changes; commit or stash them first")
 
-  # Resolve every input before changing the checkout. Accept hashes, not options
-  # or revision expressions, and retain CLI order for adjacent comparisons.
-  for (c = 1; c <= CommitCount; c++) {
-    Hash[c] = capture(Git "rev-parse --verify " quote(Commit[c] "^{commit}"), "resolve commit " Commit[c])
-    Subject[c] = capture(Git "show -s --format=%s " quote(Hash[c]), "read commit message")
-  }
+  for (c = 1; c <= CommitCount; c++)
+    Subject[c] = capture(Git "show -s --format=%s " quote(Commit[c]), "read commit message")
   GoVersion = capture("LC_ALL=C go version", "read Go version")
   Temp = capture("mktemp -d \"${TMPDIR:-/tmp}/goawk-compare.XXXXXXXX\"", "create temporary directory")
   if (Temp == "")
@@ -138,7 +134,7 @@ function build(c,    restore, cmd) {
     "}\n" \
     "trap restore 0\n" \
     "trap 'exit 129' HUP\ntrap 'exit 130' INT\ntrap 'exit 143' TERM\n" \
-    "git checkout --quiet --detach " quote(Hash[c]) "\n" \
+    "git checkout --quiet --detach " quote(Commit[c]) "\n" \
     "go build -o " quote(Temp "/goawk") " .\n"
   if (system(cmd) != 0)
     fail("checkout/build failed for " Commit[c] " (see diagnostics above)")
@@ -206,7 +202,7 @@ function report(file,    c, b, name, value, previous, cell, subject, row) {
   for (c = 1; c <= CommitCount; c++) {
     subject = Subject[c]
     if (length(subject) > 60) subject = substr(subject, 1, 57) "..."
-    row = row " | <code title=\"" Hash[c] "\">" Commit[c] "</code><br><small>" html(subject) "</small>"
+    row = row " | <code title=\"" Commit[c] "\">" substr(Commit[c], 1, 7) "</code><br><small>" html(subject) "</small>"
   }
   print row " |" > file
   row = "| :---"
