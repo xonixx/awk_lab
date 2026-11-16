@@ -1,10 +1,12 @@
-# Run with any GoAWK build:
+# Run with a goawk-xonixx build supporting bitwise operators:
 #   /path/to/goawk -f bm/bm.awk -- -n 10000000 -b inc,add_float
 # Timing reads Linux /proc/uptime (0.01-second resolution).
 
 BEGIN {
   Iterations = 10000000 # 10 million
   Available = "empty,inc,preinc,add_int,add_float,add_float_expr,sub_float,mul_float,div_float,assign"
+  Available = Available ",bit_and,bit_or,bit_xor,bit_not,bit_lshift,bit_rshift,bit_urshift"
+  Available = Available ",bit_and_assign,bit_or_assign,bit_xor_assign,bit_lshift_assign,bit_rshift_assign,bit_urshift_assign"
   bm()
 }
 
@@ -50,7 +52,7 @@ function bm(   elapsed,result,started,name,bench,selected,count,selection,option
   }
 
   printf "Iterations per benchmark: %.0f\n", Iterations
-  printf "%-16s %12s %14s %16s\n", "benchmark", "seconds", "ns/op", "result"
+  printf "%-20s %12s %14s %20s\n", "benchmark", "seconds", "ns/op", "result"
   fflush()
 
   # Measure the common loop once, even when empty is not selected.
@@ -74,7 +76,7 @@ function bm(   elapsed,result,started,name,bench,selected,count,selection,option
       if (elapsed <= 0)
         fail("clock did not advance; increase iterations and rerun")
     }
-    printf "%-16s %12.2f %14.2f %16s\n", name, elapsed, \
+    printf "%-20s %12.2f %14.2f %20s\n", name, elapsed, \
       (elapsed - empty_elapsed) * 1e9 / (Iterations * 10), result
     fflush()
   }
@@ -127,6 +129,19 @@ function run_benchmark(name, n) {
   if (name == "mul_float") return bm_mul_float(n)
   if (name == "div_float") return bm_div_float(n)
   if (name == "assign") return bm_assign(n)
+  if (name == "bit_and") return bm_bit_and(n)
+  if (name == "bit_or") return bm_bit_or(n)
+  if (name == "bit_xor") return bm_bit_xor(n)
+  if (name == "bit_not") return bm_bit_not(n)
+  if (name == "bit_lshift") return bm_bit_lshift(n)
+  if (name == "bit_rshift") return bm_bit_rshift(n)
+  if (name == "bit_urshift") return bm_bit_urshift(n)
+  if (name == "bit_and_assign") return bm_bit_and_assign(n)
+  if (name == "bit_or_assign") return bm_bit_or_assign(n)
+  if (name == "bit_xor_assign") return bm_bit_xor_assign(n)
+  if (name == "bit_lshift_assign") return bm_bit_lshift_assign(n)
+  if (name == "bit_rshift_assign") return bm_bit_rshift_assign(n)
+  if (name == "bit_urshift_assign") return bm_bit_urshift_assign(n)
 }
 
 function bm_empty(n,    i) {
@@ -207,6 +222,132 @@ function bm_assign(n,    i, a, b) {
   b = 42
   for (i = 0; i < n; i++) {
     a = b;a = b;a = b;a = b;a = b;a = b;a = b;a = b;a = b;a = b
+  }
+  return a
+}
+
+# Exercise the fork's int64 operators, including bits above float64's exact range.
+function bm_bit_and(n,    i, a, b) {
+  a = 0x123456789abcdef0
+  b = 0x0f0f0f0f0f0f0f0f
+  for (i = 0; i < n; i++) {
+    a = a & b;a = a & b;a = a & b;a = a & b;a = a & b
+    a = a & b;a = a & b;a = a & b;a = a & b;a = a & b
+  }
+  return a
+}
+
+function bm_bit_or(n,    i, a, b) {
+  a = 0x123456789abcdef0
+  b = 0x0f0f0f0f0f0f0f0f
+  for (i = 0; i < n; i++) {
+    a = a | b;a = a | b;a = a | b;a = a | b;a = a | b
+    a = a | b;a = a | b;a = a | b;a = a | b;a = a | b
+  }
+  return a
+}
+
+function bm_bit_xor(n,    i, a, b) {
+  a = 0x123456789abcdef0
+  b = 0x0f0f0f0f0f0f0f0f
+  for (i = 0; i < n; i++) {
+    a = a ^ b;a = a ^ b;a = a ^ b;a = a ^ b;a = a ^ b
+    a = a ^ b;a = a ^ b;a = a ^ b;a = a ^ b;a = a ^ b
+  }
+  return a
+}
+
+function bm_bit_not(n,    i, a) {
+  a = 0x123456789abcdef0
+  for (i = 0; i < n; i++) {
+    a = ~a;a = ~a;a = ~a;a = ~a;a = ~a
+    a = ~a;a = ~a;a = ~a;a = ~a;a = ~a
+  }
+  return a
+}
+
+# Repeated shifts settle at 0 (left/unsigned right) or -1 (signed right).
+# The VM still executes all ten int64 operations on every iteration.
+function bm_bit_lshift(n,    i, a) {
+  a = 0x123456789abcdef0
+  for (i = 0; i < n; i++) {
+    a = a << 1;a = a << 1;a = a << 1;a = a << 1;a = a << 1
+    a = a << 1;a = a << 1;a = a << 1;a = a << 1;a = a << 1
+  }
+  return a
+}
+
+function bm_bit_rshift(n,    i, a) {
+  a = -0x123456789abcdef0
+  for (i = 0; i < n; i++) {
+    a = a >> 1;a = a >> 1;a = a >> 1;a = a >> 1;a = a >> 1
+    a = a >> 1;a = a >> 1;a = a >> 1;a = a >> 1;a = a >> 1
+  }
+  return a
+}
+
+function bm_bit_urshift(n,    i, a) {
+  a = -0x123456789abcdef0
+  for (i = 0; i < n; i++) {
+    a = a >>> 1;a = a >>> 1;a = a >>> 1;a = a >>> 1;a = a >>> 1
+    a = a >>> 1;a = a >>> 1;a = a >>> 1;a = a >>> 1;a = a >>> 1
+  }
+  return a
+}
+
+function bm_bit_and_assign(n,    i, a, b) {
+  a = 0x123456789abcdef0
+  b = 0x0f0f0f0f0f0f0f0f
+  for (i = 0; i < n; i++) {
+    a &= b;a &= b;a &= b;a &= b;a &= b
+    a &= b;a &= b;a &= b;a &= b;a &= b
+  }
+  return a
+}
+
+function bm_bit_or_assign(n,    i, a, b) {
+  a = 0x123456789abcdef0
+  b = 0x0f0f0f0f0f0f0f0f
+  for (i = 0; i < n; i++) {
+    a |= b;a |= b;a |= b;a |= b;a |= b
+    a |= b;a |= b;a |= b;a |= b;a |= b
+  }
+  return a
+}
+
+function bm_bit_xor_assign(n,    i, a, b) {
+  a = 0x123456789abcdef0
+  b = 0x0f0f0f0f0f0f0f0f
+  for (i = 0; i < n; i++) {
+    a ^= b;a ^= b;a ^= b;a ^= b;a ^= b
+    a ^= b;a ^= b;a ^= b;a ^= b;a ^= b
+  }
+  return a
+}
+
+function bm_bit_lshift_assign(n,    i, a) {
+  a = 0x123456789abcdef0
+  for (i = 0; i < n; i++) {
+    a <<= 1;a <<= 1;a <<= 1;a <<= 1;a <<= 1
+    a <<= 1;a <<= 1;a <<= 1;a <<= 1;a <<= 1
+  }
+  return a
+}
+
+function bm_bit_rshift_assign(n,    i, a) {
+  a = -0x123456789abcdef0
+  for (i = 0; i < n; i++) {
+    a >>= 1;a >>= 1;a >>= 1;a >>= 1;a >>= 1
+    a >>= 1;a >>= 1;a >>= 1;a >>= 1;a >>= 1
+  }
+  return a
+}
+
+function bm_bit_urshift_assign(n,    i, a) {
+  a = -0x123456789abcdef0
+  for (i = 0; i < n; i++) {
+    a >>>= 1;a >>>= 1;a >>>= 1;a >>>= 1;a >>>= 1
+    a >>>= 1;a >>>= 1;a >>>= 1;a >>>= 1;a >>>= 1
   }
   return a
 }

@@ -1,5 +1,8 @@
 Run the same benchmarks with each GoAWK build:
 
+The script requires the bitwise operator syntax from `goawk-xonixx` to parse,
+even when selecting only arithmetic benchmarks.
+
 ```sh
 /path/to/goawk-old -f bm/bm.awk -- -n 10000000 -b inc,add_float
 /path/to/goawk-new -f bm/bm.awk -- -n 10000000 -b inc,add_float
@@ -17,6 +20,14 @@ even when `empty` is not selected. Its measurement is reused for any `empty`
 rows, whose net time is zero. Negative net times are retained to show timing
 noise rather than clamped to zero.
 
+Bitwise benchmarks use int64 operands and cover `&`, `|`, `^` (XOR), `~`
+(complement), `<<`, `>>` (signed right shift), and `>>>` (unsigned right shift).
+Their names are `bit_and`, `bit_or`, `bit_xor`, `bit_not`, `bit_lshift`,
+`bit_rshift`, and `bit_urshift`. Each binary operator also has a corresponding
+`_assign` benchmark for its compound assignment form (including `>>>=`).
+Repeated shifts eventually produce 0 or -1; the VM continues executing all ten
+operations per iteration.
+
 Timing reads the first field of Linux `/proc/uptime`, with 0.01-second
 resolution. The file is reopened for each reading. Reported times include
 loop overhead, function dispatch, and clock-read overhead;
@@ -27,7 +38,7 @@ subtracts it to estimate the cost of the operations. Output occurs outside
 the timed loops.
 
 To add an operation, add a `bm_*` function with ten operations per iteration,
-its name to `available` in `bm`, and a dispatch branch in `run_benchmark`.
+its name to `Available` in `BEGIN`, and a dispatch branch in `run_benchmark`.
 
 ### Reproducible benchmarking
 
