@@ -20,6 +20,9 @@ even when `empty` is not selected. Its measurement is reused for any `empty`
 rows, whose net time is zero. Negative net times are retained to show timing
 noise rather than clamped to zero.
 
+`unary_plus` and `unary_minus` apply ten nested unary `+` or `-` operators to
+an int64 operand per iteration, following the `bit_not` benchmark.
+
 Bitwise benchmarks use int64 operands and cover `&`, `|`, `^` (XOR), `~`
 (complement), `<<`, `>>` (signed right shift), and `>>>` (unsigned right shift).
 Their names are `bit_and`, `bit_or`, `bit_xor`, `bit_not`, `bit_lshift`,

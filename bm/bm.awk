@@ -5,6 +5,7 @@
 BEGIN {
   Iterations = 10000000 # 10 million
   Available = "empty,inc,preinc,add_int,add_float,add_float_expr,sub_float,mul_float,div_float,assign"
+  Available = Available ",unary_plus,unary_minus"
   Available = Available ",bit_and,bit_or,bit_xor,bit_not,bit_lshift,bit_rshift,bit_urshift"
   Available = Available ",bit_and_assign,bit_or_assign,bit_xor_assign,bit_lshift_assign,bit_rshift_assign,bit_urshift_assign"
   bm()
@@ -129,6 +130,8 @@ function run_benchmark(name, n) {
   if (name == "mul_float") return bm_mul_float(n)
   if (name == "div_float") return bm_div_float(n)
   if (name == "assign") return bm_assign(n)
+  if (name == "unary_plus") return bm_unary_plus(n)
+  if (name == "unary_minus") return bm_unary_minus(n)
   if (name == "bit_and") return bm_bit_and(n)
   if (name == "bit_or") return bm_bit_or(n)
   if (name == "bit_xor") return bm_bit_xor(n)
@@ -222,6 +225,23 @@ function bm_assign(n,    i, a, b) {
   b = 42
   for (i = 0; i < n; i++) {
     a = b;a = b;a = b;a = b;a = b;a = b;a = b;a = b;a = b;a = b
+  }
+  return a
+}
+
+# Separate unary signs to avoid the ++ and -- operators.
+function bm_unary_plus(n,    i, a) {
+  a = 42
+  for (i = 0; i < n; i++) {
+    a = + + + + + + + + + +a
+  }
+  return a
+}
+
+function bm_unary_minus(n,    i, a) {
+  a = 42
+  for (i = 0; i < n; i++) {
+    a = - - - - - - - - - -a
   }
   return a
 }
