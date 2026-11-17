@@ -210,6 +210,8 @@ function report(file,    c, b, name, value, previous, cell, subject, row) {
   print row " |" > file
   for (b = 1; b <= BenchCount; b++) {
     name = Names[b]
+    if (name == "empty")
+      continue
     row = "| `" name "`"
     for (c = 1; c <= CommitCount; c++) {
       value = Best[c, name]

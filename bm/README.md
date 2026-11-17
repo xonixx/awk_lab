@@ -87,8 +87,9 @@ suite's syntax, including bitwise operators even when using `-b`.
 Each cell is compared with the **previous column**: a decrease of at least
 5% is bold green, and an increase of at least 3% is bold red. Other cells
 use plain text. Percentage highlighting requires both values to be positive;
-zero (including `empty`) and negative baseline-subtracted timings are retained
-without highlighting. Color uses inline HTML (`span` with `style` and
+zero and negative baseline-subtracted timings are retained without highlighting.
+The `empty` benchmark is omitted from the comparison table.
+Color uses inline HTML (`span` with `style` and
 `strong`); viewers that strip inline styles, including GitHub, may display
 only the bold formatting.
 
