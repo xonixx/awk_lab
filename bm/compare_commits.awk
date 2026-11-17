@@ -201,7 +201,7 @@ function report(file,    c, b, name, value, previous, cell, subject, row) {
   row = "| Benchmark"
   for (c = 1; c <= CommitCount; c++) {
     subject = Subject[c]
-    if (length(subject) > 60) subject = substr(subject, 1, 57) "..."
+    if (length(subject) > 40) subject = substr(subject, 1, 37) "..."
     row = row " | <code title=\"" Commit[c] "\">" substr(Commit[c], 1, 7) "</code><br><small>" html(subject) "</small>"
   }
   print row " |" > file

@@ -4,7 +4,7 @@
 
 BEGIN {
   Iterations = 10000000 # 10 million
-  Available = "empty,inc,preinc,add_int,add_float,add_float_expr,sub_float,sub_float_expr"
+  Available = "empty,global,local,float,int,inc,preinc,add_int,add_float,add_float_expr,sub_float,sub_float_expr"
   Available = Available ",mul_float,mul_float_expr,div_float,div_float_expr,mod_float_expr,assign"
   Available = Available ",unary_plus,unary_minus"
   Available = Available ",bit_and,bit_or,bit_xor,bit_not,bit_lshift,bit_rshift,bit_urshift"
@@ -122,6 +122,10 @@ function now(    uptime, fields, status, read_status) {
 # Dispatch once per benchmark, keeping function calls out of the hot loops.
 function run_benchmark(name, n) {
   if (name == "empty") return bm_empty(n)
+  if (name == "global") return bm_global(n)
+  if (name == "local") return bm_local(n, 42)
+  if (name == "float") return bm_float(n)
+  if (name == "int") return bm_int(n)
   if (name == "inc") return bm_inc(n)
   if (name == "preinc") return bm_preinc(n)
   if (name == "add_int") return bm_add_int(n)
@@ -155,6 +159,35 @@ function run_benchmark(name, n) {
 function bm_empty(n,    i) {
   for (i = 0; i < n; i++) {}
   return i
+}
+
+function bm_global(n,    i) {
+  a = 42
+  for (i = 0; i < n; i++) {
+    a;a;a;a;a;a;a;a;a;a
+  }
+  return a
+}
+
+function bm_local(n, a,    i) {
+  for (i = 0; i < n; i++) {
+    a;a;a;a;a;a;a;a;a;a
+  }
+  return a
+}
+
+function bm_float(n,    i) {
+  for (i = 0; i < n; i++) {
+    4.2;4.2;4.2;4.2;4.2;4.2;4.2;4.2;4.2;4.2
+  }
+  return 4.2
+}
+
+function bm_int(n,    i) {
+  for (i = 0; i < n; i++) {
+    42;42;42;42;42;42;42;42;42;42
+  }
+  return 42
 }
 
 function bm_inc(n,    i, a) {
