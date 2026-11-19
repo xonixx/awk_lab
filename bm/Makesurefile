@@ -1,0 +1,4 @@
+
+@goal r5
+awk -f ./compare_commits.awk -- -o ./5.md -n 5000000 -c 14 \
+  c386d5b3157d8538af63c491596444e02220682a e46a818b563736f2983e551f1c04fcea4f6574e7 7176c94b34a1df89dcfaf92c4d1b38bf329bb61d

@@ -1,5 +1,5 @@
 #!/usr/bin/awk -f
-# Compare GoAWK commits using the minimum ns/op for each benchmark.
+# Compare GoAWK commits using minimum ns/op and total best elapsed seconds.
 # Usage: awk -f bm/compare_commits.awk -- [options] HASH [HASH ...]
 
 BEGIN {
@@ -140,7 +140,7 @@ function build(c,    restore, cmd) {
     fail("checkout/build failed for " Commit[c] " (see diagnostics above)")
 }
 
-function benchmark(c, run,    cmd, file, line, fields, count, name, value, key, status, header, rows) {
+function benchmark(c, run,    cmd, file, line, fields, count, name, value, seconds, key, status, header, rows) {
   file = Temp "/run.txt"
   cmd = "cd " quote(Repo) " && LC_ALL=C taskset -c " quote(CPU) " " quote(Temp "/goawk") \
     " -f " quote(Suite) " -- -n " quote(Iterations)
@@ -163,6 +163,7 @@ function benchmark(c, run,    cmd, file, line, fields, count, name, value, key, 
       fail("unexpected benchmark output: " line)
     name = fields[1]
     value = fields[3] + 0
+    seconds = fields[2] + 0
     if (name in Seen)
       fail("duplicate benchmark: " name)
     Seen[name] = 1
@@ -176,6 +177,8 @@ function benchmark(c, run,    cmd, file, line, fields, count, name, value, key, 
     key = c SUBSEP name
     if (!(key in Best) || value < Best[key])
       Best[key] = value
+    if (!(key in BestSeconds) || seconds < BestSeconds[key])
+      BestSeconds[key] = seconds
   }
   if (close(file) != 0 || status < 0)
     fail("cannot read benchmark output")
@@ -187,13 +190,18 @@ function number(value) {
   return value ~ /^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][+-]?[0-9]+)?$/
 }
 
-function report(file,    c, b, name, value, previous, cell, subject, row) {
+function report(file,    c, b, name, value, previous, cell, subject, row, totals) {
+  for (c = 1; c <= CommitCount; c++)
+    for (b = 1; b <= BenchCount; b++)
+      totals[c] += BestSeconds[c, Names[b]]
   print "# GoAWK benchmark comparison" > file
   print "" > file
   print "Values are **ns/op**, taking the minimum for each benchmark across **" Runs " runs** per commit." > file
   print "Iterations per benchmark: **" Iterations "**. CPU core: **" CPU "** (`taskset -c " CPU "`)." > file
   print "Go: " html(GoVersion) ". Suite: <code>" html(Suite) "</code>." > file
   print "" > file
+  print "Header percentages show the change in total duration versus the previous commit (first commit in parentheses); negative means faster." > file
+  print "Total duration sums the minimum **seconds** for each benchmark across runs, including `empty` when present. Percentages require positive totals." > file
   print "Commits appear in CLI order. Each value is compared to the column immediately to its left:" > file
   print "**green** = at least 5% faster; **red** = at least 3% slower. Other values use normal text." > file
   print "Zero/negative values are retained as timing noise; percentage highlighting requires two positive values." > file
@@ -202,7 +210,10 @@ function report(file,    c, b, name, value, previous, cell, subject, row) {
   for (c = 1; c <= CommitCount; c++) {
     subject = Subject[c]
     if (length(subject) > 40) subject = substr(subject, 1, 37) "..."
-    row = row " | <code title=\"" Commit[c] "\">" substr(Commit[c], 1, 7) "</code><br><small>" html(subject) "</small>"
+    row = row " | <code title=\"" Commit[c] "\">" substr(Commit[c], 1, 7) "</code>"
+    if (c > 1)
+      row = row " " duration_change(totals[c], totals[c - 1]) " (" duration_change(totals[c], totals[1]) ")"
+    row = row "<br><small>" html(subject) "</small>"
   }
   print row " |" > file
   row = "| :---"
@@ -231,6 +242,12 @@ function report(file,    c, b, name, value, previous, cell, subject, row) {
   }
   if (close(file) != 0)
     fail("cannot finish report")
+}
+
+function duration_change(current, baseline) {
+  if (current <= 0 || baseline <= 0)
+    return "n/a"
+  return sprintf("%+.2f%%", (current / baseline - 1) * 100)
 }
 
 function absolute(path) {

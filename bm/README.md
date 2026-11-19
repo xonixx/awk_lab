@@ -64,6 +64,14 @@ those runs. Columns follow the supplied commit order, with a 7-character hash an
 short excerpt from its commit subject. The hash as supplied is included
 in the column's HTML `title` attribute.
 
+After each hash except the first, `-x% (-y%)` shows the overall duration
+change versus the previous commit and versus the first commit, respectively.
+The duration is the sum of each benchmark's minimum `seconds` across the runs,
+including `empty` when present. These minima are independent of the `ns/op`
+minima. Percentages use `(current / baseline - 1) * 100`, with two decimal
+places: negative means faster, positive means slower. Nonpositive totals
+produce `n/a` for the affected comparison.
+
 ```sh
 awk -f bm/compare_commits.awk -- \
   --runs 5 --iterations 30000000 --cpu 17 \
