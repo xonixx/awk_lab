@@ -115,7 +115,7 @@ function parse_cli(    i, option, value, positional) {
 }
 
 function integer(value, minimum) {
-  return value ~ /^[0-9]+$/ && value + 0 >= minimum && value + 0 <= 9007199254740991
+  return value ~ /^[0-9]+$/ && +value >= minimum && +value <= 9007199254740991
 }
 
 function build(c,    restore, cmd) {
@@ -150,7 +150,7 @@ function benchmark(c, run,    cmd, file, line, fields, count, name, value, secon
     system("cat -- " quote(file) " >&2")
     fail("benchmark failed for " Commit[c] ", run " run)
   }
-  for (key in Seen) delete Seen[key]
+  delete Seen
   while ((status = (getline line < file)) > 0) {
     if (line ~ /^[[:space:]]*$/ || line ~ /^Iterations per benchmark:/)
       continue
@@ -162,8 +162,8 @@ function benchmark(c, run,    cmd, file, line, fields, count, name, value, secon
     if (!header || count != 4 || fields[1] !~ /^[a-zA-Z_][a-zA-Z_0-9]*$/ || !number(fields[2]) || !number(fields[3]))
       fail("unexpected benchmark output: " line)
     name = fields[1]
-    value = fields[3] + 0
-    seconds = fields[2] + 0
+    value = +fields[3]
+    seconds = +fields[2]
     if (name in Seen)
       fail("duplicate benchmark: " name)
     Seen[name] = 1
@@ -200,7 +200,7 @@ function report(file,    c, b, name, value, previous, cell, subject, row, totals
   print "Iterations per benchmark: **" Iterations "**. CPU core: **" CPU "** (`taskset -c " CPU "`)." > file
   print "Go: " html(GoVersion) ". Suite: <code>" html(Suite) "</code>." > file
   print "" > file
-  print "Header percentages show the change in total duration versus the previous commit (first commit in parentheses); negative means faster." > file
+  print "Header percentages show the change in total duration versus the previous commit (first commit in parentheses); negative (green) means faster, positive (red) means slower." > file
   print "Total duration sums the minimum **seconds** for each benchmark across runs, including `empty` when present. Percentages require positive totals." > file
   print "Commits appear in CLI order. Each value is compared to the column immediately to its left:" > file
   print "**green** = at least 5% faster; **red** = at least 3% slower. Other values use normal text." > file
@@ -212,7 +212,7 @@ function report(file,    c, b, name, value, previous, cell, subject, row, totals
     if (length(subject) > 40) subject = substr(subject, 1, 37) "..."
     row = row " | <code title=\"" Commit[c] "\">" substr(Commit[c], 1, 7) "</code>"
     if (c > 1)
-      row = row " " duration_change(totals[c], totals[c - 1]) " (" duration_change(totals[c], totals[1]) ")"
+      row = row " <small style=\"font-weight: normal\">" duration_change(totals[c], totals[c - 1]) " " duration_change(totals[c], totals[1], 1) "</small>"
     row = row "<br><small>" html(subject) "</small>"
   }
   print row " |" > file
@@ -244,10 +244,13 @@ function report(file,    c, b, name, value, previous, cell, subject, row, totals
     fail("cannot finish report")
 }
 
-function duration_change(current, baseline) {
-  if (current <= 0 || baseline <= 0)
-    return "n/a"
-  return sprintf("%+.2f%%", (current / baseline - 1) * 100)
+function duration_change(current, baseline, parentheses,    value) {
+  value = current <= 0 || baseline <= 0 ? "n/a" : sprintf("%+.2f%%", (current / baseline - 1) * 100)
+  if (parentheses)
+    value = "(" value ")"
+  if (current <= 0 || baseline <= 0 || current == baseline)
+    return value
+  return "<span style=\"color: " (current < baseline ? "green" : "red") "\">" value "</span>"
 }
 
 function absolute(path) {

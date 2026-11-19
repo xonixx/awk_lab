@@ -69,8 +69,10 @@ change versus the previous commit and versus the first commit, respectively.
 The duration is the sum of each benchmark's minimum `seconds` across the runs,
 including `empty` when present. These minima are independent of the `ns/op`
 minima. Percentages use `(current / baseline - 1) * 100`, with two decimal
-places: negative means faster, positive means slower. Nonpositive totals
-produce `n/a` for the affected comparison.
+places: negative means faster, positive means slower. These percentages use
+smaller, normal-weight text, colored green for faster and red for slower;
+unchanged totals use normal text color. Nonpositive totals produce `n/a`
+for the affected comparison.
 
 ```sh
 awk -f bm/compare_commits.awk -- \
