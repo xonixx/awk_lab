@@ -1,6 +1,7 @@
 #!/usr/bin/awk -f
 # Compare GoAWK commits using minimum ns/op and total best elapsed seconds.
 # Usage: awk -f bm/compare_commits.awk -- [options] HASH [HASH ...]
+#    or: awk -f bm/compare_commits.awk -- [options] --worktree
 
 BEGIN {
   CONVFMT = "%.17g"
@@ -27,11 +28,20 @@ BEGIN {
     fail("cannot bind to CPU " CPU " (check your allowed CPU set)")
   OriginalHead = capture(Git "rev-parse --verify HEAD", "read repository HEAD")
   OriginalBranch = capture(Git "symbolic-ref -q --short HEAD || :", "read original branch")
-  if (capture(Git "status --porcelain --untracked-files=no", "check repository status") != "")
+  if (!Worktree && capture(Git "status --porcelain --untracked-files=no", "check repository status") != "")
     fail("repository has staged or unstaged tracked changes; commit or stash them first")
 
-  for (c = 1; c <= CommitCount; c++)
-    Subject[c] = capture(Git "show -s --format=%s " quote(Commit[c]), "read commit message")
+  if (Worktree) {
+    CommitCount = 2
+    Commit[1] = OriginalHead
+    Commit[2] = "WORKTREE"
+  }
+  for (c = 1; c <= CommitCount; c++) {
+    if (Worktree && c == 2)
+      Subject[c] = "Current worktree"
+    else
+      Subject[c] = capture(Git "show -s --format=%s " quote(Commit[c]), "read commit message")
+  }
   GoVersion = capture("LC_ALL=C go version", "read Go version")
   Temp = capture("mktemp -d \"${TMPDIR:-/tmp}/goawk-compare.XXXXXXXX\"", "create temporary directory")
   if (Temp == "")
@@ -60,7 +70,9 @@ END {
 
 function usage() {
   print "Usage: awk -f bm/compare_commits.awk -- [options] HASH [HASH ...]"
+  print "   or: awk -f bm/compare_commits.awk -- [options] --worktree"
   print "Compare commits in the order supplied (usually oldest first)."
+  print "      --worktree        Compare current HEAD with working files (no hashes)"
   print "  -r, --runs N          Suite runs per commit (default: 3)"
   print "  -n, --iterations N    Iterations per benchmark (default: 20000000)"
   print "  -c, --cpu N           CPU core for taskset (default: 17)"
@@ -81,6 +93,10 @@ function parse_cli(    i, option, value, positional) {
     if (!positional && (option == "-h" || option == "--help")) {
       usage()
       exit
+    }
+    if (!positional && option == "--worktree") {
+      Worktree = 1
+      continue
     }
     if (!positional && option ~ /^-/) {
       if (option != "-r" && option != "--runs" && option != "-n" && option != "--iterations" &&
@@ -103,7 +119,9 @@ function parse_cli(    i, option, value, positional) {
       Commit[++CommitCount] = option
     }
   }
-  if (!CommitCount)
+  if (Worktree && CommitCount)
+    fail("--worktree cannot be combined with commit hashes")
+  if (!Worktree && !CommitCount)
     fail("provide at least one commit hash (use --help for options)")
   if (!integer(Runs, 1)) fail("runs must be a positive integer at most 9007199254740991")
   if (!integer(Iterations, 1)) fail("iterations must be a positive integer at most 9007199254740991")
@@ -119,6 +137,10 @@ function integer(value, minimum) {
 }
 
 function build(c,    restore, cmd) {
+  if (Worktree) {
+    build_worktree(c)
+    return
+  }
   restore = OriginalBranch != "" ? OriginalBranch : OriginalHead
   # The shell owns the checkout/build/restore sequence, so its EXIT trap also
   # restores on a build error or a catchable interrupt. Never force checkout.
@@ -138,6 +160,20 @@ function build(c,    restore, cmd) {
     "go build -o " quote(Temp "/goawk") " .\n"
   if (system(cmd) != 0)
     fail("checkout/build failed for " Commit[c] " (see diagnostics above)")
+}
+
+function build_worktree(c,    dir, cmd) {
+  dir = c == 1 ? Temp "/head" : Repo
+  cmd = "set -eu\n"
+  if (c == 1) {
+    # Borrow Git objects for a temporary HEAD checkout without touching the
+    # original branch, index, or working files, even when the build fails.
+    cmd = cmd "git clone --quiet --shared --no-checkout -- " quote(Repo) " " quote(dir) "\n" \
+      "git -C " quote(dir) " checkout --quiet --detach " quote(OriginalHead) "\n"
+  }
+  cmd = cmd "cd " quote(dir) "\ngo build -o " quote(Temp "/goawk") " .\n"
+  if (system(cmd) != 0)
+    fail("build failed for " Commit[c] " (see diagnostics above)")
 }
 
 function benchmark(c, run,    cmd, file, line, fields, count, name, value, seconds, key, status, header, rows) {
@@ -210,7 +246,7 @@ function report(file,    c, b, name, value, previous, cell, subject, row, totals
   for (c = 1; c <= CommitCount; c++) {
     subject = Subject[c]
     if (length(subject) > 40) subject = substr(subject, 1, 37) "..."
-    row = row " | <code title=\"" Commit[c] "\">" substr(Commit[c], 1, 7) "</code>"
+    row = row " | <code title=\"" Commit[c] "\">" (Worktree && c == 2 ? Commit[c] : substr(Commit[c], 1, 7)) "</code>"
     if (c > 1)
       row = row " <small style=\"font-weight: normal\">" duration_change(totals[c], totals[c - 1]) " " duration_change(totals[c], totals[1], 1) "</small>"
     row = row "<br><small>" html(subject) "</small>"

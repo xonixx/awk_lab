@@ -84,7 +84,18 @@ awk -f bm/compare_commits.awk -- \
 awk -f bm/compare_commits.awk -- \
   --repo /path/to/goawk --suite /path/to/bm.awk \
   --output comparison.md HASH1 HASH2
+
+# Compare current HEAD against uncommitted changes:
+awk -f bm/compare_commits.awk -- --worktree --output bm/worktree.md
 ```
+
+`--worktree` takes no commit hashes and compares the current `HEAD` with the
+working files in `--repo`. The first column shows the HEAD hash; the second is
+labeled `WORKTREE` and uses the same timing and speedup calculations. HEAD is
+built in a temporary local clone, and the worktree is built in place, including
+staged, unstaged, and untracked source files used by `go build`. No checkout or
+stash is performed in the original repository, and its index and working files
+are preserved. This also works with a clean worktree or a detached HEAD.
 
 Short options are `-r` (runs), `-n` (iterations), `-c` (CPU), `-b`
 (benchmark selection), and `-o` (output). The default output is
@@ -103,7 +114,8 @@ Color uses inline HTML (`span` with `style` and
 `strong`); viewers that strip inline styles, including GitHub, may display
 only the bold formatting.
 
-The repository must have no staged or unstaged changes to tracked files.
+When supplying commit hashes, the repository must have no staged or unstaged
+changes to tracked files.
 Untracked files are left in place, and checkout is never forced. Each build
 uses a temporary binary and restores the original branch or detached HEAD
 before benchmarking, including on build failure or catchable build interrupts.
