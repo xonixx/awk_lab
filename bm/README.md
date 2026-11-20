@@ -87,6 +87,10 @@ awk -f bm/compare_commits.awk -- \
 
 # Compare current HEAD against uncommitted changes:
 awk -f bm/compare_commits.awk -- --worktree --output bm/worktree.md
+
+# Append a master baseline to either comparison mode:
+awk -f bm/compare_commits.awk -- --master HASH1 HASH2
+awk -f bm/compare_commits.awk -- --worktree --master --output bm/worktree.md
 ```
 
 `--worktree` takes no commit hashes and compares the current `HEAD` with the
@@ -97,13 +101,30 @@ staged, unstaged, and untracked source files used by `go build`. No checkout or
 stash is performed in the original repository, and its index and working files
 are preserved. This also works with a clean worktree or a detached HEAD.
 
+`--master` appends the tip of the local `master` branch as the last column,
+built in a temporary clone. It uses a temporary copy of the suite with all
+`BITWISE_BEGIN` through `BITWISE_END` sections removed, including the marker
+lines. Keep bitwise names, dispatch branches, and functions inside those
+sections. Explicit `--benchmarks` selections are restricted to benchmarks
+available in the filtered suite for master. Excluded rows show `n/a`; if all
+selected benchmarks are excluded, master has no timing runs and its column
+contains only `n/a`. The original suite is preserved.
+
+The master header shows its branch name and hash without aggregate speedups.
+Its timings are compared with the preceding column using inverted colors:
+at least 5% lower is red, at least 3% higher is green, showing whether that
+preceding build is slower or faster than master. Other timings use normal
+text, and nonpositive timings are not highlighted. This flag works with
+either commit hashes or `--worktree`; it uses local master without fetching.
+
 Short options are `-r` (runs), `-n` (iterations), `-c` (CPU), `-b`
 (benchmark selection), and `-o` (output). The default output is
 `benchmark-report.md` in the current directory. Use `--help` for all options.
 Requires Linux, a POSIX awk (tested with gawk and mawk), Git, Go, `taskset`,
 and standard shell utilities. Choose a CPU allowed by your environment;
-the driver checks affinity before building. Each commit must support the
-suite's syntax, including bitwise operators even when using `-b`.
+the driver checks affinity before building. Each comparison commit must support
+the suite's syntax, including bitwise operators even when using `-b`;
+the appended `--master` baseline uses the filtered suite described above.
 
 Each cell is compared with the **previous column**: a decrease of at least
 5% is bold green, and an increase of at least 3% is bold red. Other cells

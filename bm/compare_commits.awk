@@ -36,6 +36,10 @@ BEGIN {
     Commit[1] = OriginalHead
     Commit[2] = "WORKTREE"
   }
+  if (Master) {
+    MasterColumn = ++CommitCount
+    Commit[MasterColumn] = capture(Git "rev-parse --verify " quote("refs/heads/master^{commit}"), "resolve master branch")
+  }
   for (c = 1; c <= CommitCount; c++) {
     if (Worktree && c == 2)
       Subject[c] = "Current worktree"
@@ -47,10 +51,22 @@ BEGIN {
   if (Temp == "")
     fail("mktemp returned no directory")
   Temp = absolute(Temp)
+  if (Master) {
+    MasterSuite = Temp "/bm-master.awk"
+    if (system("awk '/BITWISE_BEGIN/,/BITWISE_END/ {next} 1' " quote(Suite) " > " quote(MasterSuite)) != 0)
+      fail("cannot prepare benchmark suite for master")
+  }
 
   for (c = 1; c <= CommitCount; c++) {
     log_message("[" c "/" CommitCount "] Building " Commit[c] ": " Subject[c])
     build(c)
+    if (c == MasterColumn) {
+      master_benchmarks()
+      if (!MasterBenchCount) {
+        log_message("  No selected benchmarks supported by master; its column will contain n/a")
+        continue
+      }
+    }
     for (r = 1; r <= Runs; r++) {
       log_message("  Run " r "/" Runs " on CPU " CPU)
       benchmark(c, r)
@@ -73,6 +89,7 @@ function usage() {
   print "   or: awk -f bm/compare_commits.awk -- [options] --worktree"
   print "Compare commits in the order supplied (usually oldest first)."
   print "      --worktree        Compare current HEAD with working files (no hashes)"
+  print "      --master          Append local master baseline without bitwise benchmarks"
   print "  -r, --runs N          Suite runs per commit (default: 3)"
   print "  -n, --iterations N    Iterations per benchmark (default: 20000000)"
   print "  -c, --cpu N           CPU core for taskset (default: 17)"
@@ -96,6 +113,10 @@ function parse_cli(    i, option, value, positional) {
     }
     if (!positional && option == "--worktree") {
       Worktree = 1
+      continue
+    }
+    if (!positional && option == "--master") {
+      Master = 1
       continue
     }
     if (!positional && option ~ /^-/) {
@@ -137,8 +158,8 @@ function integer(value, minimum) {
 }
 
 function build(c,    restore, cmd) {
-  if (Worktree) {
-    build_worktree(c)
+  if (Worktree || c == MasterColumn) {
+    build_isolated(c)
     return
   }
   restore = OriginalBranch != "" ? OriginalBranch : OriginalHead
@@ -162,26 +183,46 @@ function build(c,    restore, cmd) {
     fail("checkout/build failed for " Commit[c] " (see diagnostics above)")
 }
 
-function build_worktree(c,    dir, cmd) {
-  dir = c == 1 ? Temp "/head" : Repo
+function build_isolated(c,    dir, cmd) {
+  dir = Worktree && c == 2 ? Repo : Temp "/checkout-" c
   cmd = "set -eu\n"
-  if (c == 1) {
-    # Borrow Git objects for a temporary HEAD checkout without touching the
+  if (dir != Repo) {
+    # Borrow Git objects for a temporary checkout without touching the
     # original branch, index, or working files, even when the build fails.
     cmd = cmd "git clone --quiet --shared --no-checkout -- " quote(Repo) " " quote(dir) "\n" \
-      "git -C " quote(dir) " checkout --quiet --detach " quote(OriginalHead) "\n"
+      "git -C " quote(dir) " checkout --quiet --detach " quote(Commit[c]) "\n"
   }
   cmd = cmd "cd " quote(dir) "\ngo build -o " quote(Temp "/goawk") " .\n"
   if (system(cmd) != 0)
     fail("build failed for " Commit[c] " (see diagnostics above)")
 }
 
-function benchmark(c, run,    cmd, file, line, fields, count, name, value, seconds, key, status, header, rows) {
+function master_benchmarks(    cmd, listed, count, i, b, name, supported) {
+  cmd = "cd " quote(Repo) " && LC_ALL=C " quote(Temp "/goawk") " -f " quote(MasterSuite) " -- --list"
+  count = split(capture(cmd, "list master benchmarks"), listed, "\n")
+  for (i = 1; i <= count; i++) {
+    name = listed[i]
+    if (name !~ /^[a-zA-Z_][a-zA-Z_0-9]*$/ || name in supported)
+      fail("unexpected master benchmark name: " name)
+    supported[name] = 1
+  }
+  for (b = 1; b <= BenchCount; b++) {
+    name = Names[b]
+    if (name in supported) {
+      MasterExpected[name] = 1
+      MasterSelection = MasterSelection (MasterBenchCount++ ? "," : "") name
+    }
+  }
+}
+
+function benchmark(c, run,    cmd, file, line, fields, count, name, value, seconds, key, status, header, rows, suite, selection) {
   file = Temp "/run.txt"
+  suite = c == MasterColumn ? MasterSuite : Suite
+  selection = c == MasterColumn ? MasterSelection : Selection
   cmd = "cd " quote(Repo) " && LC_ALL=C taskset -c " quote(CPU) " " quote(Temp "/goawk") \
-    " -f " quote(Suite) " -- -n " quote(Iterations)
-  if (Selection != "")
-    cmd = cmd " -b " quote(Selection)
+    " -f " quote(suite) " -- -n " quote(Iterations)
+  if (selection != "")
+    cmd = cmd " -b " quote(selection)
   if (system(cmd " > " quote(file)) != 0) {
     system("cat -- " quote(file) " >&2")
     fail("benchmark failed for " Commit[c] ", run " run)
@@ -207,7 +248,7 @@ function benchmark(c, run,    cmd, file, line, fields, count, name, value, secon
     if (c == 1 && run == 1) {
       Names[++BenchCount] = name
       Known[name] = 1
-    } else if (!(name in Known)) {
+    } else if ((c == MasterColumn && !(name in MasterExpected)) || !(name in Known)) {
       fail("benchmark set changed: unexpected " name " in " Commit[c] ", run " run)
     }
     key = c SUBSEP name
@@ -218,7 +259,7 @@ function benchmark(c, run,    cmd, file, line, fields, count, name, value, secon
   }
   if (close(file) != 0 || status < 0)
     fail("cannot read benchmark output")
-  if (!rows || rows != BenchCount)
+  if (!rows || rows != (c == MasterColumn ? MasterBenchCount : BenchCount))
     fail("missing benchmark rows in " Commit[c] ", run " run)
 }
 
@@ -228,8 +269,9 @@ function number(value) {
 
 function report(file,    c, b, name, value, previous, cell, subject, row, totals) {
   for (c = 1; c <= CommitCount; c++)
-    for (b = 1; b <= BenchCount; b++)
-      totals[c] += BestSeconds[c, Names[b]]
+    if (c != MasterColumn)
+      for (b = 1; b <= BenchCount; b++)
+        totals[c] += BestSeconds[c, Names[b]]
   print "# GoAWK benchmark comparison" > file
   print "" > file
   print "Values are **ns/op**, taking the minimum for each benchmark across **" Runs " runs** per commit." > file
@@ -240,14 +282,16 @@ function report(file,    c, b, name, value, previous, cell, subject, row, totals
   print "Total duration sums the minimum **seconds** for each benchmark across runs, including `empty` when present. Percentages require positive totals." > file
   print "Commits appear in CLI order. Each value is compared to the column immediately to its left:" > file
   print "**green** = at least 5% faster; **red** = at least 3% slower. Other values use normal text." > file
+  if (Master)
+    print "The final **master** column excludes bitwise benchmarks (shown as n/a), has no aggregate percentages, and reverses the colors: lower is red, higher is green, using the same thresholds." > file
   print "Zero/negative values are retained as timing noise; percentage highlighting requires two positive values." > file
   print "" > file
   row = "| Benchmark"
   for (c = 1; c <= CommitCount; c++) {
     subject = Subject[c]
     if (length(subject) > 40) subject = substr(subject, 1, 37) "..."
-    row = row " | <code title=\"" Commit[c] "\">" (Worktree && c == 2 ? Commit[c] : substr(Commit[c], 1, 7)) "</code>"
-    if (c > 1)
+    row = row " | <code title=\"" Commit[c] "\">" (c == MasterColumn ? "master " : "") (Worktree && c == 2 ? Commit[c] : substr(Commit[c], 1, 7)) "</code>"
+    if (c > 1 && c != MasterColumn)
       row = row " <small style=\"font-weight: normal\">" duration_change(totals[c], totals[c - 1]) " " duration_change(totals[c], totals[1], 1) "</small>"
     row = row "<br><small>" html(subject) "</small>"
   }
@@ -261,15 +305,19 @@ function report(file,    c, b, name, value, previous, cell, subject, row, totals
       continue
     row = "| `" name "`"
     for (c = 1; c <= CommitCount; c++) {
+      if (!((c SUBSEP name) in Best)) {
+        row = row " | n/a"
+        continue
+      }
       value = Best[c, name]
       cell = sprintf("%.2f", value)
       if (c > 1) {
         previous = Best[c - 1, name]
         if (previous > 0 && value > 0) {
           if (value * 100 <= previous * 95)
-            cell = "<span style=\"color: green\"><strong>" cell "</strong></span>"
+            cell = "<span style=\"color: " (c == MasterColumn ? "red" : "green") "\"><strong>" cell "</strong></span>"
           else if (value * 100 >= previous * 103)
-            cell = "<span style=\"color: red\"><strong>" cell "</strong></span>"
+            cell = "<span style=\"color: " (c == MasterColumn ? "green" : "red") "\"><strong>" cell "</strong></span>"
         }
       }
       row = row " | " cell

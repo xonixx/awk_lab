@@ -7,8 +7,10 @@ BEGIN {
   Available = "empty,global,local,float,int,inc,preinc,add_int,add_float,add_float_expr,sub_float,sub_float_expr"
   Available = Available ",mul_float,mul_float_expr,div_float,div_float_expr,mod_float_expr,assign"
   Available = Available ",unary_plus,unary_minus"
+  # BITWISE_BEGIN
   Available = Available ",bit_and,bit_or,bit_xor,bit_not,bit_lshift,bit_rshift,bit_urshift"
   Available = Available ",bit_and_assign,bit_or_assign,bit_xor_assign,bit_lshift_assign,bit_rshift_assign,bit_urshift_assign"
+  # BITWISE_END
   bm()
 }
 
@@ -141,6 +143,7 @@ function run_benchmark(name, n) {
   if (name == "assign") return bm_assign(n)
   if (name == "unary_plus") return bm_unary_plus(n)
   if (name == "unary_minus") return bm_unary_minus(n)
+  # BITWISE_BEGIN
   if (name == "bit_and") return bm_bit_and(n)
   if (name == "bit_or") return bm_bit_or(n)
   if (name == "bit_xor") return bm_bit_xor(n)
@@ -154,6 +157,7 @@ function run_benchmark(name, n) {
   if (name == "bit_lshift_assign") return bm_bit_lshift_assign(n)
   if (name == "bit_rshift_assign") return bm_bit_rshift_assign(n)
   if (name == "bit_urshift_assign") return bm_bit_urshift_assign(n)
+  # BITWISE_END
 }
 
 function bm_empty(n,    i) {
@@ -315,7 +319,7 @@ function bm_unary_minus(n,    i, a) {
   }
   return a
 }
-
+# BITWISE_BEGIN
 # Exercise the fork's int64 operators, including bits above float64's exact range.
 function bm_bit_and(n,    i, a, b) {
   a = 0x123456789abcdef0
@@ -434,3 +438,4 @@ function bm_bit_urshift_assign(n,    i, a) {
   }
   return a
 }
+# BITWISE_END
