@@ -110,8 +110,15 @@ available in the filtered suite for master. Excluded rows show `n/a`; if all
 selected benchmarks are excluded, master has no timing runs and its column
 contains only `n/a`. The original suite is preserved.
 
-The master header shows its branch name and hash without aggregate speedups.
-Its timings are compared with the preceding column using inverted colors:
+The master header shows its branch name, hash, and a single duration delta
+versus the preceding column. Both totals sum each benchmark's minimum `seconds`
+across runs over exactly the shared set of selected benchmarks, including
+`empty` when present and excluding bitwise benchmarks. The delta uses
+`(master_total / previous_total - 1) * 100`, with no comparison to the first
+column. Header colors are inverted: negative is red, positive is green.
+Nonpositive totals or no shared benchmarks produce `n/a`.
+
+Its per-benchmark timings also use inverted colors versus the preceding column:
 at least 5% lower is red, at least 3% higher is green, showing whether that
 preceding build is slower or faster than master. Other timings use normal
 text, and nonpositive timings are not highlighted. This flag works with

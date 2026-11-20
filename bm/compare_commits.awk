@@ -267,11 +267,19 @@ function number(value) {
   return value ~ /^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)([eE][+-]?[0-9]+)?$/
 }
 
-function report(file,    c, b, name, value, previous, cell, subject, row, totals) {
+function report(file,    c, b, name, value, previous, cell, subject, row, totals, master_total, master_previous) {
   for (c = 1; c <= CommitCount; c++)
     if (c != MasterColumn)
       for (b = 1; b <= BenchCount; b++)
         totals[c] += BestSeconds[c, Names[b]]
+  if (Master)
+    for (b = 1; b <= BenchCount; b++) {
+      name = Names[b]
+      if (name in MasterExpected) {
+        master_total += BestSeconds[MasterColumn, name]
+        master_previous += BestSeconds[MasterColumn - 1, name]
+      }
+    }
   print "# GoAWK benchmark comparison" > file
   print "" > file
   print "Values are **ns/op**, taking the minimum for each benchmark across **" Runs " runs** per commit." > file
@@ -283,7 +291,7 @@ function report(file,    c, b, name, value, previous, cell, subject, row, totals
   print "Commits appear in CLI order. Each value is compared to the column immediately to its left:" > file
   print "**green** = at least 5% faster; **red** = at least 3% slower. Other values use normal text." > file
   if (Master)
-    print "The final **master** column excludes bitwise benchmarks (shown as n/a), has no aggregate percentages, and reverses the colors: lower is red, higher is green, using the same thresholds." > file
+    print "The final **master** column excludes bitwise benchmarks (shown as n/a). Its single header percentage compares total best seconds for shared benchmarks against the previous column. Colors are reversed for the header and values: lower is red, higher is green, using the same value thresholds." > file
   print "Zero/negative values are retained as timing noise; percentage highlighting requires two positive values." > file
   print "" > file
   row = "| Benchmark"
@@ -291,7 +299,9 @@ function report(file,    c, b, name, value, previous, cell, subject, row, totals
     subject = Subject[c]
     if (length(subject) > 40) subject = substr(subject, 1, 37) "..."
     row = row " | <code title=\"" Commit[c] "\">" (c == MasterColumn ? "master " : "") (Worktree && c == 2 ? Commit[c] : substr(Commit[c], 1, 7)) "</code>"
-    if (c > 1 && c != MasterColumn)
+    if (c == MasterColumn)
+      row = row " <small style=\"font-weight: normal\">" duration_change(master_total, master_previous, 0, 1) "</small>"
+    else if (c > 1)
       row = row " <small style=\"font-weight: normal\">" duration_change(totals[c], totals[c - 1]) " " duration_change(totals[c], totals[1], 1) "</small>"
     row = row "<br><small>" html(subject) "</small>"
   }
@@ -328,13 +338,16 @@ function report(file,    c, b, name, value, previous, cell, subject, row, totals
     fail("cannot finish report")
 }
 
-function duration_change(current, baseline, parentheses,    value) {
+function duration_change(current, baseline, parentheses, invert,    value, color) {
   value = current <= 0 || baseline <= 0 ? "n/a" : sprintf("%+.2f%%", (current / baseline - 1) * 100)
   if (parentheses)
     value = "(" value ")"
   if (current <= 0 || baseline <= 0 || current == baseline)
     return value
-  return "<span style=\"color: " (current < baseline ? "green" : "red") "\">" value "</span>"
+  color = current < baseline ? "green" : "red"
+  if (invert)
+    color = color == "green" ? "red" : "green"
+  return "<span style=\"color: " color "\">" value "</span>"
 }
 
 function absolute(path) {
